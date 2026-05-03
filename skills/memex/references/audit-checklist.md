@@ -55,7 +55,6 @@ CLAUDE.md                      (symlink → AGENTS.md, Claude Code back-compat)
 .claude/commands/memex-spec.md
 .claude/commands/memex-review-spec.md
 .claude/commands/memex-sweep.md
-.claude/commands/memex-link.md
 
 .gitignore                     (contains obsidian workspace exclusions)
 ```

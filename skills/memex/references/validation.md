@@ -146,7 +146,7 @@ Slash commands are Claude Code-specific and only install if `.claude/` is presen
 if [ ! -d .claude ]; then
   echo "N/A — no .claude/ directory; commands skipped by design"
 else
-  for c in memex-open-pr memex-learn memex-spec memex-review-spec memex-sweep memex-link; do
+  for c in memex-open-pr memex-learn memex-spec memex-review-spec memex-sweep; do
     [ -f ".claude/commands/$c.md" ] && echo "PASS: $c" || echo "FAIL: $c"
   done
 fi

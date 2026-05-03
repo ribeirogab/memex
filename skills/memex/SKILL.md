@@ -125,7 +125,7 @@ done
 ```bash
 if [ -d .claude ]; then
   mkdir -p .claude/commands
-  for cmd in memex-open-pr memex-learn memex-spec memex-review-spec memex-sweep memex-link; do
+  for cmd in memex-open-pr memex-learn memex-spec memex-review-spec memex-sweep; do
     target=".claude/commands/$cmd.md"
     [ -e "$target" ] && continue
     cp "$MEMEX_DIR/scaffold/commands/$cmd.md" "$target"
