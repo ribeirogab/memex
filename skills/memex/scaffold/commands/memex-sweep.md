@@ -206,14 +206,14 @@ find vault/specs -mindepth 1 -maxdepth 1 -type d -name '[0-9]*-*' 2>/dev/null | 
     | sort -u | wc -l | tr -d ' ')
   if [ "$count" = "0" ]; then
     echo "ISLAND: $spec — zero outgoing wikilinks beyond plan/tasks pair."
-    echo "  Suggest: /memex-link $folder"
+    echo "  Suggest: memex-link $folder"
   fi
 done
 ```
 
-An empty result is healthy. Each `ISLAND:` line is a finding to surface to the user. The sweep does not auto-fix; running `/memex-link <folder>` is the suggested next step (it analyzes the spec and offers `related:` candidates interactively).
+An empty result is healthy. Each `ISLAND:` line is a finding to surface to the user. The sweep does not auto-fix; running `memex-link <folder>` is the suggested next step (it analyzes the spec and offers `related:` candidates interactively).
 
-WARN-level — never blocks. Ask the user: review the spec and run `/memex-link`, or explicitly bless the spec as standalone (no action required, the flag will recur on next sweep until `related:` is populated).
+WARN-level — never blocks. Ask the user: review the spec and run `memex-link`, or explicitly bless the spec as standalone (no action required, the flag will recur on next sweep until `related:` is populated).
 
 ## Output format
 
@@ -242,7 +242,7 @@ PASS
 - `_index/conventions.md`: ## Tooling — no entries
 
 ### Isolated specs (1)
-- `specs/2026-04-30-opensource-readiness/` — zero outgoing wikilinks beyond plan/tasks. Suggest: `/memex-link 2026-04-30-opensource-readiness`
+- `specs/2026-04-30-opensource-readiness/` — zero outgoing wikilinks beyond plan/tasks. Suggest: `memex-link 2026-04-30-opensource-readiness`
 
 ### Summary
 15 findings across 7 categories. Walk through them?
