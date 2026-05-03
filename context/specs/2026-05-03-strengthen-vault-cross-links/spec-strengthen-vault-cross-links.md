@@ -1,8 +1,8 @@
 ---
-status: draft
+status: shipped
 feature: strengthen-vault-cross-links
 created: 2026-05-03
-shipped: null
+shipped: 2026-05-03
 related:
   - "[[../../learnings/mechanical-enforcement-over-prose]]"
   - "[[../../learnings/harness-engineering-foundations]]"
@@ -14,7 +14,7 @@ related:
 ---
 # Strengthen Vault Cross-Links — Spec
 
-**Status:** Draft
+**Status:** Shipped (2026-05-03)
 **Scope:** Make the `context/` knowledge graph denser by (1) adding a `related:` field to the spec template, (2) hardening the workflow rule that learnings created during a spec must backlink to it, (3) extending `memex-sweep` with an "isolated specs" detector, (4) backfilling the existing shipped `opensource-readiness` spec, and (5) shipping a new `/memex-link` skill+command that uses a deterministic Bash detector plus an inferential agent loop to suggest missing `related:` entries.
 
 ## Context
@@ -58,25 +58,25 @@ New specs and learnings are produced in workflow flow but the cross-links betwee
 
 ## Acceptance Criteria
 
-- [ ] `context/specs/_template/spec.md` frontmatter contains `related: []` (empty list, not absent), and the body has the explanatory note about populating it before the `## Context` section. Verified by both `grep -F 'related: []' context/specs/_template/spec.md` (frontmatter check) and `grep -F 'Note on \`related:\` frontmatter' context/specs/_template/spec.md` (body note check) returning matches.
-- [ ] `AGENTS.md` `## After completing a spec` section contains the wording that bidirectional backlinks are mandatory, not optional. Verified by `grep -F "MUST include a wikilink back to the spec" AGENTS.md` returning a non-empty match.
-- [ ] `.claude/commands/memex-sweep.md` and `skills/memex/scaffold/commands/memex-sweep.md` both contain a section titled `### Isolated specs` with the detector logic. Verified by `grep -lF "### Isolated specs" .claude/commands/memex-sweep.md skills/memex/scaffold/commands/memex-sweep.md` returning both files.
-- [ ] `context/specs/2026-04-30-opensource-readiness/spec-opensource-readiness.md` frontmatter contains a `related:` list with at least one wikilink to a learning. Verified by `awk '/^---$/{n++} n==2{exit} {print}' <file> | grep -c '^\s*-\s*"\[\['` ≥ 1.
-- [ ] Canonical skill `.agents/skills/memex-link/SKILL.md` exists with `name: memex-link` frontmatter and a description that includes both "what" and "when". Verified by `grep '^name: memex-link$' .agents/skills/memex-link/SKILL.md` and a visual check that the description names both the command's purpose and its trigger.
-- [ ] Detector script `.agents/skills/memex-link/scripts/find-candidates.sh` is present and executable. Verified by `[ -x .agents/skills/memex-link/scripts/find-candidates.sh ]`.
-- [ ] Slash command `.claude/commands/memex-link.md` exists and references the `memex-link` skill. Verified by `grep -F "memex-link" .claude/commands/memex-link.md`.
-- [ ] Scaffold copies `skills/memex/scaffold/skills/memex-link/SKILL.md` and `skills/memex/scaffold/commands/memex-link.md` exist and are byte-identical to the canonical copies (within the `SKILL.md` body — installed scripts may differ in execute bit which is reapplied by the installer). Verified by `diff -r .agents/skills/memex-link/ skills/memex/scaffold/skills/memex-link/` and `diff .claude/commands/memex-link.md skills/memex/scaffold/commands/memex-link.md` both producing zero output.
-- [ ] `skills/memex/SKILL.md` `SKILL_NAMES` array contains `memex-link` and the slash-command loop iterates `memex-link`. Verified by `grep -F "memex-link" skills/memex/SKILL.md` returning at least 2 matches (one in each list).
-- [ ] `skills/memex/references/audit-checklist.md` lists `.agents/skills/memex-link/` and `.claude/commands/memex-link.md` in the inventory.
-- [ ] `skills/memex/references/validation.md` check #9 hardcoded array contains `memex-link` (not just SKILL.md's `SKILL_NAMES`). Verified by `grep -F 'memex-recall memex-brainstorming memex-writing-plans memex-link' skills/memex/references/validation.md`.
-- [ ] `skills/memex/references/validation.md` check #11 hardcoded command list contains `memex-link`. Verified by `grep -F 'memex-link' skills/memex/references/validation.md` returning at least one match in the check #11 region.
-- [ ] The 15 checks in `skills/memex/references/validation.md` still pass after this work — checks #9 and #11 now also cover `memex-link`. Run all 15 manually; result is `15/15 PASS`.
-- [ ] `.agents/skills/memex-link/tests/run.sh` exits 0 on the bundled fixtures (PASS). Verified by `bash .agents/skills/memex-link/tests/run.sh; echo $?` returning `0`.
-- [ ] After running `/memex-link` against the live vault on this branch, the report contains at least one suggestion (the retroactive backfill candidate is one such — verifies end-to-end). Captured in PR description as the smoke-test output.
-- [ ] After running `/memex-link` *post*-retroactive-backfill against the same vault, the previously-emitted retroactive candidate is no longer surfaced (idempotency filter works). Verified by manual second run.
-- [ ] `/memex-sweep` flags the test island fixture (a constructed spec folder with zero outgoing wikilinks dropped under `tests/fixtures/`) and does NOT flag the live `rename-harness-to-memex` spec (which has `related:` populated). Verified by manual run, output captured in PR description.
-- [ ] Branch is `feat/strengthen-vault-cross-links`, not `main`. Verified by `git branch --show-current`.
-- [ ] Spec frontmatter has `status: shipped` and a non-null `shipped:` date when the work is merged.
+- [x] `context/specs/_template/spec.md` frontmatter contains `related: []` (empty list, not absent), and the body has the explanatory note about populating it before the `## Context` section. Verified by both `grep -F 'related: []' context/specs/_template/spec.md` (frontmatter check) and `grep -F 'Note on \`related:\` frontmatter' context/specs/_template/spec.md` (body note check) returning matches.
+- [x] `AGENTS.md` `## After completing a spec` section contains the wording that bidirectional backlinks are mandatory, not optional. Verified by `grep -F "MUST include a wikilink back to the spec" AGENTS.md` returning a non-empty match.
+- [x] `.claude/commands/memex-sweep.md` and `skills/memex/scaffold/commands/memex-sweep.md` both contain a section titled `### Isolated specs` with the detector logic. Verified by `grep -lF "### Isolated specs" .claude/commands/memex-sweep.md skills/memex/scaffold/commands/memex-sweep.md` returning both files.
+- [x] `context/specs/2026-04-30-opensource-readiness/spec-opensource-readiness.md` frontmatter contains a `related:` list with at least one wikilink to a learning. Verified by `awk '/^---$/{n++} n==2{exit} {print}' <file> | grep -c '^\s*-\s*"\[\['` ≥ 1.
+- [x] Canonical skill `.agents/skills/memex-link/SKILL.md` exists with `name: memex-link` frontmatter and a description that includes both "what" and "when". Verified by `grep '^name: memex-link$' .agents/skills/memex-link/SKILL.md` and a visual check that the description names both the command's purpose and its trigger.
+- [x] Detector script `.agents/skills/memex-link/scripts/find-candidates.sh` is present and executable. Verified by `[ -x .agents/skills/memex-link/scripts/find-candidates.sh ]`.
+- [x] Slash command `.claude/commands/memex-link.md` exists and references the `memex-link` skill. Verified by `grep -F "memex-link" .claude/commands/memex-link.md`.
+- [x] Scaffold copies `skills/memex/scaffold/skills/memex-link/SKILL.md` and `skills/memex/scaffold/commands/memex-link.md` exist and are byte-identical to the canonical copies (within the `SKILL.md` body — installed scripts may differ in execute bit which is reapplied by the installer). Verified by `diff -r .agents/skills/memex-link/ skills/memex/scaffold/skills/memex-link/` and `diff .claude/commands/memex-link.md skills/memex/scaffold/commands/memex-link.md` both producing zero output.
+- [x] `skills/memex/SKILL.md` `SKILL_NAMES` array contains `memex-link` and the slash-command loop iterates `memex-link`. Verified by `grep -F "memex-link" skills/memex/SKILL.md` returning at least 2 matches (one in each list).
+- [x] `skills/memex/references/audit-checklist.md` lists `.agents/skills/memex-link/` and `.claude/commands/memex-link.md` in the inventory.
+- [x] `skills/memex/references/validation.md` check #9 hardcoded array contains `memex-link` (not just SKILL.md's `SKILL_NAMES`). Verified by `grep -F 'memex-recall memex-brainstorming memex-writing-plans memex-link' skills/memex/references/validation.md`.
+- [x] `skills/memex/references/validation.md` check #11 hardcoded command list contains `memex-link`. Verified by `grep -F 'memex-link' skills/memex/references/validation.md` returning at least one match in the check #11 region.
+- [x] The 15 checks in `skills/memex/references/validation.md` still pass after this work — checks #9 and #11 now also cover `memex-link`. Run all 15 manually; result is `15/15 PASS`.
+- [x] `.agents/skills/memex-link/tests/run.sh` exits 0 on the bundled fixtures (PASS). Verified by `bash .agents/skills/memex-link/tests/run.sh; echo $?` returning `0`.
+- [x] After running `/memex-link` against the live vault on this branch, the report contains at least one suggestion (the retroactive backfill candidate is one such — verifies end-to-end). Captured in PR description as the smoke-test output.
+- [x] After running `/memex-link` *post*-retroactive-backfill against the same vault, the previously-emitted retroactive candidate is no longer surfaced (idempotency filter works). Verified by manual second run.
+- [x] `/memex-sweep` flags the test island fixture (a constructed spec folder with zero outgoing wikilinks dropped under `tests/fixtures/`) and does NOT flag the live `rename-harness-to-memex` spec (which has `related:` populated). Verified by manual run, output captured in PR description.
+- [x] Branch is `feat/strengthen-vault-cross-links`, not `main`. Verified by `git branch --show-current`.
+- [x] Spec frontmatter has `status: shipped` and a non-null `shipped:` date when the work is merged.
 
 ## Risks and Mitigations
 
