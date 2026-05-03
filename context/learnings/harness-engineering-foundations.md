@@ -6,6 +6,7 @@ related:
   - "[[agents-md-as-map-not-encyclopedia]]"
   - "[[mechanical-enforcement-over-prose]]"
   - "[[generator-evaluator-separation]]"
+  - "[[memex]]"
 created: 2026-04-30
 ---
 # Harness engineering — the foundation behind this repo
@@ -14,7 +15,7 @@ Every skill in `agent-skills/` is, by definition, a *harness* in the technical s
 
 ## Context
 
-Discovered while documenting the philosophy behind the existing `harness/` skill. The author asked the AI to read three sources line-by-line and capture what was load-bearing. These three are the canonical references and should be re-read before any large redesign of how skills here are structured:
+Discovered while documenting the philosophy behind the existing `memex/` skill. The author asked the AI to read three sources line-by-line and capture what was load-bearing. These three are the canonical references and should be re-read before any large redesign of how skills here are structured:
 
 - **Anthropic — Harness Design for Long-Running AI Agent Apps** (https://www.anthropic.com/engineering/harness-design-long-running-apps)
 - **Martin Fowler — Harness Engineering for Coding Agent Users** (https://martinfowler.com/articles/harness-engineering.html)
@@ -41,4 +42,8 @@ Two more principles each article adds individually that are worth absorbing:
 
 ## Note on scope
 
-These principles describe the *agent harness pattern* — the runtime scaffolding around a model. They are the basis for what the existing `harness/` skill scaffolds into target repos (the `context/` vault, AGENTS.md, spec flow, evaluator command, sweeper). They are **not** guidance for how Claude Code skills themselves should be authored — that is a separate platform concern (SKILL.md format, references layout, scaffold conventions) and is governed by docs/best-practices the author will introduce separately.
+These principles describe the *agent harness pattern* — the runtime scaffolding around a model. They are the basis for what the existing `memex/` skill scaffolds into target repos (the `context/` vault, AGENTS.md, spec flow, evaluator command, sweeper). They are **not** guidance for how Claude Code skills themselves should be authored — that is a separate platform concern (SKILL.md format, references layout, scaffold conventions) and is governed by docs/best-practices the author will introduce separately.
+
+## Note on naming (2026-05-03)
+
+The skill formerly named `harness` in this repo was renamed to `memex` to free the word "harness" for its literature meaning (the runtime pattern documented in this very note — Fowler, Anthropic, OpenAI). The pattern is still called *harness engineering*; the **skill that scaffolds an agent's project memory** is now called `memex` (after Vannevar Bush's 1945 personal memory extender — see [[memex|memex]]). When you read "harness" in this note or in the literature it cites, it always means the technical pattern, never the skill.

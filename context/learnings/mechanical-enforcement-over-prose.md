@@ -12,7 +12,7 @@ When designing a skill, prefer a runnable check (validation script, linter, stru
 
 ## Context
 
-Synthesized from Martin Fowler's harness-engineering article (the feedforward/feedback split, the computational/inferential modalities) and OpenAI's Codex post (their custom lints "inject remediation instructions into agent context" via the error message itself). Both articles independently arrived at the same insight — and the existing `harness/` skill already partially implements it via `references/validation.md` (Phase 5 — 13 deterministic checks).
+Synthesized from Martin Fowler's harness-engineering article (the feedforward/feedback split, the computational/inferential modalities) and OpenAI's Codex post (their custom lints "inject remediation instructions into agent context" via the error message itself). Both articles independently arrived at the same insight — and the existing `memex/` skill already partially implements it via `references/validation.md` (Phase 5 — 13 deterministic checks).
 
 ## How It Works
 
@@ -39,4 +39,4 @@ When the agent reads this message, it has both the violation and the remediation
 
 ## Note on scope
 
-This note describes a principle the existing `harness/` skill embodies (its Phase 5 validation is the canonical example). It is **not** a prescription for how Claude Code skills should be authored — that is a separate platform concern.
+This note describes a principle the existing `memex/` skill embodies (its Phase 5 validation is the canonical example). It is **not** a prescription for how Claude Code skills should be authored — that is a separate platform concern.

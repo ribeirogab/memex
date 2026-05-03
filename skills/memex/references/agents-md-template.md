@@ -1,6 +1,43 @@
-# agent-skills — Agent Instructions
+# AGENTS.md Template
 
-`agent-skills` is the author's personal library of agent skills and slash commands, written in markdown with occasional shell scripts. The flagship is `skills/memex/`, an idempotent scaffolder that installs an externalized project memory (the "memex") into target repos. There is no build system, no package manager, and no test runner at the repo root — each skill is self-contained under `skills/<name>/`. The repo dogfoods its own memex: scaffolded helper skills live canonically under `.agents/skills/<name>/` and are exposed via per-agent symlinks (`.claude/skills/<name>` → `.agents/skills/<name>`); the `/memex-*` slash commands live in `.claude/commands/` (Claude Code-specific concept).
+`AGENTS.md` is the universal agent entry point at the repo root — it must work for any AI agent, not just Claude Code. Load this reference when creating, repairing, or auditing it.
+
+## Filling rules
+
+Use the project info gathered in Prerequisites to fill `{{Project Name}}` and the project description. The `## Commands (most used)` section should be populated from detected `package.json` scripts (or equivalents) — list the 5-6 most important.
+
+Do **not** leave `{{placeholders}}` in the final file. Phase 5 validation will catch them.
+
+## Size constraint
+
+The final `AGENTS.md` must be **≤ 80 lines** (target 70–80). The file is loaded into every agent session as the entry-point contract; longer than that and it crowds out conversation context, restates content that belongs in `context/`, and starts rotting (see `context/learnings/agents-md-as-map-not-encyclopedia.md`). Phase 5 validation enforces the cap.
+
+When trimming to fit:
+
+- Tighten the project-description paragraph rather than dropping required section headers.
+- Trim the `## Commands (most used)` list to 5–6 entries — it is a list of the most-used commands, not a catalog.
+- Replace any longer narrative inside a section with a one-line pointer into `context/` (e.g., "See `context/learnings/X.md` for the full story").
+- Never drop a required section header — the validator checks for all of them.
+
+## Required section headers
+
+The audit checklist (`references/audit-checklist.md`) checks for these section headers — none may be missing:
+
+- `## Before starting any work`
+- `## Work ethic — never the lazy path`
+- `## When stuck or in doubt — read the vault first`
+- `## After completing any task`
+- `## After completing a spec`
+- `## Commands (most used)`
+- `## Knowledge locations`
+- `## Skills and slash commands`
+
+## Template
+
+```markdown
+# {{Project Name}} — Agent Instructions
+
+{{One paragraph: what the project is, its tech stack, and repo structure.}}
 
 ## Before starting any work
 
@@ -35,14 +72,7 @@ When a spec is shipped (all tasks in `tasks-<slug>.md` done, spec marked `shippe
 
 ## Commands (most used)
 
-This repo has no package.json and no build system. The most used commands are git workflow and the memex slash commands themselves.
-
-- `git status` / `git diff` — inspect the working tree.
-- `git switch -c feat/<name>` — start a new feature branch (never commit directly to `main`).
-- `/memex-open-pr` — open a PR with auto-generated title and description (always use this, never raw `gh pr create`).
-- `/memex` — invoke this skill (in this repo or any other) to audit/scaffold the memex.
-- `/memex-spec` — turn the current conversation into a spec.
-- `/memex-sweep` — manual garbage-collection pass over `context/`.
+{{Fill from detected package.json scripts — list the 5-6 most important ones}}
 
 Full command catalog: `context/learnings/commands-catalog.md` _(create this note after setup)_.
 
@@ -60,7 +90,7 @@ Full command catalog: `context/learnings/commands-catalog.md` _(create this note
 
 ## Skills and slash commands
 
-Skills live canonically under `.agents/skills/` (agent-agnostic) and are exposed via per-agent symlinks (`.claude/skills/`, `.codex/skills/`, etc.) for whichever agent is in use. Slash commands live in `.claude/commands/` only — slash commands are a Claude Code-specific concept; on other agents the same workflows are invoked via prose prompts.
+Skills are committed to `.agents/skills/` (canonical, agent-agnostic) and exposed via per-agent symlinks (`.claude/skills/`, `.codex/skills/`, etc.) for agents that scan their own discovery dir. Slash commands live in `.claude/commands/` only — slash commands are a Claude Code-specific concept; users on other agents invoke the same workflows via prose prompts.
 
 - **`memex-brainstorming`** — design exploration before writing a spec.
 - **`memex-writing-plans`** — turn an approved design into a task list.
@@ -70,3 +100,4 @@ Skills live canonically under `.agents/skills/` (agent-agnostic) and are exposed
 - **`/memex-sweep`** — manual garbage-collection pass over the vault: orphan learnings, MOC entries pointing nowhere, constitution rules never cited, specs whose `tasks-<slug>.md` is fully checked but `status:` is still `draft`. Run on demand, never automatic.
 - **`/memex-learn`** — investigate a topic in the project and save findings as a learning note in `context/learnings/`.
 - **`/memex-open-pr`** — **required** command to open pull requests with auto-generated title and description. Always use this command when creating a PR.
+```

@@ -15,7 +15,7 @@ The maintenance model is **solo, best-effort, no SLA**. Pull requests are review
 ### What is out of scope
 
 - **New unrelated top-level skills.** This is a curated personal collection. Open an issue first if you think a new skill belongs here; otherwise the [skills CLI](https://github.com/vercel-labs/skills) makes any public GitHub repo installable, so a separate repo is usually the right home.
-- **`context/`, `.agents/`, `.claude/`, `evals/`** — these are the maintainer's local-only dirs (personal knowledge vault, dogfooded harness output, eval workspaces). They are not part of the published skill surface and PRs touching them will be closed without merge.
+- **`context/`, `.agents/`, `.claude/`, `evals/`** — these are the maintainer's local-only dirs (personal knowledge vault, dogfooded memex output, eval workspaces). They are not part of the published skill surface and PRs touching them will be closed without merge.
 - **Governance proposals**, maintainer hierarchies, decision-making frameworks, funding models, sponsorship, and similar process documents. The project is intentionally solo and lightweight.
 
 ## How to fix a bug or improve a skill
