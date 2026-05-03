@@ -213,7 +213,7 @@ Report:
 ```
 ## Phase 5 — Validation: 15/15 PASS
 
-Harness is structurally sound.
+Memex is structurally sound.
 ```
 
 ## When something fails
