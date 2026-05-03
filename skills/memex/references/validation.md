@@ -119,7 +119,7 @@ FAIL lists the offending folder names. Fix: rename per the migration prompt in `
 Skills are canonically under `.agents/skills/<name>/`. Per-agent symlinks (`.claude/skills/<name>`, etc.) are bonus exposure, not the source of truth.
 
 ```bash
-for s in memex-recall memex-brainstorming memex-writing-plans; do
+for s in memex-recall memex-brainstorming memex-writing-plans memex-link; do
   [ -f ".agents/skills/$s/SKILL.md" ] && echo "PASS: $s" || echo "FAIL: $s"
 done
 ```
@@ -146,7 +146,7 @@ Slash commands are Claude Code-specific and only install if `.claude/` is presen
 if [ ! -d .claude ]; then
   echo "N/A — no .claude/ directory; commands skipped by design"
 else
-  for c in memex-open-pr memex-learn memex-spec memex-review-spec memex-sweep; do
+  for c in memex-open-pr memex-learn memex-spec memex-review-spec memex-sweep memex-link; do
     [ -f ".claude/commands/$c.md" ] && echo "PASS: $c" || echo "FAIL: $c"
   done
 fi
