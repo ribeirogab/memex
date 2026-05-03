@@ -5,7 +5,7 @@ argument-hint: <optional: scope filter — learnings, specs, rules, conventions,
 
 # Sweep — Vault Garbage Collection
 
-Manual sweep of the `context/` vault to surface drift that the harness audit does not catch: orphan notes, broken cross-references, shipped-but-still-draft specs, and rules nobody cites.
+Manual sweep of the `context/` vault to surface drift that the memex audit does not catch: orphan notes, broken cross-references, shipped-but-still-draft specs, and rules nobody cites.
 
 This command **never deletes or rewrites** anything on its own. It produces a report and asks the user, item by item, what to do.
 

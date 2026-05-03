@@ -5,7 +5,7 @@ argument-hint: <optional: path to spec folder, or current spec if omitted>
 
 # Review Spec — External Evaluator Pass
 
-Run an **independent** review of a spec written by the agent. This is the second pair of eyes between the spec author's own self-review and the handoff to `harness-writing-plans`. The point is to catch the things the author rationalized past.
+Run an **independent** review of a spec written by the agent. This is the second pair of eyes between the spec author's own self-review and the handoff to `memex-writing-plans`. The point is to catch the things the author rationalized past.
 
 **Announce at start:** "Reviewing spec against constitution and vault..."
 
@@ -84,7 +84,7 @@ Every `[NEEDS CLARIFICATION: ...]` marker is a blocker. Same for any acceptance 
 
 ### Verdict
 
-**Block handoff** — 2 FAILs must be addressed before `harness-writing-plans`.
+**Block handoff** — 2 FAILs must be addressed before `memex-writing-plans`.
 
 ### Suggested edits
 
@@ -96,9 +96,9 @@ Every `[NEEDS CLARIFICATION: ...]` marker is a blocker. Same for any acceptance 
 
 ## Verdict rules
 
-- **Any FAIL** → `Block handoff`. Do not proceed to `harness-writing-plans`.
+- **Any FAIL** → `Block handoff`. Do not proceed to `memex-writing-plans`.
 - **Only WARNs** → `Approve with notes`. Author may proceed but should address WARNs in the next pass.
-- **All PASS** → `Approved`. Hand off to `harness-writing-plans`.
+- **All PASS** → `Approved`. Hand off to `memex-writing-plans`.
 
 ## Key rule
 
