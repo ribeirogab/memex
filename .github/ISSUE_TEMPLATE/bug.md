@@ -7,7 +7,7 @@ labels: ["bug"]
 
 ## Skill affected
 
-Path under `skills/` (e.g. `skills/harness`, `skills/skill-improver`).
+Path under `skills/` (e.g. `skills/memex`, `skills/skill-improver`).
 
 ## Agent and version
 
