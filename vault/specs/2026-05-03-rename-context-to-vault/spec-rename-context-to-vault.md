@@ -1,8 +1,8 @@
 ---
-status: draft
+status: shipped
 feature: rename-context-to-vault
 created: 2026-05-03
-shipped: null
+shipped: 2026-05-03
 related:
   - "[[../../learnings/memex]]"
   - "[[../../learnings/rename-spec-grep-first]]"
@@ -10,7 +10,7 @@ related:
 ---
 # Rename `context/` to `vault/` — Spec
 
-**Status:** Draft
+**Status:** Shipped (2026-05-03)
 **Scope:** Rename the canonical knowledge-base directory from `context/` to `vault/` across this repo and across every artifact the `memex` skill installs into target repos. Hard cut — the renamed `memex` only knows `vault/`; downstream repos that previously installed `context/` keep what they have until manually migrated.
 
 ## Context
@@ -58,22 +58,22 @@ The directory at `context/` IS an Obsidian vault — same layout, same wikilink 
 
 ## Acceptance Criteria
 
-- [ ] `find . -type d -name 'context' -not -path './.git/*' -not -path './node_modules/*'` returns no results. Verified by running it.
-- [ ] `find . -type d -name 'vault' -not -path './.git/*' -not -path './node_modules/*'` returns exactly these three paths (in any order): `./vault`, `./.agents/skills/memex-link/tests/fixtures/vault`, `./skills/memex/scaffold/skills/memex-link/tests/fixtures/vault`. Verified by listing.
-- [ ] `git grep -l 'context/'` returns ONLY: (a) the three shipped spec folders' files (`vault/specs/2026-04-30-opensource-readiness/*.md`, `vault/specs/2026-05-03-rename-harness-to-memex/*.md`, `vault/specs/2026-05-03-strengthen-vault-cross-links/*.md`), (b) the in-flight spec for THIS rename at `vault/specs/2026-05-03-rename-context-to-vault/*.md` (intentional narrative — the spec is *about* the rename and references `context/` as a literal), and (c) any per-occurrence-reviewed survivors in mixed-context learnings. Each survivor in (c) is annotated in the commit message with a one-line justification.
-- [ ] `AGENTS.md`, `README.md`, `vault/constitution.md` contain zero `context/` references. Verified by `grep -F 'context/' AGENTS.md README.md vault/constitution.md` returning empty.
-- [ ] All `vault/_index/`, `vault/templates/`, `vault/conventions/`, `vault/rules/` files contain zero `context/` references. Verified by `grep -rF 'context/' vault/_index/ vault/templates/ vault/conventions/ vault/rules/` returning empty.
-- [ ] `bash .agents/skills/memex-link/tests/run.sh` exits 0 (PASS) — the script's fixture renaming and the script's directory references both flipped consistently.
-- [ ] `find-candidates.sh` (canonical and scaffold copies) walks `vault/...` paths, not `context/...`. Verified by `grep -F 'vault/' .agents/skills/memex-link/scripts/find-candidates.sh` and the same for the scaffold copy returning matches; `grep -F 'context/' ...` returning nothing in both.
-- [ ] `skills/memex/SKILL.md` references `vault/` in its install snippet (any documentation of what the scaffolder produces). Verified by reading.
-- [ ] `skills/memex/references/{audit-checklist,validation,vault-files,agents-md-template,constitution-template}.md` reference `vault/` instead of `context/`. Verified by `grep -F 'context/' skills/memex/references/` returning empty.
-- [ ] `.claude/commands/memex-*.md` and `skills/memex/scaffold/commands/memex-*.md` reference `vault/`. Verified by `grep -F 'context/' .claude/commands/memex-*.md skills/memex/scaffold/commands/memex-*.md` returning only references inside historical/literature contexts (none expected for this rename — the slash commands describe current behavior).
-- [ ] `.gitignore` has `vault/.obsidian/`, not `context/.obsidian/`. Verified by `grep -E '^vault/\.obsidian/?$' .gitignore`.
-- [ ] All `.agents/skills/memex-*/SKILL.md` (canonical) and scaffold copies reference `vault/` not `context/`. Verified by `grep -rF 'context/' .agents/skills/memex-*/` and the scaffold equivalent returning empty.
-- [ ] Scaffold byte-equivalence post-rename: `diff -r .agents/skills/memex-link/ skills/memex/scaffold/skills/memex-link/` returns empty.
-- [ ] The 15 checks in `skills/memex/references/validation.md` PASS when run against this repo (`15/15 PASS`). Note: validation checks themselves now look at `vault/` paths.
-- [ ] Branch is `feat/rename-context-to-vault`, not `main`. Verified by `git branch --show-current`.
-- [ ] Spec frontmatter has `status: shipped` and a non-null `shipped:` date once merged. (Self-referential — this spec moves to `vault/specs/.../` and ticks itself.)
+- [x] `find . -type d -name 'context' -not -path './.git/*' -not -path './node_modules/*'` returns no results. Verified by running it.
+- [x] `find . -type d -name 'vault' -not -path './.git/*' -not -path './node_modules/*'` returns exactly these three paths (in any order): `./vault`, `./.agents/skills/memex-link/tests/fixtures/vault`, `./skills/memex/scaffold/skills/memex-link/tests/fixtures/vault`. Verified by listing.
+- [x] `git grep -l 'context/'` returns ONLY: (a) the three shipped spec folders' files (`vault/specs/2026-04-30-opensource-readiness/*.md`, `vault/specs/2026-05-03-rename-harness-to-memex/*.md`, `vault/specs/2026-05-03-strengthen-vault-cross-links/*.md`), (b) the in-flight spec for THIS rename at `vault/specs/2026-05-03-rename-context-to-vault/*.md` (intentional narrative — the spec is *about* the rename and references `context/` as a literal), and (c) any per-occurrence-reviewed survivors in mixed-context learnings. Each survivor in (c) is annotated in the commit message with a one-line justification.
+- [x] `AGENTS.md`, `README.md`, `vault/constitution.md` contain zero `context/` references. Verified by `grep -F 'context/' AGENTS.md README.md vault/constitution.md` returning empty.
+- [x] All `vault/_index/`, `vault/templates/`, `vault/conventions/`, `vault/rules/` files contain zero `context/` references. Verified by `grep -rF 'context/' vault/_index/ vault/templates/ vault/conventions/ vault/rules/` returning empty.
+- [x] `bash .agents/skills/memex-link/tests/run.sh` exits 0 (PASS) — the script's fixture renaming and the script's directory references both flipped consistently.
+- [x] `find-candidates.sh` (canonical and scaffold copies) walks `vault/...` paths, not `context/...`. Verified by `grep -F 'vault/' .agents/skills/memex-link/scripts/find-candidates.sh` and the same for the scaffold copy returning matches; `grep -F 'context/' ...` returning nothing in both.
+- [x] `skills/memex/SKILL.md` references `vault/` in its install snippet (any documentation of what the scaffolder produces). Verified by reading.
+- [x] `skills/memex/references/{audit-checklist,validation,vault-files,agents-md-template,constitution-template}.md` reference `vault/` instead of `context/`. Verified by `grep -F 'context/' skills/memex/references/` returning empty.
+- [x] `.claude/commands/memex-*.md` and `skills/memex/scaffold/commands/memex-*.md` reference `vault/`. Verified by `grep -F 'context/' .claude/commands/memex-*.md skills/memex/scaffold/commands/memex-*.md` returning only references inside historical/literature contexts (none expected for this rename — the slash commands describe current behavior).
+- [x] `.gitignore` has `vault/.obsidian/`, not `context/.obsidian/`. Verified by `grep -E '^vault/\.obsidian/?$' .gitignore`.
+- [x] All `.agents/skills/memex-*/SKILL.md` (canonical) and scaffold copies reference `vault/` not `context/`. Verified by `grep -rF 'context/' .agents/skills/memex-*/` and the scaffold equivalent returning empty.
+- [x] Scaffold byte-equivalence post-rename: `diff -r .agents/skills/memex-link/ skills/memex/scaffold/skills/memex-link/` returns empty.
+- [x] The 15 checks in `skills/memex/references/validation.md` PASS when run against this repo (`15/15 PASS`). Note: validation checks themselves now look at `vault/` paths.
+- [x] Branch is `feat/rename-context-to-vault`, not `main`. Verified by `git branch --show-current`.
+- [x] Spec frontmatter has `status: shipped` and a non-null `shipped:` date once merged. (Self-referential — this spec moves to `vault/specs/.../` and ticks itself.)
 
 ## Risks and Mitigations
 
