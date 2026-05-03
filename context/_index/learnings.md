@@ -32,3 +32,4 @@ _No references yet._
 
 - [[../learnings/vendoring-a-single-skill-loses-upstream-license|Vendoring a single skill from a multi-skill repo loses the upstream LICENSE]] — license-at-root layouts (xixu-me/skills pattern) drop the notice when only the skill subdir is vendored; restore inside the folder + add a NOTICE.md row.
 - [[../learnings/rename-spec-grep-first|Rename specs must start with git grep, never list scope from memory]] — running `git grep` and `find -name` BEFORE writing scope catches files intuition misses; also: distinguish basename-match (`find -name`) from content-match (`grep -rl`) in acceptance criteria.
+- [[../learnings/bash-strict-mode-grep-filter|Bash strict mode + grep filter exits 1 — wrap with `\|\| true`]] — `set -euo pipefail` + `grep -Ev` / `grep -c` that produces zero matches kills the script silently; wrap the failing step in a brace block with `\|\| true`, never the whole pipeline.

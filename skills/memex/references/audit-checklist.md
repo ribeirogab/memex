@@ -48,12 +48,14 @@ CLAUDE.md                      (symlink → AGENTS.md, Claude Code back-compat)
 .agents/skills/memex-recall/SKILL.md            (canonical, agent-agnostic)
 .agents/skills/memex-brainstorming/             (full directory)
 .agents/skills/memex-writing-plans/             (full directory)
+.agents/skills/memex-link/                      (full directory — vault cross-link analyzer)
 
 .claude/commands/memex-open-pr.md               (slash commands — Claude Code only)
 .claude/commands/memex-learn.md
 .claude/commands/memex-spec.md
 .claude/commands/memex-review-spec.md
 .claude/commands/memex-sweep.md
+.claude/commands/memex-link.md
 
 .gitignore                     (contains obsidian workspace exclusions)
 ```
