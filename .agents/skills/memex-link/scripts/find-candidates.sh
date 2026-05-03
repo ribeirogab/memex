@@ -5,7 +5,11 @@
 # Usage: find-candidates.sh [scope]
 #   scope (optional): path, folder name, or empty (whole vault).
 # Requires: bash >= 3.2, jq, find, awk, grep, sort, comm, tr.
-set -euo pipefail
+# Note: pipefail intentionally omitted. The script has many `producer | consumer-with-early-exit`
+# pipelines (e.g. `extract_body | awk '... exit'`, `grep -m1 ... | cut`). With pipefail, the
+# producer gets SIGPIPE when the consumer closes stdin early, exits 141, and the pipeline aborts.
+# Pipelines that need failure detection already use `{ ... || true; }` blocks for the specific step.
+set -eu
 
 SCOPE="${1:-}"
 
