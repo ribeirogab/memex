@@ -9,17 +9,17 @@ set -euo pipefail
 
 SCOPE="${1:-}"
 
-if [ ! -d context ]; then
-  echo "FATAL: context/ vault not found. Run from a directory containing context/." >&2
+if [ ! -d vault ]; then
+  echo "FATAL: vault/ not found. Run from a directory containing vault/." >&2
   exit 2
 fi
 
 STOPWORDS_RE='^(the|a|an|of|in|on|by|and|or|for|to|with|is|this|that|repo|skill|skills|vault|agent|agents|context|note|notes|learning|learnings|spec|specs|how|what|why|when|where|works|use|using|over)$'
 
 all_notes() {
-  find context/learnings context/conventions context/rules context/specs \
+  find vault/learnings vault/conventions vault/rules vault/specs \
     -type f -name '*.md' 2>/dev/null \
-    | grep -v '^context/specs/_template/' \
+    | grep -v '^vault/specs/_template/' \
     | grep -Ev '/plan-[^/]+\.md$' \
     | grep -Ev '/tasks-[^/]+\.md$' \
     | sort

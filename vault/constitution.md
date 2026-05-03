@@ -12,7 +12,7 @@ If you are tempted to violate a rule here, stop and open a discussion first. Nev
 
 `agent-skills` is the author's personal collection of Claude Code skills and slash commands. It exists so that high-leverage agentic workflows (scaffolding memexes, recalling project context, structured brainstorming, plan-writing, etc.) can be developed once, version-controlled, and re-used across every other repo via symlinks.
 
-The flagship skill in this repo is `memex/`, which idempotently installs a project memex (`context/` vault, `AGENTS.md`, spec templates, bundled skills/commands) into any target repo. The repo's purpose is therefore twofold: (1) be a usable library of skills, and (2) dogfood those skills on itself so the author trusts what is shipped.
+The flagship skill in this repo is `memex/`, which idempotently installs a project memex (`vault/` vault, `AGENTS.md`, spec templates, bundled skills/commands) into any target repo. The repo's purpose is therefore twofold: (1) be a usable library of skills, and (2) dogfood those skills on itself so the author trusts what is shipped.
 
 ## Scope guardrails
 
@@ -41,17 +41,17 @@ The flagship skill in this repo is `memex/`, which idempotently installs a proje
 
 Before implementing any user request, assess whether the solution is obvious. If you cannot describe the complete solution in one sentence, use the Spec Kit flow: brainstorm → `spec-<slug>.md` → `plan-<slug>.md` → `tasks-<slug>.md` → implement. If the solution is obvious, go direct. If almost obvious but with 1-2 open decisions, ask the user whether to spec or go direct.
 
-Specs never get deleted. Shipped specs remain in `context/specs/` as historical record.
+Specs never get deleted. Shipped specs remain in `vault/specs/` as historical record.
 
 ## Knowledge layering
 
-- Project-specific knowledge lives in `context/`. Only add notes here for things unique to agent-skills (e.g. how the memex symlink works, conventions for authoring new skills).
+- Project-specific knowledge lives in `vault/`. Only add notes here for things unique to agent-skills (e.g. how the memex symlink works, conventions for authoring new skills).
 - Generic patterns that apply to any project should not be duplicated in this vault — they belong in skill content under `skills/`, where they can be shipped to other repos.
 
 ## What this constitution is not
 
-- Not an architecture document. See `context/_index/learnings.md` for architecture notes.
-- Not a style guide. See `context/conventions/` for code style conventions.
-- Not a spec for any feature. Specs live in `context/specs/`.
+- Not an architecture document. See `vault/_index/learnings.md` for architecture notes.
+- Not a style guide. See `vault/conventions/` for code style conventions.
+- Not a spec for any feature. Specs live in `vault/specs/`.
 
 This document exists to hold the things that would be catastrophic to forget.

@@ -42,7 +42,7 @@ Two more principles each article adds individually that are worth absorbing:
 
 ## Note on scope
 
-These principles describe the *agent harness pattern* — the runtime scaffolding around a model. They are the basis for what the existing `memex/` skill scaffolds into target repos (the `context/` vault, AGENTS.md, spec flow, evaluator command, sweeper). They are **not** guidance for how Claude Code skills themselves should be authored — that is a separate platform concern (SKILL.md format, references layout, scaffold conventions) and is governed by docs/best-practices the author will introduce separately.
+These principles describe the *agent harness pattern* — the runtime scaffolding around a model. They are the basis for what the existing `memex/` skill scaffolds into target repos (the `vault/` vault, AGENTS.md, spec flow, evaluator command, sweeper). They are **not** guidance for how Claude Code skills themselves should be authored — that is a separate platform concern (SKILL.md format, references layout, scaffold conventions) and is governed by docs/best-practices the author will introduce separately.
 
 ## Note on naming (2026-05-03)
 
