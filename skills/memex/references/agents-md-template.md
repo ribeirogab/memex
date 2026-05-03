@@ -45,7 +45,7 @@ The audit checklist (`references/audit-checklist.md`) checks for these section h
 2. **Read `context/constitution.md`** for non-negotiable principles.
 3. **If the user is asking you to implement, modify, or create something**, assess the request: "Can I describe the complete solution in one sentence?"
    - **Yes** → implement directly.
-   - **No** → invoke `harness-brainstorming` → `spec-<slug>.md` → self-review the spec → `/harness-review-spec` for an external evaluator pass → `harness-writing-plans` → `plan-<slug>.md` + `tasks-<slug>.md` → implement.
+   - **No** → invoke `memex-brainstorming` → `spec-<slug>.md` → self-review the spec → `/memex-review-spec` for an external evaluator pass → `memex-writing-plans` → `plan-<slug>.md` + `tasks-<slug>.md` → implement.
    - **Almost** (1-2 open decisions) → ask the user whether to spec or go direct.
 
    If the user is asking a question, investigating, or exploring — just answer.
@@ -56,7 +56,7 @@ When you see two ways to do something — one quick-and-shallow, one correct-and
 
 ## When stuck or in doubt — read the vault first
 
-`context/` is your project brain. You have been writing to it; **read from it too**. Before grinding on a hard problem, before guessing, before asking the user a question whose answer might already be captured: search `context/learnings/`, `context/conventions/`, `context/rules/`, the relevant spec in `context/specs/`, and `context/constitution.md`. Use the `harness-recall` skill or grep directly. Reading the vault is the **first move** on a hard problem, not the last. If the vault answers the question, cite the note; if it almost answers it, update the note after you fill the gap.
+`context/` is your project brain. You have been writing to it; **read from it too**. Before grinding on a hard problem, before guessing, before asking the user a question whose answer might already be captured: search `context/learnings/`, `context/conventions/`, `context/rules/`, the relevant spec in `context/specs/`, and `context/constitution.md`. Use the `memex-recall` skill or grep directly. Reading the vault is the **first move** on a hard problem, not the last. If the vault answers the question, cite the note; if it almost answers it, update the note after you fill the gap.
 
 ## After completing any task
 
@@ -92,12 +92,12 @@ Full command catalog: `context/learnings/commands-catalog.md` _(create this note
 
 Skills are committed to `.agents/skills/` (canonical, agent-agnostic) and exposed via per-agent symlinks (`.claude/skills/`, `.codex/skills/`, etc.) for agents that scan their own discovery dir. Slash commands live in `.claude/commands/` only — slash commands are a Claude Code-specific concept; users on other agents invoke the same workflows via prose prompts.
 
-- **`harness-brainstorming`** — design exploration before writing a spec.
-- **`harness-writing-plans`** — turn an approved design into a task list.
-- **`harness-recall`** — quick project reconnaissance of the `context/` vault.
-- **`/harness-spec`** — take the current conversation and enter the spec flow, skipping already-discussed questions.
-- **`/harness-review-spec`** — external evaluator that reads `context/constitution.md` + a spec and flags violations, vagueness, missing acceptance criteria, and duplication of existing learnings/rules. Run this **after** your own spec self-review and **before** moving to `harness-writing-plans`.
-- **`/harness-sweep`** — manual garbage-collection pass over the vault: orphan learnings, MOC entries pointing nowhere, constitution rules never cited, specs whose `tasks-<slug>.md` is fully checked but `status:` is still `draft`. Run on demand, never automatic.
-- **`/harness-learn`** — investigate a topic in the project and save findings as a learning note in `context/learnings/`.
-- **`/harness-open-pr`** — **required** command to open pull requests with auto-generated title and description. Always use this command when creating a PR.
+- **`memex-brainstorming`** — design exploration before writing a spec.
+- **`memex-writing-plans`** — turn an approved design into a task list.
+- **`memex-recall`** — quick project reconnaissance of the `context/` vault.
+- **`/memex-spec`** — take the current conversation and enter the spec flow, skipping already-discussed questions.
+- **`/memex-review-spec`** — external evaluator that reads `context/constitution.md` + a spec and flags violations, vagueness, missing acceptance criteria, and duplication of existing learnings/rules. Run this **after** your own spec self-review and **before** moving to `memex-writing-plans`.
+- **`/memex-sweep`** — manual garbage-collection pass over the vault: orphan learnings, MOC entries pointing nowhere, constitution rules never cited, specs whose `tasks-<slug>.md` is fully checked but `status:` is still `draft`. Run on demand, never automatic.
+- **`/memex-learn`** — investigate a topic in the project and save findings as a learning note in `context/learnings/`.
+- **`/memex-open-pr`** — **required** command to open pull requests with auto-generated title and description. Always use this command when creating a PR.
 ```

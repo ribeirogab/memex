@@ -1,6 +1,6 @@
 # Validation — Phase 5 Checklist
 
-Run this checklist after **any** scaffold or fix run, and at the end of an audit even when nothing was missing. Confirms the harness is structurally sound. Each check is a quick command with a clear pass/fail.
+Run this checklist after **any** scaffold or fix run, and at the end of an audit even when nothing was missing. Confirms the memex is structurally sound. Each check is a quick command with a clear pass/fail.
 
 Report results as a table. Any `FAIL` triggers an automatic fix attempt using the recipe under each check, then re-runs the validator. The orchestrator does not prompt the user before fixing — it loops until the table is clean or it determines a check cannot be auto-repaired.
 
@@ -119,7 +119,7 @@ FAIL lists the offending folder names. Fix: rename per the migration prompt in `
 Skills are canonically under `.agents/skills/<name>/`. Per-agent symlinks (`.claude/skills/<name>`, etc.) are bonus exposure, not the source of truth.
 
 ```bash
-for s in harness-recall harness-brainstorming harness-writing-plans; do
+for s in memex-recall memex-brainstorming memex-writing-plans; do
   [ -f ".agents/skills/$s/SKILL.md" ] && echo "PASS: $s" || echo "FAIL: $s"
 done
 ```
@@ -130,13 +130,13 @@ Fix: re-run the skills copy block from `SKILL.md` (Scaffolding section).
 
 ```bash
 fail=0
-for f in .agents/skills/harness-brainstorming/scripts/*.sh; do
+for f in .agents/skills/memex-brainstorming/scripts/*.sh; do
   [ -x "$f" ] || { echo "FAIL: $f not executable"; fail=1; }
 done
 [ $fail -eq 0 ] && echo PASS
 ```
 
-Fix: `chmod +x .agents/skills/harness-brainstorming/scripts/*.sh`.
+Fix: `chmod +x .agents/skills/memex-brainstorming/scripts/*.sh`.
 
 ### 11. Commands copied
 
@@ -146,7 +146,7 @@ Slash commands are Claude Code-specific and only install if `.claude/` is presen
 if [ ! -d .claude ]; then
   echo "N/A — no .claude/ directory; commands skipped by design"
 else
-  for c in harness-open-pr harness-learn harness-spec harness-review-spec harness-sweep; do
+  for c in memex-open-pr memex-learn memex-spec memex-review-spec memex-sweep; do
     [ -f ".claude/commands/$c.md" ] && echo "PASS: $c" || echo "FAIL: $c"
   done
 fi
@@ -166,7 +166,7 @@ Fix: re-substitute `{{Project Name}}` (and any other surviving `{{}}` placeholde
 
 ### 13. Spec template carries an `## Acceptance Criteria` section
 
-Every spec produced from `_template/spec.md` must inherit a structured Acceptance Criteria section so the behaviour harness has something concrete to verify. If the heading was deleted from the template, every future spec loses it silently — `/harness-review-spec` would have nothing to enforce.
+Every spec produced from `_template/spec.md` must inherit a structured Acceptance Criteria section so the behaviour harness has something concrete to verify. If the heading was deleted from the template, every future spec loses it silently — `/memex-review-spec` would have nothing to enforce.
 
 ```bash
 grep -q '^## Acceptance Criteria$' context/specs/_template/spec.md \

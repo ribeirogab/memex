@@ -1,13 +1,13 @@
 ---
-name: harness
-description: "Scaffold or audit the agent harness (context/ vault + AGENTS.md + spec templates + bundled skills) in any repo. Agent-agnostic — works with any tool that supports the open agent skills standard (Claude Code, Codex, Cursor, OpenCode, etc.). Idempotent — safe to run repeatedly. Use when the user wants to set up, verify, or fix agent infrastructure in a project."
+name: memex
+description: "Scaffold or audit the memex (context/ vault + AGENTS.md + spec templates + bundled skills) in any repo — an externalized, navigable project memory for agents (Claude Code, Codex, Cursor, OpenCode, etc.). Agent-agnostic. Idempotent — safe to run repeatedly. Use when the user wants to set up, verify, or fix the memex in a project."
 ---
 
-# Harness — Idempotent Agent Infrastructure
+# Memex — Idempotent Agent Memory Infrastructure
 
-Set up or audit the agent harness in the current repo. Safe to run multiple times — it checks what exists, reports what's missing or wrong, asks before making changes, then validates the result.
+Set up or audit the memex in the current repo. Safe to run multiple times — it checks what exists, reports what's missing or wrong, asks before making changes, then validates the result.
 
-**Announce at start:** "Auditing agent harness..."
+**Announce at start:** "Auditing memex..."
 
 ## Mode of Operation
 
@@ -18,7 +18,7 @@ This skill is **audit-first, then autonomous**. Audit, report, and proceed to sc
 3. **Fix** — if issues are found, scaffold or repair them directly. Confirm only before destructive ops (e.g., renaming a spec folder).
 4. **Validate** — after any creation or fix (and at the end of an audit-only run), run Phase 5 validation.
 
-If the audit finds nothing wrong **and** validation passes, just say "Harness is healthy." and stop.
+If the audit finds nothing wrong **and** validation passes, just say "Memex is healthy." and stop.
 
 ## Phase 1 — Audit
 
@@ -83,28 +83,28 @@ Append these lines to the repo's `.gitignore` (skip if already present):
 context/.obsidian/
 ```
 
-Rationale: Obsidian rewrites `app.json`, `appearance.json`, `core-plugins.json`, and the workspace files every time the vault is opened, which creates constant `git status` noise. The harness still **creates** the three config JSONs locally during scaffolding (so `useMarkdownLinks: false` / `newLinkFormat: "relative"` are set the first time Obsidian opens — wikilinks in the MOCs depend on this), but they are not tracked. Obsidian preserves existing user settings when it rewrites these files, so the defaults persist locally on subsequent opens.
+Rationale: Obsidian rewrites `app.json`, `appearance.json`, `core-plugins.json`, and the workspace files every time the vault is opened, which creates constant `git status` noise. The memex installer still **creates** the three config JSONs locally during scaffolding (so `useMarkdownLinks: false` / `newLinkFormat: "relative"` are set the first time Obsidian opens — wikilinks in the MOCs depend on this), but they are not tracked. Obsidian preserves existing user settings when it rewrites these files, so the defaults persist locally on subsequent opens.
 
 ### Skills and commands (copy from scaffold/)
 
 All bundled skills and commands live in `scaffold/` alongside this `SKILL.md`.
 
-**Skills** are agent-agnostic and install canonically under `.agents/skills/<name>/` (the open agent skills standard's location, also discoverable by `npx skills` and similar tooling). For each agent-specific discovery directory already present in the repo (`.claude/`, `.codex/`, `.cursor/`, `.opencode/`, `.aider/`, `.augment/`, etc.), the harness adds a per-skill symlink so that agent picks up the skill without duplicating files on disk:
+**Skills** are agent-agnostic and install canonically under `.agents/skills/<name>/` (the open agent skills standard's location, also discoverable by `npx skills` and similar tooling). For each agent-specific discovery directory already present in the repo (`.claude/`, `.codex/`, `.cursor/`, `.opencode/`, `.aider/`, `.augment/`, etc.), the memex installer adds a per-skill symlink so that agent picks up the skill without duplicating files on disk:
 
 ```bash
-HARNESS_DIR="<directory where this SKILL.md lives>"
-SKILL_NAMES=(harness-recall harness-brainstorming harness-writing-plans)
+MEMEX_DIR="<directory where this SKILL.md lives>"
+SKILL_NAMES=(memex-recall memex-brainstorming memex-writing-plans)
 
 # 1. Canonical install — single source of truth on disk
 mkdir -p .agents/skills
 for name in "${SKILL_NAMES[@]}"; do
   [ -e ".agents/skills/$name" ] && continue   # idempotent: don't overwrite
-  cp -r "$HARNESS_DIR/scaffold/skills/$name" ".agents/skills/$name"
+  cp -r "$MEMEX_DIR/scaffold/skills/$name" ".agents/skills/$name"
 done
 
 # Ensure scripts are executable (only one skill ships scripts today)
-[ -d .agents/skills/harness-brainstorming/scripts ] && \
-  chmod +x .agents/skills/harness-brainstorming/scripts/*.sh
+[ -d .agents/skills/memex-brainstorming/scripts ] && \
+  chmod +x .agents/skills/memex-brainstorming/scripts/*.sh
 
 # 2. Per-agent symlinks — only into discovery dirs that already exist
 #    (do NOT auto-create agent dirs; their absence means the user does
@@ -125,10 +125,10 @@ done
 ```bash
 if [ -d .claude ]; then
   mkdir -p .claude/commands
-  for cmd in harness-open-pr harness-learn harness-spec harness-review-spec harness-sweep; do
+  for cmd in memex-open-pr memex-learn memex-spec memex-review-spec memex-sweep; do
     target=".claude/commands/$cmd.md"
     [ -e "$target" ] && continue
-    cp "$HARNESS_DIR/scaffold/commands/$cmd.md" "$target"
+    cp "$MEMEX_DIR/scaffold/commands/$cmd.md" "$target"
   done
 fi
 ```
@@ -193,7 +193,7 @@ Validation is non-negotiable — this is what catches `{{placeholders}}` that su
 ## Final summary (always show at the end)
 
 ```
-## Harness Audit Complete
+## Memex Audit Complete
 
 - X/Y items OK
 - N created, M fixed, K skipped (already correct)
