@@ -1,5 +1,5 @@
 ---
-description: Manual garbage-collection pass over the vault/ vault — orphans, broken links, stale specs, uncited rules
+description: Manual garbage-collection pass over the vault — orphans, broken links, stale specs, uncited rules
 argument-hint: <optional: scope filter — learnings, specs, rules, conventions, all (default)>
 ---
 

@@ -1,6 +1,6 @@
 ---
 name: memex
-description: "Scaffold or audit the memex (vault/ vault + AGENTS.md + spec templates + bundled skills) in any repo — an externalized, navigable project memory for agents (Claude Code, Codex, Cursor, OpenCode, etc.). Agent-agnostic. Idempotent — safe to run repeatedly. Use when the user wants to set up, verify, or fix the memex in a project."
+description: "Scaffold or audit the memex (vault + AGENTS.md + spec templates + bundled skills) in any repo — an externalized, navigable project memory for agents (Claude Code, Codex, Cursor, OpenCode, etc.). Agent-agnostic. Idempotent — safe to run repeatedly. Use when the user wants to set up, verify, or fix the memex in a project."
 ---
 
 # Memex — Idempotent Agent Memory Infrastructure
