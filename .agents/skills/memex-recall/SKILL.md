@@ -1,5 +1,5 @@
 ---
-name: harness-recall
+name: memex-recall
 description: "Search the vault for context on a topic"
 ---
 
