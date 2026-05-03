@@ -22,25 +22,25 @@ For each item, check existence and content correctness. Report status as:
 ## Files and directories to check
 
 ```
-context/
-  context/.obsidian/app.json
-  context/.obsidian/appearance.json
-  context/.obsidian/core-plugins.json
-  context/_index/home.md
-  context/_index/specs.md
-  context/_index/learnings.md
-  context/_index/conventions.md
-  context/_index/rules.md
-  context/constitution.md
-  context/specs/_template/spec.md
-  context/specs/_template/plan.md
-  context/specs/_template/tasks.md
-  context/templates/learning.md
-  context/templates/rule.md
-  context/templates/convention.md
-  context/learnings/           (directory exists)
-  context/conventions/         (directory exists)
-  context/rules/               (directory exists)
+vault/
+  vault/.obsidian/app.json
+  vault/.obsidian/appearance.json
+  vault/.obsidian/core-plugins.json
+  vault/_index/home.md
+  vault/_index/specs.md
+  vault/_index/learnings.md
+  vault/_index/conventions.md
+  vault/_index/rules.md
+  vault/constitution.md
+  vault/specs/_template/spec.md
+  vault/specs/_template/plan.md
+  vault/specs/_template/tasks.md
+  vault/templates/learning.md
+  vault/templates/rule.md
+  vault/templates/convention.md
+  vault/learnings/           (directory exists)
+  vault/conventions/         (directory exists)
+  vault/rules/               (directory exists)
 
 AGENTS.md                      (repo root)
 CLAUDE.md                      (symlink → AGENTS.md, Claude Code back-compat)
@@ -76,7 +76,7 @@ A missing per-agent symlink is **not `DRIFT`** — only the canonical files unde
 
 ### Spec folder naming follows `YYYY-MM-DD-<kebab-slug>/`
 
-Actively scan `context/specs/` (excluding `_template/`) — any folder whose name does **not** start with `YYYY-MM-DD-` is `DRIFT`. Report each non-conforming folder and ask the user, per folder:
+Actively scan `vault/specs/` (excluding `_template/`) — any folder whose name does **not** start with `YYYY-MM-DD-` is `DRIFT`. Report each non-conforming folder and ask the user, per folder:
 
 > "`<old-name>/` is not date-prefixed. Date prefixes prevent the naming conflicts that numeric prefixes (`01-`, `02-`) cause when multiple specs land in parallel. Rename to `<YYYY-MM-DD>-<slug>/`?"
 
@@ -91,7 +91,7 @@ The `_template/` folder is the only exception — its files stay named `spec.md`
 **Detection** (run during the audit pass, alongside the date-prefix check):
 
 ```bash
-find context/specs -mindepth 1 -maxdepth 1 -type d -name '[0-9]*-*' 2>/dev/null | while read -r spec_dir; do
+find vault/specs -mindepth 1 -maxdepth 1 -type d -name '[0-9]*-*' 2>/dev/null | while read -r spec_dir; do
   slug=$(basename "$spec_dir" | sed 's/^[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]-//')
   for generic in spec.md plan.md tasks.md; do
     if [ -f "$spec_dir/$generic" ]; then
@@ -105,15 +105,15 @@ Report each drift with the source path and the target name. Fix logic lives in `
 
 ### .gitignore ignores the entire Obsidian config directory
 
-The repo's `.gitignore` must contain a pattern that ignores `context/.obsidian/` in full:
+The repo's `.gitignore` must contain a pattern that ignores `vault/.obsidian/` in full:
 
 ```
-context/.obsidian/
+vault/.obsidian/
 ```
 
-Rationale: Obsidian rewrites every file under `context/.obsidian/` on each vault open, which creates constant `git status` noise. The whole directory is machine-local. The memex installer still scaffolds the three config JSONs locally so first-time Obsidian opens get the right wikilink defaults — they just are never tracked.
+Rationale: Obsidian rewrites every file under `vault/.obsidian/` on each vault open, which creates constant `git status` noise. The whole directory is machine-local. The memex installer still scaffolds the three config JSONs locally so first-time Obsidian opens get the right wikilink defaults — they just are never tracked.
 
-If `.gitignore` is missing, or contains the older fine-grained pattern set (`workspace.json`, `cache`, `plugins/*/data.json`) instead of the directory-level ignore, status is `DRIFT`. Fix: replace the old patterns with the single `context/.obsidian/` line.
+If `.gitignore` is missing, or contains the older fine-grained pattern set (`workspace.json`, `cache`, `plugins/*/data.json`) instead of the directory-level ignore, status is `DRIFT`. Fix: replace the old patterns with the single `vault/.obsidian/` line.
 
 ## AGENTS.md drift detection (required headers + size cap)
 
@@ -134,7 +134,7 @@ When reporting drift, name the missing section(s) explicitly so the fix step kno
 
 ## Constitution drift detection (required sections)
 
-`context/constitution.md` must contain all of these top-level sections:
+`vault/constitution.md` must contain all of these top-level sections:
 
 - `## Why {{Project Name}} exists` (the placeholder may be substituted with the actual project name — that is `OK`, not `DRIFT`)
 - `## Scope guardrails`
@@ -157,9 +157,9 @@ Each MOC and template must begin with valid YAML frontmatter (between `---` fenc
 
 | Status | Item |
 |--------|------|
-| OK     | context/constitution.md |
-| MISSING| context/_index/conventions.md |
-| DRIFT  | context/specs/old-feature/ (not date-prefixed) |
+| OK     | vault/constitution.md |
+| MISSING| vault/_index/conventions.md |
+| DRIFT  | vault/specs/old-feature/ (not date-prefixed) |
 | DRIFT  | AGENTS.md (missing section: "Work ethic — never the lazy path") |
 | ...    | ... |
 
