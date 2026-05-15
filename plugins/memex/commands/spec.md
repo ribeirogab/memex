@@ -15,14 +15,14 @@ Take what was discussed so far in this conversation and enter the spec flow.
 
 2. **Enter the `memex-brainstorming` skill** — use the conversation as context, but run the full flow. The prior discussion gives you a head start, not a shortcut. If something important was mentioned casually, confirm it explicitly before locking it into the spec.
 
-3. **Follow the brainstorming flow normally** — clarifying questions, approaches, design sections, user approval, write spec, spec self-review loop, user review gate, then `/memex-review-spec` for an external evaluator pass, and finally hand off to `memex-writing-plans`.
+3. **Follow the brainstorming flow normally** — clarifying questions, approaches, design sections, user approval, write spec, spec self-review loop, user review gate, then `/memex:review-spec` for an external evaluator pass, and finally hand off to `memex-writing-plans`.
 
 ## If `$ARGUMENTS` is provided
 
 Use it to focus or narrow the spec scope. Examples:
 
-- `/memex-spec focus on the auth part` — scope the spec to just the auth subsystem discussed
-- `/memex-spec let's split this into two specs` — decompose before speccing
+- `/memex:spec focus on the auth part` — scope the spec to just the auth subsystem discussed
+- `/memex:spec let's split this into two specs` — decompose before speccing
 
 ## Key rule
 

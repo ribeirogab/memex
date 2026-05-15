@@ -120,43 +120,65 @@ for agent_dir in .claude .codex .cursor .opencode .aider .augment; do
 done
 ```
 
-**Slash commands** install canonically under `.agents/commands/<cmd>.md` (single source of truth on disk, agent-agnostic location) and are exposed via per-agent symlinks. Slash-command UI is a Claude Code-specific concept today — no other current agent has an equivalent — so the symlink loop targets only `.claude/commands/`. If `.claude/` does not exist in the repo, the canonical files are still installed (they are the source of truth) but no symlinks are created. The workflows the commands encode are useful in any agent; users on other agents invoke them via prose prompts, not via `/foo` syntax.
+**Slash commands** ship as a Claude Code plugin published from the upstream marketplace `agent-skills` (this repo's root `.claude-plugin/marketplace.json`). The four slash commands — `/memex:spec`, `/memex:learn`, `/memex:sweep`, `/memex:review-spec` — live in `plugins/memex/commands/` upstream and are fetched by Claude Code at workspace-trust time. The memex skill **does not copy command files into the target repo** — it only declares the marketplace and pre-enables the plugin via `.claude/settings.json`.
+
+The skill does two things at install time, both gated on the target repo having a `.claude/` directory (its absence signals the user does not run Claude Code in this repo):
+
+1. **Remove legacy command files** that pre-plugin memex installs left behind: `.claude/commands/memex-{spec,learn,sweep,review-spec}.md` and `.agents/commands/memex-{spec,learn,sweep,review-spec}.md`. This is a non-destructive op per the existing "scaffold sempre vence" policy — no prompt, no diff. `rm` works for both regular files and symlinks.
+2. **Merge marketplace + plugin entries** into `.claude/settings.json`. Read `references/claude-plugin-settings.md` for the canonical coordinates, the JSON shapes, the jq merge recipe (preferred), and the Python fallback.
 
 ```bash
-COMMAND_NAMES=(memex-learn memex-spec memex-review-spec memex-sweep)
-
-# 1. Canonical install — single source of truth on disk
-mkdir -p .agents/commands
-for cmd in "${COMMAND_NAMES[@]}"; do
-  [ -e ".agents/commands/$cmd.md" ] && continue   # idempotent: don't overwrite
-  cp "$MEMEX_DIR/scaffold/commands/$cmd.md" ".agents/commands/$cmd.md"
+# 1. Remove legacy command files for the four affected verbs.
+#    rm works for files and symlinks alike. Missing files are not an error.
+for cmd in memex-spec memex-learn memex-sweep memex-review-spec; do
+  rm -f ".claude/commands/$cmd.md" 2>/dev/null
+  rm -f ".agents/commands/$cmd.md" 2>/dev/null
 done
 
-# 2. Per-agent symlinks — only into .claude/ (slash commands are Claude-only).
-#    Migration: if a regular file already sits at the symlink target, drop it
-#    and replace with a symlink. Policy is "scaffold sempre vence" — no diff,
-#    no prompt. Order matters: [ -L ] before [ -f ] because [ -f ] resolves
-#    through symlinks on macOS and would otherwise rm a working symlink.
+# Also remove the .agents/commands/ directory if it is now empty (only the four
+# legacy files lived there; if anything else is present, leave it alone).
+if [ -d .agents/commands ] && [ -z "$(ls -A .agents/commands 2>/dev/null)" ]; then
+  rmdir .agents/commands
+fi
+
+# 2. Merge marketplace + plugin entries into .claude/settings.json — only when
+#    .claude/ exists in the target repo. Read references/claude-plugin-settings.md
+#    for the canonical coordinates, JSON shapes, jq recipe, and Python fallback.
 if [ -d .claude ]; then
-  mkdir -p .claude/commands
-  for cmd in "${COMMAND_NAMES[@]}"; do
-    target=".claude/commands/$cmd.md"
-    if [ -L "$target" ]; then
-      continue                                     # already symlink — leave it
-    elif [ -f "$target" ]; then
-      rm "$target"                                 # real file → drop (migration)
-    fi
-    ln -s "../../.agents/commands/$cmd.md" "$target"
-  done
+  # Detect dogfood: if this repo's own .claude-plugin/marketplace.json declares
+  # name = "agent-skills", use the local-path source. Otherwise use github.
+  if [ -f .claude-plugin/marketplace.json ] && \
+     [ "$(jq -r '.name' .claude-plugin/marketplace.json 2>/dev/null)" = "agent-skills" ]; then
+    MARKETPLACE_SOURCE='{"source":"local","path":"."}'
+  else
+    MARKETPLACE_SOURCE='{"source":"github","repo":"ribeirogab/agent-skills"}'
+  fi
+
+  SETTINGS=".claude/settings.json"
+  TMP="$(mktemp)"
+  if [ -s "$SETTINGS" ]; then
+    cp "$SETTINGS" "$TMP"
+  else
+    echo '{}' > "$TMP"
+  fi
+
+  jq --argjson src "$MARKETPLACE_SOURCE" '
+    .extraKnownMarketplaces["agent-skills"] = { "source": $src } |
+    .enabledPlugins["memex@agent-skills"] = true
+  ' "$TMP" > "$SETTINGS"
+  rm "$TMP"
 fi
 ```
 
+If `jq` is not installed, fall back to the Python recipe documented in `references/claude-plugin-settings.md`. The skill must never overwrite `.claude/settings.json` wholesale — unrelated top-level keys must survive intact.
+
 Rules:
 - Skills always go to `.agents/skills/<name>` first (canonical), then symlinked into existing agent dirs.
-- Commands always go to `.agents/commands/<cmd>.md` first (canonical), then symlinked into `.claude/commands/` if `.claude/` exists. Slash commands are Claude-only today — no Codex/Cursor equivalent — so the symlink loop is single-agent.
-- Existing canonical files are never overwritten — re-runs are no-ops on already-installed items.
-- Existing regular files at a command symlink target are removed and replaced with a symlink (migration path). Existing symlinks are left alone.
+- Slash commands ship as a Claude Code plugin from the upstream marketplace `agent-skills`. The skill writes `.claude/settings.json` (extraKnownMarketplaces + enabledPlugins) so Claude Code installs the plugin at workspace-trust time. No command files are copied into the target repo.
+- Existing canonical skill files are never overwritten — re-runs are no-ops on already-installed items.
+- Legacy `.claude/commands/memex-{spec,learn,sweep,review-spec}.md` and `.agents/commands/memex-*.md` files (from pre-plugin installs) are removed unconditionally on every run. `rm` works for regular files and symlinks.
 - Per-agent dirs that do not already exist are not auto-created by the skill copy; only an existing dir signals that agent is in use here.
+- `.claude/settings.json` is created if absent (with `{}` as the seed) or merged into if present — every unrelated top-level key survives.
 
 ### Spec folder migration (if drift was reported)
 

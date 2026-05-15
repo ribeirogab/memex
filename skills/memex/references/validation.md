@@ -7,7 +7,7 @@ Report results as a table. Any `FAIL` triggers an automatic fix attempt using th
 ## Contents
 
 - [Output format](#output-format)
-- [Checks](#checks) — 15 numbered checks (CLAUDE.md symlink, placeholder sweeps, AGENTS.md headers, frontmatter, Obsidian JSON, .gitignore, spec folder naming, canonical skills/commands installed, executable scripts, MOC placeholders, spec template Acceptance Criteria, AGENTS.md size cap, spec-file slug naming)
+- [Checks](#checks) — 15 numbered checks (CLAUDE.md symlink, placeholder sweeps, AGENTS.md headers, frontmatter, Obsidian JSON, .gitignore, spec folder naming, canonical skills installed, Claude plugin settings, executable scripts, MOC placeholders, spec template Acceptance Criteria, AGENTS.md size cap, spec-file slug naming)
 - [When everything passes](#when-everything-passes)
 - [When something fails](#when-something-fails)
 
@@ -138,17 +138,28 @@ done
 
 Fix: `chmod +x .agents/skills/memex-brainstorming/scripts/*.sh`.
 
-### 11. Canonical commands installed
+### 11. Claude plugin settings present (when `.claude/` exists)
 
-Slash commands install canonically under `.agents/commands/<cmd>.md`. The canonical files are the source of truth; `.claude/commands/<cmd>.md` symlinks are bonus exposure and are validated as drift in Phase 1, not here. This check always runs (no `.claude/` gating) and always returns PASS or FAIL.
+Slash commands ship as a Claude Code plugin from the upstream marketplace `agent-skills`. When the target repo has a `.claude/` directory, `.claude/settings.json` must declare both `extraKnownMarketplaces["agent-skills"]` (with any non-empty `source` object) and `enabledPlugins["memex@agent-skills"] = true`. If `.claude/` is absent, this check trivially PASSes — the user does not run Claude Code here, so no settings.json is required.
 
 ```bash
-for c in memex-learn memex-spec memex-review-spec memex-sweep; do
-  [ -f ".agents/commands/$c.md" ] && echo "PASS: $c" || echo "FAIL: $c"
-done
+if [ ! -d .claude ]; then
+  echo PASS
+elif [ ! -f .claude/settings.json ]; then
+  echo FAIL
+else
+  has_mp=$(jq 'has("extraKnownMarketplaces") and (.extraKnownMarketplaces | has("agent-skills"))' .claude/settings.json 2>/dev/null)
+  has_src=$(jq '.extraKnownMarketplaces["agent-skills"].source != null' .claude/settings.json 2>/dev/null)
+  has_plugin=$(jq '.enabledPlugins["memex@agent-skills"] == true' .claude/settings.json 2>/dev/null)
+  if [ "$has_mp" = "true" ] && [ "$has_src" = "true" ] && [ "$has_plugin" = "true" ]; then
+    echo PASS
+  else
+    echo FAIL
+  fi
+fi
 ```
 
-Fix: re-run the commands copy block from `SKILL.md` (Scaffolding section).
+Fix: re-run the settings.json merge block from `SKILL.md` (Phase 4), which uses the jq recipe in `references/claude-plugin-settings.md`. If `jq` is unavailable, fall back to the Python recipe in the same reference.
 
 ### 12. MOCs have no surviving `{{Project Name}}` placeholders
 
