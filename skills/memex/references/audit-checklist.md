@@ -78,7 +78,7 @@ Legacy `.claude/commands/memex-open-pr.md` is **not** in scope here — orphan p
 
 When the target repo has a `.claude/` directory (signal that the user runs Claude Code in this repo), `.claude/settings.json` must declare:
 
-- `extraKnownMarketplaces["agent-skills"]` with a non-empty `source` object (either `{ "source": "github", "repo": "ribeirogab/agent-skills" }` for target repos, or `{ "source": "local", "path": "." }` for this repo's own dogfood).
+- `extraKnownMarketplaces["agent-skills"]` with a non-empty `source` object (either `{ "source": "github", "repo": "ribeirogab/agent-skills" }` for target repos, or `{ "source": "directory", "path": "." }` for this repo's own dogfood).
 - `enabledPlugins["memex@agent-skills"]` set to `true`.
 
 Detection:

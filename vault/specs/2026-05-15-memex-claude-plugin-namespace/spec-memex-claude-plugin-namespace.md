@@ -5,6 +5,7 @@ created: 2026-05-15
 shipped: 2026-05-15
 related:
   - "[[../2026-05-05-memex-canonical-commands/spec-memex-canonical-commands]]"
+  - "[[../../learnings/claude-code-extra-known-marketplaces-source-schema]]"
 ---
 # Memex Claude Plugin Namespace — Spec
 

@@ -149,7 +149,7 @@ if [ -d .claude ]; then
   # name = "agent-skills", use the local-path source. Otherwise use github.
   if [ -f .claude-plugin/marketplace.json ] && \
      [ "$(jq -r '.name' .claude-plugin/marketplace.json 2>/dev/null)" = "agent-skills" ]; then
-    MARKETPLACE_SOURCE='{"source":"local","path":"."}'
+    MARKETPLACE_SOURCE='{"source":"directory","path":"."}'
   else
     MARKETPLACE_SOURCE='{"source":"github","repo":"ribeirogab/agent-skills"}'
   fi
