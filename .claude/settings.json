@@ -2,7 +2,7 @@
   "extraKnownMarketplaces": {
     "agent-skills": {
       "source": {
-        "source": "local",
+        "source": "directory",
         "path": "."
       }
     }

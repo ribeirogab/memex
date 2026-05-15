@@ -8,7 +8,7 @@ The memex skill writes (or merges into) the target repo's `.claude/settings.json
 | --------------- | --------------------------- |
 | Marketplace name | `agent-skills`             |
 | Marketplace source (target repos) | `{ "source": "github", "repo": "ribeirogab/agent-skills" }` |
-| Marketplace source (this repo dogfood only) | `{ "source": "local", "path": "." }` |
+| Marketplace source (this repo dogfood only) | `{ "source": "directory", "path": "." }` |
 | Plugin name     | `memex`                     |
 | Enabled-plugins key | `memex@agent-skills`    |
 
@@ -85,7 +85,7 @@ If neither `jq` nor `python3` is available, the skill must report a clear error 
 
 ## Dogfood note (this repo only)
 
-When the memex skill runs **inside `ribeirogab/agent-skills` itself** (the marketplace repo), the dogfood `.claude/settings.json` declares the marketplace source as `{ "source": "local", "path": "." }` instead of the GitHub source above. This keeps the maintainer's inner dev loop fast — local edits to `plugins/memex/` are picked up on `/plugin marketplace update` without commit-push-fetch. The github source is for **target repos** (every other repo). The skill detects this case by checking whether the current repo's `.claude-plugin/marketplace.json` declares `name = "agent-skills"`; if it does, use the local source.
+When the memex skill runs **inside `ribeirogab/agent-skills` itself** (the marketplace repo), the dogfood `.claude/settings.json` declares the marketplace source as `{ "source": "directory", "path": "." }` instead of the GitHub source above. This keeps the maintainer's inner dev loop fast — local edits to `plugins/memex/` are picked up on `/plugin marketplace update` without commit-push-fetch. The github source is for **target repos** (every other repo). The skill detects this case by checking whether the current repo's `.claude-plugin/marketplace.json` declares `name = "agent-skills"`; if it does, use the local source.
 
 ## Trade-off-rejected alternatives (from Architecture Decision 3)
 
