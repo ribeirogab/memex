@@ -14,6 +14,7 @@ Template: `[[../specs/_template/spec|_template/spec]]`
 
 ## Active
 
+- [[../specs/2026-06-13-dedicate-repo-to-memex/spec-dedicate-repo-to-memex|dedicate-repo-to-memex]] — convert the repo from a personal multi-skill library into a memex-only repository: delete every non-memex skill (`skill-improver`, vendored `skill-creator`/`opensource-guide-coach`), rename the project identity `agent-skills → memex` (repo slug, marketplace, titles, install commands, embedded refs), relocate the skill-validation scripts into `memex`, and rewrite the constitution/docs/vault. Draft 2026-06-13.
 - [[../specs/2026-05-05-memex-canonical-commands/spec-memex-canonical-commands|memex-canonical-commands]] — bring bundled slash commands under the same `.agents/<cmd>` canonical + `.claude/<cmd>` symlink layout that already governs bundled skills, and stop shipping `memex-open-pr`. Draft 2026-05-05.
 
 ## Shipped
