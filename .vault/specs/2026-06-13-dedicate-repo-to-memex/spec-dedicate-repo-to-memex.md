@@ -1,8 +1,8 @@
 ---
-status: draft
+status: shipped
 feature: dedicate-repo-to-memex
 created: 2026-06-13
-shipped: null
+shipped: 2026-06-13
 related:
   - "[[../../learnings/claude-code-reserved-marketplace-names|claude-code-reserved-marketplace-names]]"
   - "[[../../learnings/claude-code-extra-known-marketplaces-source-schema|claude-code-extra-known-marketplaces-source-schema]]"
@@ -12,10 +12,12 @@ related:
   - "[[../2026-05-03-rename-harness-to-memex/spec-rename-harness-to-memex|rename-harness-to-memex]]"
   - "[[../2026-05-15-memex-claude-plugin-namespace/spec-memex-claude-plugin-namespace|memex-claude-plugin-namespace]]"
   - "[[../2026-04-30-opensource-readiness/spec-opensource-readiness|opensource-readiness]]"
+  - "[[../../learnings/memex-marketplace-name-not-reserved|memex-marketplace-name-not-reserved]]"
+  - "[[../../learnings/git-rm-leaves-gitignored-leftovers|git-rm-leaves-gitignored-leftovers]]"
 ---
 # Dedicate Repo to Memex — Spec
 
-**Status:** Draft
+**Status:** Shipped (2026-06-13)
 **Scope:** Convert the repo from a personal *multi-skill library* (flagship `memex` + `skill-improver` + vendored references) into a *memex-only* repository: delete every non-memex skill, rename the project identity `agent-skills → memex` (repo slug, marketplace, titles, install commands, and all embedded references), relocate the skill-validation scripts into `memex` itself, and rewrite the constitution / docs / vault so nothing frames the repo as a collection of skills.
 
 ## Context

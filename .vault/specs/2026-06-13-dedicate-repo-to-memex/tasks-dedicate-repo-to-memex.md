@@ -25,11 +25,11 @@ Work on branch `feat/dedicate-repo-to-memex` (already created; the spec is commi
 
 **Files:** `.claude-plugin/marketplace.json` (temporary probe edit, finalized in Task 3.1)
 
-- [ ] **Step 1: Set the candidate name to `memex`**
+- [x] **Step 1: Set the candidate name to `memex`**
 
 Edit `.claude-plugin/marketplace.json` line 2: `"name": "ribeirogab-agent-skills",` → `"name": "memex",`
 
-- [ ] **Step 2: Install-test the name**
+- [x] **Step 2: Install-test the name**
 
 Run (the reservation check fires here, not at file-write):
 ```bash
@@ -43,7 +43,7 @@ claude plugin marketplace add . 2>&1 | tee /tmp/mkt-test.txt
 
 If the `claude` CLI requires interactive trust and cannot run head-less here, ask the maintainer to run the command and paste the result (`! claude plugin marketplace add .`).
 
-- [ ] **Step 3: Record the decision**
+- [x] **Step 3: Record the decision**
 
 Note the resolved `<MKT>` value and the exact CLI output in the eventual PR description (acceptance criterion #1). Do **not** commit yet — Task 3.1 finalizes `marketplace.json` together with the rest of the cascade. Leave the probe edit in place.
 
@@ -58,7 +58,7 @@ Note the resolved `<MKT>` value and the exact CLI output in the eventual PR desc
 - Move: `skills/skill-improver/scripts/package_skill.py` → `skills/memex/scripts/package_skill.py`
 - Move: `skills/skill-improver/scripts/__init__.py` → `skills/memex/scripts/__init__.py`
 
-- [ ] **Step 1: Create the destination and move all three files with history**
+- [x] **Step 1: Create the destination and move all three files with history**
 
 ```bash
 mkdir -p skills/memex/scripts
@@ -67,7 +67,7 @@ git mv skills/skill-improver/scripts/package_skill.py skills/memex/scripts/packa
 git mv skills/skill-improver/scripts/__init__.py skills/memex/scripts/__init__.py
 ```
 
-- [ ] **Step 2: Verify the scripts run from the new location**
+- [x] **Step 2: Verify the scripts run from the new location**
 
 ```bash
 python skills/memex/scripts/quick_validate.py skills/memex
@@ -79,14 +79,14 @@ python skills/memex/scripts/package_skill.py skills/memex /tmp
 ```
 Expected: ends with `Successfully packaged skill to: /tmp/memex.skill`
 
-- [ ] **Step 3: Verify history followed the move**
+- [x] **Step 3: Verify history followed the move**
 
 ```bash
 git log --follow --oneline skills/memex/scripts/quick_validate.py | head -3
 ```
 Expected: shows commits predating this move (not a single "add" commit).
 
-- [ ] **Step 4: Commit**
+- [x] **Step 4: Commit**
 
 ```bash
 git add skills/memex/scripts/
@@ -103,21 +103,21 @@ git commit -m "chore(memex): relocate skill validators into skills/memex/scripts
 - Delete: `skills/skill-improver/` (now scriptless)
 - Delete: `.claude/skills/skill-improver` (symlink)
 
-- [ ] **Step 1: Remove the skill and its symlink**
+- [x] **Step 1: Remove the skill and its symlink**
 
 ```bash
 git rm -r skills/skill-improver
 git rm .claude/skills/skill-improver
 ```
 
-- [ ] **Step 2: Verify no live skill-improver files remain**
+- [x] **Step 2: Verify no live skill-improver files remain**
 
 ```bash
 find . -path ./.git -prune -o -name '*skill-improver*' -print
 ```
 Expected: only matches inside `.vault/specs/` (historical) — no `skills/`, `.claude/`, or `evals/` paths yet (evals removed in 2.2).
 
-- [ ] **Step 3: Commit**
+- [x] **Step 3: Commit**
 
 ```bash
 git commit -m "feat(repo)!: delete skill-improver (memex-only dedication)"
@@ -127,20 +127,20 @@ git commit -m "feat(repo)!: delete skill-improver (memex-only dedication)"
 
 **Files:** Delete: `evals/` (only contains `evals/skill-improver/`)
 
-- [ ] **Step 1: Remove**
+- [x] **Step 1: Remove**
 
 ```bash
 git rm -r evals
 ```
 
-- [ ] **Step 2: Verify gone**
+- [x] **Step 2: Verify gone**
 
 ```bash
 test ! -e evals && echo "evals removed"
 ```
 Expected: `evals removed`
 
-- [ ] **Step 3: Commit**
+- [x] **Step 3: Commit**
 
 ```bash
 git commit -m "chore(repo): drop evals/ (only held skill-improver harness)"
@@ -152,13 +152,13 @@ git commit -m "chore(repo): drop evals/ (only held skill-improver harness)"
 - Delete: `.claude/skills/skill-creator/`
 - Delete: `.claude/skills/opensource-guide-coach/`
 
-- [ ] **Step 1: Remove both vendored dirs**
+- [x] **Step 1: Remove both vendored dirs**
 
 ```bash
 git rm -r .claude/skills/skill-creator .claude/skills/opensource-guide-coach
 ```
 
-- [ ] **Step 2: Verify `.claude/skills/` is memex-only and resolves**
+- [x] **Step 2: Verify `.claude/skills/` is memex-only and resolves**
 
 ```bash
 ls .claude/skills/
@@ -166,7 +166,7 @@ for f in .claude/skills/*; do [ -e "$f" ] || echo "BROKEN $f"; done
 ```
 Expected: `ls` prints exactly `memex`; the loop prints nothing.
 
-- [ ] **Step 3: Commit**
+- [x] **Step 3: Commit**
 
 ```bash
 git commit -m "chore(repo): remove vendored skill-creator and opensource-guide-coach"
@@ -182,24 +182,24 @@ git commit -m "chore(repo): remove vendored skill-creator and opensource-guide-c
 
 **Files:** Modify: `.claude-plugin/marketplace.json`
 
-- [ ] **Step 1: Confirm the `name` field matches `<MKT>`**
+- [x] **Step 1: Confirm the `name` field matches `<MKT>`**
 
 From Phase 0 the probe edit already set line 2 to `"name": "memex",` (or `"ribeirogab-memex"`). Confirm it equals `<MKT>`. No slug appears in this file. The plugin entry `"name": "memex"` (line 8) stays unchanged.
 
-- [ ] **Step 2: Verify**
+- [x] **Step 2: Verify**
 
 ```bash
 jq -r '.name' .claude-plugin/marketplace.json
 ```
 Expected: the `<MKT>` value.
 
-- [ ] **Step 3: Commit** (deferred — committed with Task 3.2 since both are tiny config files)
+- [x] **Step 3: Commit** (deferred — committed with Task 3.2 since both are tiny config files)
 
 ### Task 3.2: Rewrite `.claude/settings.json` keys
 
 **Files:** Modify: `.claude/settings.json`
 
-- [ ] **Step 1: Replace both keys**
+- [x] **Step 1: Replace both keys**
 
 Edit so the file reads (with `<MKT>` substituted):
 ```json
@@ -218,14 +218,14 @@ Edit so the file reads (with `<MKT>` substituted):
 }
 ```
 
-- [ ] **Step 2: Verify**
+- [x] **Step 2: Verify**
 
 ```bash
 jq -e '.enabledPlugins["memex@<MKT>"] == true and (.extraKnownMarketplaces | has("<MKT>"))' .claude/settings.json
 ```
 Expected: `true`
 
-- [ ] **Step 3: Commit**
+- [x] **Step 3: Commit**
 
 ```bash
 git add .claude-plugin/marketplace.json .claude/settings.json
@@ -236,21 +236,21 @@ git commit -m "feat(plugin)!: rename marketplace ribeirogab-agent-skills -> <MKT
 
 **Files:** Modify: `skills/memex/SKILL.md` (occurrences at lines 114, 139, 165, 167, 170, 182, 183)
 
-- [ ] **Step 1: Apply the ordered replacements**
+- [x] **Step 1: Apply the ordered replacements**
 
 ```bash
 perl -pi -e 's{ribeirogab/agent-skills}{ribeirogab/memex}g; s{ribeirogab-agent-skills}{<MKT>}g' skills/memex/SKILL.md
 ```
 (There is no bare `agent-skills` in SKILL.md outside the compounds — the two patterns cover all 7 occurrences. Line 170's `MARKETPLACE_SOURCE='{"source":"github","repo":"ribeirogab/agent-skills"}'` becomes `ribeirogab/memex`; the dogfood check on line 167 comparing against the marketplace name becomes `<MKT>`.)
 
-- [ ] **Step 2: Verify**
+- [x] **Step 2: Verify**
 
 ```bash
 grep -nE "ribeirogab-agent-skills|ribeirogab/agent-skills" skills/memex/SKILL.md || echo "clean"
 ```
 Expected: `clean`
 
-- [ ] **Step 3: Commit** (deferred — committed with Task 3.4)
+- [x] **Step 3: Commit** (deferred — committed with Task 3.4)
 
 ### Task 3.4: Cascade through the four reference docs
 
@@ -260,7 +260,7 @@ Expected: `clean`
 - `skills/memex/references/validation.md`
 - `skills/memex/references/agents-md-template.md`
 
-- [ ] **Step 1: Apply the ordered replacements to all four**
+- [x] **Step 1: Apply the ordered replacements to all four**
 
 ```bash
 for f in skills/memex/references/claude-plugin-settings.md \
@@ -271,18 +271,18 @@ for f in skills/memex/references/claude-plugin-settings.md \
 done
 ```
 
-- [ ] **Step 2: Verify the whole memex skill is clean**
+- [x] **Step 2: Verify the whole memex skill is clean**
 
 ```bash
 grep -rnE "ribeirogab-agent-skills|ribeirogab/agent-skills" skills/memex/ || echo "clean"
 ```
 Expected: `clean`
 
-- [ ] **Step 3: Verify the dogfood detection is internally consistent**
+- [x] **Step 3: Verify the dogfood detection is internally consistent**
 
 `claude-plugin-settings.md:88` describes detecting the marketplace repo by checking `name = "<MKT>"`; confirm it now reads `<MKT>` and matches `SKILL.md:167`.
 
-- [ ] **Step 4: Commit**
+- [x] **Step 4: Commit**
 
 ```bash
 git add skills/memex/SKILL.md skills/memex/references/
@@ -299,7 +299,7 @@ git commit -m "feat(memex)!: cascade marketplace/slug rename through skill sourc
 
 **Files:** Modify: `README.md`
 
-- [ ] **Step 1: Replace the entire file** with:
+- [x] **Step 1: Replace the entire file** with:
 
 ```markdown
 # memex
@@ -352,7 +352,7 @@ This repository's original work is licensed under the [MIT License](LICENSE). Th
 Pull requests welcome — see [`CONTRIBUTING.md`](CONTRIBUTING.md) for scope, the quality bar, and the per-PR checklist. By participating, you agree to the [Code of Conduct](CODE_OF_CONDUCT.md). Security concerns go to [`SECURITY.md`](SECURITY.md).
 ```
 
-- [ ] **Step 2: Verify**
+- [x] **Step 2: Verify**
 
 ```bash
 grep -c "^## Skills" README.md            # expect 0
@@ -361,7 +361,7 @@ grep -cE "ribeirogab-agent-skills|ribeirogab/agent-skills" README.md   # expect 
 grep -c "ribeirogab/memex" README.md       # expect 1
 ```
 
-- [ ] **Step 3: Commit**
+- [x] **Step 3: Commit**
 
 ```bash
 git add README.md
@@ -372,21 +372,21 @@ git commit -m "docs(readme)!: reframe as memex-only, drop multi-skill catalog"
 
 **Files:** Modify: `AGENTS.md` (`CLAUDE.md` symlink propagates)
 
-- [ ] **Step 1: Replace line 1** `# agent-skills — Agent Instructions` → `# memex — Agent Instructions`
+- [x] **Step 1: Replace line 1** `# agent-skills — Agent Instructions` → `# memex — Agent Instructions`
 
-- [ ] **Step 2: Replace the opening paragraph (line 3)** with:
+- [x] **Step 2: Replace the opening paragraph (line 3)** with:
 
 ```markdown
 This repository **is** memex — a single agent skill that idempotently installs an externalized project memory (a "memex") into any repo: a `.vault/` knowledge vault, an `AGENTS.md`, spec/plan/task templates, and bundled companion skills + slash commands. It is written in markdown with occasional shell scripts; there is no build system, no package manager, and no test runner at the repo root. The skill source lives under `skills/memex/`; its bundled companion skills live canonically under `.agents/skills/memex-*/` and are exposed via per-agent symlinks (`.claude/skills/<name>` → `.agents/skills/<name>`); the `/memex:*` slash commands ship as a Claude Code plugin (`plugins/memex/`). The repo dogfoods its own memex.
 ```
 
-- [ ] **Step 3: Fix the marketplace reference in the "Skills and slash commands" section (line 64)**
+- [x] **Step 3: Fix the marketplace reference in the "Skills and slash commands" section (line 64)**
 
 ```bash
 perl -pi -e 's{ribeirogab-agent-skills}{<MKT>}g' AGENTS.md
 ```
 
-- [ ] **Step 4: Verify the CLAUDE.md symlink survived and identifiers are clean**
+- [x] **Step 4: Verify the CLAUDE.md symlink survived and identifiers are clean**
 
 ```bash
 test -L CLAUDE.md && [ "$(readlink CLAUDE.md)" = "AGENTS.md" ] && echo "symlink ok"
@@ -394,7 +394,7 @@ grep -nE "agent-skills" AGENTS.md || echo "clean"
 ```
 Expected: `symlink ok`, then `clean`.
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```bash
 git add AGENTS.md
@@ -405,22 +405,22 @@ git commit -m "docs(agents)!: reframe AGENTS.md as memex-only"
 
 **Files:** Modify: `CONTRIBUTING.md`
 
-- [ ] **Step 1: Line 3** — replace the intro:
+- [x] **Step 1: Line 3** — replace the intro:
 `Thanks for considering a contribution to \`agent-skills\`. The repository accepts pull requests for the published skills under [\`skills/\`](skills/) and for the documentation that supports them, with a small quality bar that this document explains.`
 →
 `Thanks for considering a contribution to \`memex\`. The repository accepts pull requests for the \`memex\` skill (and its bundled companions) and the documentation that supports them, with a small quality bar that this document explains.`
 
-- [ ] **Step 2: Lines 10-13 (in-scope)** — replace the first bullet:
+- [x] **Step 2: Lines 10-13 (in-scope)** — replace the first bullet:
 `- **Bug fixes and improvements to any skill under \`skills/\`** — including bundled payloads (e.g., scaffold content the skill copies into a target repo, or vendored helper scripts the skill ships).`
 →
 `- **Bug fixes and improvements to \`memex\`** — including bundled payloads (the scaffold content it copies into target repos, the bundled companion skills under \`.agents/skills/memex-*/\`, and the vendored validator scripts under \`skills/memex/scripts/\`).`
 
-- [ ] **Step 3: Line 17 (out-of-scope)** — replace:
+- [x] **Step 3: Line 17 (out-of-scope)** — replace:
 `- **New unrelated top-level skills.** This is a curated personal collection. Open an issue first if you think a new skill belongs here; otherwise the [skills CLI](https://github.com/vercel-labs/skills) makes any public GitHub repo installable, so a separate repo is usually the right home.`
 →
 `- **Skills unrelated to memex.** This repository is dedicated to memex. The [skills CLI](https://github.com/vercel-labs/skills) makes any public GitHub repo installable, so publish unrelated skills from your own repo.`
 
-- [ ] **Step 4: Lines 30-42 (quality bar)** — repoint the script paths and drop the "invoke the skill-improver skill" paragraph. Replace the block from line 30 through line 42 with:
+- [x] **Step 4: Lines 30-42 (quality bar)** — repoint the script paths and drop the "invoke the skill-improver skill" paragraph. Replace the block from line 30 through line 42 with:
 
 ```markdown
 Mechanical checks must pass on the modified skill before the PR is opened. Both scripts are vendored copies of the canonical authoring validators (Apache-2.0, see [`NOTICE.md`](NOTICE.md)) and ship under `skills/memex/scripts/`:
@@ -436,9 +436,9 @@ python skills/memex/scripts/package_skill.py skills/<the-skill-you-changed> /tmp
 `quick_validate.py` enforces the frontmatter contract (kebab-case `name`, `description` ≤ 1024 chars, no XML angle brackets, no reserved words, only canonical top-level keys). `package_skill.py` re-runs that validation and additionally confirms the skill packages cleanly into a `.skill` artifact (no broken file references, no excluded patterns left behind).
 ```
 
-- [ ] **Step 5: Line 49 (PR-checklist explainer)** — the wording "on every modified skill" still holds; just confirm it no longer names `skill-improver`. No edit needed unless it does.
+- [x] **Step 5: Line 49 (PR-checklist explainer)** — the wording "on every modified skill" still holds; just confirm it no longer names `skill-improver`. No edit needed unless it does.
 
-- [ ] **Step 6: Verify**
+- [x] **Step 6: Verify**
 
 ```bash
 grep -cE "curated personal collection|any skill under" CONTRIBUTING.md   # expect 0
@@ -447,7 +447,7 @@ grep -c "skills/memex/scripts" CONTRIBUTING.md                           # expec
 grep -nE "agent-skills" CONTRIBUTING.md || echo clean
 ```
 
-- [ ] **Step 7: Commit**
+- [x] **Step 7: Commit**
 
 ```bash
 git add CONTRIBUTING.md
@@ -458,19 +458,19 @@ git commit -m "docs(contributing)!: narrow scope to memex, repoint validators"
 
 **Files:** Modify: `SECURITY.md`
 
-- [ ] **Step 1: Line 5** — `If you find a security issue in any skill in this repository` → `If you find a security issue in memex or its bundled companions`.
-- [ ] **Step 2: Line 9** — `- The skill affected (path under \`skills/\`).` → `- The affected component (the \`memex\` skill, a bundled companion, or a script).`
-- [ ] **Step 3: Line 24** — `- Skills under [\`skills/\`](skills/) — the published surface that \`npx skills add\` installs.` → `- The \`memex\` skill under [\`skills/memex/\`](skills/memex/) — the published surface that \`npx skills add\` installs, plus its bundled companions under \`.agents/skills/memex-*/\`.`
-- [ ] **Step 4: Line 29** — drop `evals/` from the out-of-scope dir list: `The \`.agents/\`, \`.claude/\`, \`.vault/\`, and \`evals/\` directories` → `The \`.agents/\`, \`.claude/\`, and \`.vault/\` directories`.
-- [ ] **Step 5: Line 34** — `Skills in this repository are markdown instructions loaded by an agent` → `memex and its bundled companions are markdown instructions loaded by an agent`.
+- [x] **Step 1: Line 5** — `If you find a security issue in any skill in this repository` → `If you find a security issue in memex or its bundled companions`.
+- [x] **Step 2: Line 9** — `- The skill affected (path under \`skills/\`).` → `- The affected component (the \`memex\` skill, a bundled companion, or a script).`
+- [x] **Step 3: Line 24** — `- Skills under [\`skills/\`](skills/) — the published surface that \`npx skills add\` installs.` → `- The \`memex\` skill under [\`skills/memex/\`](skills/memex/) — the published surface that \`npx skills add\` installs, plus its bundled companions under \`.agents/skills/memex-*/\`.`
+- [x] **Step 4: Line 29** — drop `evals/` from the out-of-scope dir list: `The \`.agents/\`, \`.claude/\`, \`.vault/\`, and \`evals/\` directories` → `The \`.agents/\`, \`.claude/\`, and \`.vault/\` directories`.
+- [x] **Step 5: Line 34** — `Skills in this repository are markdown instructions loaded by an agent` → `memex and its bundled companions are markdown instructions loaded by an agent`.
 
-- [ ] **Step 6: Verify**
+- [x] **Step 6: Verify**
 
 ```bash
 grep -c "evals/" SECURITY.md   # expect 0
 ```
 
-- [ ] **Step 7: Commit**
+- [x] **Step 7: Commit**
 
 ```bash
 git add SECURITY.md
@@ -481,7 +481,7 @@ git commit -m "docs(security): scope policy to memex"
 
 **Files:** Modify: `NOTICE.md`
 
-- [ ] **Step 1: Replace the whole file** with (keeps the Apache-2.0 attribution at its new path, drops the maintainer-local section since those dirs are deleted):
+- [x] **Step 1: Replace the whole file** with (keeps the Apache-2.0 attribution at its new path, drops the maintainer-local section since those dirs are deleted):
 
 ```markdown
 # NOTICE — Vendored content attribution
@@ -507,7 +507,7 @@ memex bundles two scripts vendored from `anthropics/skills` so the skill is self
 The repository as a whole is licensed under MIT (see [`LICENSE`](LICENSE)). MIT is compatible with the Apache-2.0 vendored scripts: Apache-2.0 permits redistribution under these terms provided the license and notices are retained, which they are above.
 ```
 
-- [ ] **Step 2: Verify**
+- [x] **Step 2: Verify**
 
 ```bash
 grep -c "opensource-guide-coach" NOTICE.md     # expect 0
@@ -515,7 +515,7 @@ grep -c "skill-creator" NOTICE.md              # expect 0
 grep -c "skills/memex/scripts" NOTICE.md       # expect >=1
 ```
 
-- [ ] **Step 3: Commit**
+- [x] **Step 3: Commit**
 
 ```bash
 git add NOTICE.md
@@ -528,13 +528,13 @@ git commit -m "docs(notice): keep Apache-2.0 attribution at new path, drop remov
 - Rename + rewrite: `.github/ISSUE_TEMPLATE/skill_request.md` → `.github/ISSUE_TEMPLATE/feature_request.md`
 - Modify: `.github/PULL_REQUEST_TEMPLATE.md`
 
-- [ ] **Step 1: Move the issue template**
+- [x] **Step 1: Move the issue template**
 
 ```bash
 git mv .github/ISSUE_TEMPLATE/skill_request.md .github/ISSUE_TEMPLATE/feature_request.md
 ```
 
-- [ ] **Step 2: Replace its contents** with:
+- [x] **Step 2: Replace its contents** with:
 
 ```markdown
 ---
@@ -561,12 +561,12 @@ Two or three bullets describing what the agent would do. No need to draft the SK
 Yes / No / Maybe. Either is fine — this issue is useful as a backlog signal even if no one has time today.
 ```
 
-- [ ] **Step 3: Fix `.github/PULL_REQUEST_TEMPLATE.md`** — three edits:
+- [x] **Step 3: Fix `.github/PULL_REQUEST_TEMPLATE.md`** — three edits:
   - Lines 7-8: `skills/skill-improver/scripts/quick_validate.py` → `skills/memex/scripts/quick_validate.py` and `skills/skill-improver/scripts/package_skill.py` → `skills/memex/scripts/package_skill.py`.
-  - Line 15: delete the entire line `- [ ] \`README.md\`'s \`## Skills\` section was updated if a skill was added or removed.`
+  - Line 15: delete the entire line `- [x] \`README.md\`'s \`## Skills\` section was updated if a skill was added or removed.`
   - Line 17: `No edits under \`.vault/\`, \`.agents/\`, \`.claude/\`, or \`evals/\`` → `No edits under \`.vault/\`, \`.agents/\`, or \`.claude/\``.
 
-- [ ] **Step 4: Verify**
+- [x] **Step 4: Verify**
 
 ```bash
 test ! -e .github/ISSUE_TEMPLATE/skill_request.md && echo "renamed"
@@ -575,7 +575,7 @@ grep -c "## Skills" .github/PULL_REQUEST_TEMPLATE.md   # expect 0
 grep -c "evals/" .github/PULL_REQUEST_TEMPLATE.md      # expect 0
 ```
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```bash
 git add .github/
@@ -590,9 +590,9 @@ git commit -m "docs(github): repurpose issue template, fix PR template paths"
 
 **Files:** Modify: `.vault/constitution.md`
 
-- [ ] **Step 1: Line 5 title** — `# agent-skills — Constitution` → `# memex — Constitution`
+- [x] **Step 1: Line 5 title** — `# agent-skills — Constitution` → `# memex — Constitution`
 
-- [ ] **Step 2: Replace the "Why agent-skills exists" section (heading + body, lines ~11-15)** with:
+- [x] **Step 2: Replace the "Why agent-skills exists" section (heading + body, lines ~11-15)** with:
 
 ```markdown
 ## Why memex exists
@@ -602,7 +602,7 @@ git commit -m "docs(github): repurpose issue template, fix PR template paths"
 This repository **is** memex: the skill's source, its bundled companions, its Claude Code distribution surface (marketplace + plugin), and the `.vault/` that dogfoods the skill on its own development. The repo's purpose is singular — build and ship memex — and it dogfoods memex on itself so the maintainer trusts what is shipped.
 ```
 
-- [ ] **Step 3: Rewrite the "Scope guardrails" section** — replace the in-scope/out-of-scope/symlink bullets with:
+- [x] **Step 3: Rewrite the "Scope guardrails" section** — replace the in-scope/out-of-scope/symlink bullets with:
 
 ```markdown
 - **In scope**: the `memex` skill under `skills/memex/` (including `skills/memex/scaffold/`, `skills/memex/references/`, and `skills/memex/scripts/`), the bundled companion skills under `.agents/skills/memex-*/`, and the Claude Code distribution surface (`.claude-plugin/marketplace.json` and `plugins/memex/`).
@@ -611,13 +611,13 @@ This repository **is** memex: the skill's source, its bundled companions, its Cl
 - **No build pipeline**: this repo intentionally has no `package.json`, no transpiler, no test runner. memex is markdown + occasional shell/Python scripts and must stay that way unless a clear need overrides this rule.
 ```
 
-- [ ] **Step 4: Line ~28 (Idempotency principle)** — `the \`memex\` skill (and any future scaffolding skill) must be safe to re-run` → `the \`memex\` skill must be safe to re-run`.
+- [x] **Step 4: Line ~28 (Idempotency principle)** — `the \`memex\` skill (and any future scaffolding skill) must be safe to re-run` → `the \`memex\` skill must be safe to re-run`.
 
-- [ ] **Step 5: Line ~26 (Skills are self-contained)** — reword `every skill under \`skills/<name>/\`` → `memex (under \`skills/memex/\`) and each bundled companion ship` to keep the self-containment principle without implying a catalog.
+- [x] **Step 5: Line ~26 (Skills are self-contained)** — reword `every skill under \`skills/<name>/\`` → `memex (under \`skills/memex/\`) and each bundled companion ship` to keep the self-containment principle without implying a catalog.
 
-- [ ] **Step 6: Line ~48 (Knowledge layering)** — `things unique to agent-skills (e.g. how the memex symlink works, conventions for authoring new skills)` → `things unique to memex (e.g. how the memex symlink works, how the scaffold layer embeds the marketplace coordinates)`.
+- [x] **Step 6: Line ~48 (Knowledge layering)** — `things unique to agent-skills (e.g. how the memex symlink works, conventions for authoring new skills)` → `things unique to memex (e.g. how the memex symlink works, how the scaffold layer embeds the marketplace coordinates)`.
 
-- [ ] **Step 7: Verify**
+- [x] **Step 7: Verify**
 
 ```bash
 grep -c "library of skills" .vault/constitution.md          # expect 0
@@ -626,7 +626,7 @@ grep -c "skill-creator\|opensource-guide-coach" .vault/constitution.md   # expec
 grep -nE "agent-skills" .vault/constitution.md || echo clean
 ```
 
-- [ ] **Step 8: Commit**
+- [x] **Step 8: Commit**
 
 ```bash
 git add .vault/constitution.md
@@ -637,9 +637,9 @@ git commit -m "docs(constitution)!: rewrite as memex-only project charter"
 
 **Files:** Modify: `.vault/_index/home.md`, `.vault/_index/learnings.md`, `.vault/_index/conventions.md`, `.vault/_index/rules.md`, `.vault/_index/specs.md`
 
-- [ ] **Step 1: home.md** — line 5 `# agent-skills — Project Knowledge Vault` → `# memex — Project Knowledge Vault`; line 7 `all project-specific knowledge for agent-skills` → `all project-specific knowledge for memex`.
+- [x] **Step 1: home.md** — line 5 `# agent-skills — Project Knowledge Vault` → `# memex — Project Knowledge Vault`; line 7 `all project-specific knowledge for agent-skills` → `all project-specific knowledge for memex`.
 
-- [ ] **Step 2: Replace bare `agent-skills` in the other four index headers**
+- [x] **Step 2: Replace bare `agent-skills` in the other four index headers**
 
 ```bash
 for f in .vault/_index/learnings.md .vault/_index/conventions.md .vault/_index/rules.md .vault/_index/specs.md; do
@@ -648,14 +648,14 @@ done
 ```
 (These occurrences are MOC header text like "all specs for agent-skills features" — the substitution to "memex" reads correctly. Review each diff to confirm none sit inside a code block or a path.)
 
-- [ ] **Step 3: Verify**
+- [x] **Step 3: Verify**
 
 ```bash
 grep -rnE "\bagent-skills\b" .vault/_index/ || echo clean
 ```
 Expected: `clean`
 
-- [ ] **Step 4: Commit** (deferred — committed with Task 6.3 since both touch the indexes)
+- [x] **Step 4: Commit** (deferred — committed with Task 6.3 since both touch the indexes)
 
 ### Task 6.3: Delete the 6 craft notes + clean the MOCs
 
@@ -664,7 +664,7 @@ Expected: `clean`
 - Delete: `.vault/conventions/skill-directory-layout.md`, `.vault/conventions/skill-md-style.md`
 - Modify: `.vault/_index/learnings.md`, `.vault/_index/conventions.md`, and any surviving note whose `related:` links to a deleted note
 
-- [ ] **Step 1: Delete the six notes**
+- [x] **Step 1: Delete the six notes**
 
 ```bash
 git rm .vault/learnings/skill-development-workflow.md \
@@ -675,24 +675,24 @@ git rm .vault/learnings/skill-development-workflow.md \
        .vault/conventions/skill-md-style.md
 ```
 
-- [ ] **Step 2: Find every inbound reference to the deleted notes**
+- [x] **Step 2: Find every inbound reference to the deleted notes**
 
 ```bash
 grep -rnE "skill-development-workflow|skill-progressive-disclosure|skill-degrees-of-freedom|generator-evaluator-separation|skill-directory-layout|skill-md-style" .vault --include='*.md' | grep -v ".vault/specs/"
 ```
 
-- [ ] **Step 3: Remove the MOC list-entries** for the deleted notes from `.vault/_index/learnings.md` and `.vault/_index/conventions.md` (delete the bullet lines that link to them).
+- [x] **Step 3: Remove the MOC list-entries** for the deleted notes from `.vault/_index/learnings.md` and `.vault/_index/conventions.md` (delete the bullet lines that link to them).
 
-- [ ] **Step 4: Fix dangling `related:` wikilinks** in any surviving note the grep surfaced — remove the wikilink to the deleted note from its `related:` frontmatter list.
+- [x] **Step 4: Fix dangling `related:` wikilinks** in any surviving note the grep surfaced — remove the wikilink to the deleted note from its `related:` frontmatter list.
 
-- [ ] **Step 5: Verify no dangling links outside historical specs**
+- [x] **Step 5: Verify no dangling links outside historical specs**
 
 ```bash
 grep -rnE "skill-development-workflow|skill-progressive-disclosure|skill-degrees-of-freedom|generator-evaluator-separation|skill-directory-layout|skill-md-style" .vault --include='*.md' | grep -v ".vault/specs/" || echo clean
 ```
 Expected: `clean`
 
-- [ ] **Step 6: Commit**
+- [x] **Step 6: Commit**
 
 ```bash
 git add .vault/_index/ .vault/learnings/ .vault/conventions/
@@ -703,7 +703,7 @@ git commit -m "docs(vault): drop skill-authoring craft notes, reframe indexes fo
 
 **Files:** Modify (judgment): `.vault/learnings/claude-code-extra-known-marketplaces-source-schema.md`, `.vault/learnings/vendoring-a-single-skill-loses-upstream-license.md`, `.vault/learnings/harness-engineering-foundations.md`
 
-- [ ] **Step 1: Inspect each occurrence**
+- [x] **Step 1: Inspect each occurrence**
 
 ```bash
 grep -nE "agent-skills" .vault/learnings/claude-code-extra-known-marketplaces-source-schema.md \
@@ -711,9 +711,9 @@ grep -nE "agent-skills" .vault/learnings/claude-code-extra-known-marketplaces-so
                         .vault/learnings/harness-engineering-foundations.md
 ```
 
-- [ ] **Step 2: Apply per-occurrence judgment.** For each line: if `agent-skills` / `ribeirogab-agent-skills` / `ribeirogab/agent-skills` names *this project's current identity* (e.g. an example marketplace coordinate that should stay accurate), update it to `memex` / `<MKT>` / `ribeirogab/memex`. If it describes a *past event* ("the marketplace was renamed to `ribeirogab-agent-skills`") leave it as frozen history. Note: `claude-code-reserved-marketplace-names.md` is explicitly out of scope (frozen historical record) and is not in this list.
+- [x] **Step 2: Apply per-occurrence judgment.** For each line: if `agent-skills` / `ribeirogab-agent-skills` / `ribeirogab/agent-skills` names *this project's current identity* (e.g. an example marketplace coordinate that should stay accurate), update it to `memex` / `<MKT>` / `ribeirogab/memex`. If it describes a *past event* ("the marketplace was renamed to `ribeirogab-agent-skills`") leave it as frozen history. Note: `claude-code-reserved-marketplace-names.md` is explicitly out of scope (frozen historical record) and is not in this list.
 
-- [ ] **Step 3: Commit**
+- [x] **Step 3: Commit**
 
 ```bash
 git add .vault/learnings/
@@ -726,7 +726,7 @@ git commit -m "docs(vault): update kept learnings' live agent-skills references 
 
 ### Task 7.1: Repo-wide cascade verification
 
-- [ ] **Step 1: No active `agent-skills` survivors**
+- [x] **Step 1: No active `agent-skills` survivors**
 
 ```bash
 grep -rIn "agent-skills" --exclude-dir=.git . \
@@ -736,7 +736,7 @@ grep -rIn "agent-skills" --exclude-dir=.git . \
 ```
 Expected: `clean` (only the allowed survivors remain — historical specs and the reserved-names learning).
 
-- [ ] **Step 2: Marketplace + slug fully cascaded**
+- [x] **Step 2: Marketplace + slug fully cascaded**
 
 ```bash
 grep -rIn "ribeirogab-agent-skills" --exclude-dir=.git . | grep -vE "\.vault/specs/|claude-code-reserved-marketplace-names" || echo "clean"
@@ -746,9 +746,9 @@ Expected: both `clean`.
 
 ### Task 7.2: memex Phase-5 validation
 
-- [ ] **Step 1: Run the validator checklist** in `skills/memex/references/validation.md` against this repo (the `.claude/settings.json` checks now expect `<MKT>` and `memex@<MKT>`).
+- [x] **Step 1: Run the validator checklist** in `skills/memex/references/validation.md` against this repo (the `.claude/settings.json` checks now expect `<MKT>` and `memex@<MKT>`).
 
-- [ ] **Step 2: Re-run the marketplace add** to confirm the live plugin still loads under `<MKT>`:
+- [x] **Step 2: Re-run the marketplace add** to confirm the live plugin still loads under `<MKT>`:
 
 ```bash
 claude plugin marketplace add . 2>&1 | tail -3
@@ -757,14 +757,14 @@ Expected: no reservation error; the `memex` plugin resolves. (If interactive, ha
 
 ### Task 7.3: GitHub repo rename (maintainer action)
 
-- [ ] **Step 1: Hand the maintainer the command** — they run, in this repo:
+- [x] **Step 1: Hand the maintainer the command** — they run, in this repo:
 
 ```bash
 gh repo rename memex
 ```
 This renames `ribeirogab/agent-skills` → `ribeirogab/memex` on GitHub and updates the local `origin` remote. GitHub keeps a redirect for `git clone`.
 
-- [ ] **Step 2: Verify the remote**
+- [x] **Step 2: Verify the remote**
 
 ```bash
 git remote get-url origin
@@ -773,11 +773,11 @@ Expected: `…ribeirogab/memex…`. (If the maintainer hasn't run the rename yet
 
 ### Task 7.4: Ship — spec status + reflection (same PR)
 
-- [ ] **Step 1: Flip the spec frontmatter** in `spec-dedicate-repo-to-memex.md`: `status: draft` → `status: shipped`, `shipped: null` → `shipped: 2026-06-13`, and update the `**Status:**` line in the body. Move the spec from "Active" to "Shipped" in `.vault/_index/specs.md`.
+- [x] **Step 1: Flip the spec frontmatter** in `spec-dedicate-repo-to-memex.md`: `status: draft` → `status: shipped`, `shipped: null` → `shipped: 2026-06-13`, and update the `**Status:**` line in the body. Move the spec from "Active" to "Shipped" in `.vault/_index/specs.md`.
 
-- [ ] **Step 2: Reflection** — per the after-completing-a-spec rule, write a learning note for anything non-obvious discovered (e.g. whether `memex` was reserved, any cascade-ordering gotcha), with a `related:` backlink to this spec; or state "No new learnings from this spec" in the PR description if nothing surfaced.
+- [x] **Step 2: Reflection** — per the after-completing-a-spec rule, write a learning note for anything non-obvious discovered (e.g. whether `memex` was reserved, any cascade-ordering gotcha), with a `related:` backlink to this spec; or state "No new learnings from this spec" in the PR description if nothing surfaced.
 
-- [ ] **Step 3: Commit + open PR**
+- [x] **Step 3: Commit + open PR**
 
 ```bash
 git add .vault/specs/2026-06-13-dedicate-repo-to-memex/ .vault/_index/specs.md .vault/learnings/
