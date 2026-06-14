@@ -54,7 +54,7 @@ Create or repair only the items the audit flagged. Never touch files that are al
 
 ### Vault files
 
-For `.obsidian/*.json`, atomic note templates (`templates/learning.md`, `convention.md`), spec templates (`_template/spec.md`, `plan.md`, `tasks.md`), and the four MOCs in `_index/`, read `references/vault-files.md` and write each file from the spec there. Use the project name from Prerequisites to substitute `{{Project Name}}` in MOCs.
+For `.obsidian/*.json`, atomic note templates (`templates/learning.md`, `convention.md`), spec templates (`_template/spec.md`, `design.md`, `tasks.md`), and the four MOCs in `_index/`, read `references/vault-files.md` and write each file from the spec there. Use the project name from Prerequisites to substitute `{{Project Name}}` in MOCs.
 
 ### Constitution
 
@@ -102,9 +102,17 @@ for name in "${SKILL_NAMES[@]}"; do
   cp -r "$MEMEX_DIR/scaffold/skills/$name" ".agents/skills/$name"
 done
 
-# Ensure scripts are executable (only one skill ships scripts today)
+# Ensure bundled skill scripts are executable
 [ -d .agents/skills/memex-brainstorming/scripts ] && \
   chmod +x .agents/skills/memex-brainstorming/scripts/*.sh
+
+# Ship the spec validator into the vault (the single file only — the in-repo
+# fixtures/ sibling is for testing the validator, never scaffolded). Idempotent.
+mkdir -p .memex/scripts
+if [ ! -e .memex/scripts/validate-spec.sh ]; then
+  cp "$MEMEX_DIR/scaffold/vault-scripts/validate-spec.sh" .memex/scripts/validate-spec.sh
+  chmod +x .memex/scripts/validate-spec.sh
+fi
 
 # 2. Per-agent symlinks — only into discovery dirs that already exist
 #    (do NOT auto-create agent dirs; their absence means the user does
@@ -202,7 +210,7 @@ If the audit flagged any spec folder without a `YYYY-MM-DD-` prefix, migrate per
 
 ### Spec file rename migration (if drift was reported)
 
-If the audit detected a spec folder containing slug-named `spec-<slug>.md` / `plan-<slug>.md` / `tasks-<slug>.md` files (instead of the bare-name convention), migrate the folder. Renaming tracked files is a destructive operation — surface each detected folder, get explicit user confirmation per folder, then run the recipe below.
+If the audit detected a spec folder containing slug-named `spec-<slug>.md` / `design-<slug>.md` / `plan-<slug>.md` / `tasks-<slug>.md` files (instead of the bare-name convention), migrate the folder. This is a **filename** migration (slug → bare); it never converts a legacy `plan.md` into `design.md` (frozen specs keep their ship-time shape). `plan` stays in the set for pre-design-era specs; `design` covers the current artifact set. Renaming tracked files is a destructive operation — surface each detected folder, get explicit user confirmation per folder, then run the recipe below.
 
 For each confirmed `<spec_dir>` (e.g. `.memex/specs/2026-04-30-opensource-readiness/`):
 
@@ -211,8 +219,10 @@ spec_dir="<the folder, e.g. .memex/specs/2026-04-30-opensource-readiness>"
 slug=$(basename "$spec_dir" | sed 's/^[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]-//')
 folder=$(basename "$spec_dir")
 
-# 1. Rename each slug-named file to its bare name, preserving git history
-for type in spec plan tasks; do
+# 1. Rename each slug-named file to its bare name, preserving git history.
+#    `design` covers the current artifact set; `plan` stays for pre-design-era
+#    specs (this renames filenames only — it never rewrites plan.md as design.md).
+for type in spec design plan tasks; do
   src="$spec_dir/${type}-${slug}.md"
   dst="$spec_dir/${type}.md"
   [ -f "$src" ] && [ ! -e "$dst" ] && git mv "$src" "$dst"
@@ -222,6 +232,7 @@ done
 for f in "$spec_dir"/*.md; do
   sed -i.bak \
     -e "s|\\[\\[spec-${slug}\\]\\]|[[${folder}/spec\\|spec]]|g" \
+    -e "s|\\[\\[design-${slug}\\]\\]|[[${folder}/design\\|design]]|g" \
     -e "s|\\[\\[plan-${slug}\\]\\]|[[${folder}/plan\\|plan]]|g" \
     -e "s|\\[\\[tasks-${slug}\\]\\]|[[${folder}/tasks\\|tasks]]|g" \
     "$f" && rm "$f.bak"
@@ -229,27 +240,29 @@ done
 
 # 3. Rewrite path-qualified links anywhere they kept the slugged filename:
 #    /<folder>/spec-<slug> → /<folder>/spec
-grep -rl "/${folder}/spec-${slug}\|/${folder}/plan-${slug}\|/${folder}/tasks-${slug}" .memex 2>/dev/null \
+grep -rl "/${folder}/spec-${slug}\|/${folder}/design-${slug}\|/${folder}/plan-${slug}\|/${folder}/tasks-${slug}" .memex 2>/dev/null \
   | while IFS= read -r f; do
       sed -i.bak \
         -e "s|/${folder}/spec-${slug}|/${folder}/spec|g" \
+        -e "s|/${folder}/design-${slug}|/${folder}/design|g" \
         -e "s|/${folder}/plan-${slug}|/${folder}/plan|g" \
         -e "s|/${folder}/tasks-${slug}|/${folder}/tasks|g" \
         "$f" && rm "$f.bak"
     done
 
 # 4. Rewrite bare-basename inbound links: [[spec-<slug>]] → [[<folder>/spec|<slug>]]
-grep -rl "\\[\\[spec-${slug}\\]\\]\|\\[\\[plan-${slug}\\]\\]\|\\[\\[tasks-${slug}\\]\\]" .memex 2>/dev/null \
+grep -rl "\\[\\[spec-${slug}\\]\\]\|\\[\\[design-${slug}\\]\\]\|\\[\\[plan-${slug}\\]\\]\|\\[\\[tasks-${slug}\\]\\]" .memex 2>/dev/null \
   | while IFS= read -r f; do
       sed -i.bak \
         -e "s|\\[\\[spec-${slug}\\]\\]|[[${folder}/spec\\|${slug}]]|g" \
+        -e "s|\\[\\[design-${slug}\\]\\]|[[${folder}/design\\|${slug}]]|g" \
         -e "s|\\[\\[plan-${slug}\\]\\]|[[${folder}/plan\\|${slug}]]|g" \
         -e "s|\\[\\[tasks-${slug}\\]\\]|[[${folder}/tasks\\|${slug}]]|g" \
         "$f" && rm "$f.bak"
     done
 ```
 
-After the recipe runs, `grep -rn "spec-${slug}\|plan-${slug}\|tasks-${slug}" .memex` to confirm no slugged reference survived; update any straggler manually with the user's confirmation.
+After the recipe runs, `grep -rn "spec-${slug}\|design-${slug}\|plan-${slug}\|tasks-${slug}" .memex` to confirm no slugged reference survived; update any straggler manually with the user's confirmation.
 
 Note: steps 3–4 scope edits to `/<folder>/<type>-<slug>` path segments and `[[<type>-<slug>]]` wikilink forms, so they do not match `<folder>/spec-tweaks.md` or other longer names that merely start with `spec`.
 
