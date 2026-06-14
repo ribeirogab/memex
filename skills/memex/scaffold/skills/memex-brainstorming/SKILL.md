@@ -26,10 +26,10 @@ You MUST create a task for each of these items and complete them in order:
 3. **Ask clarifying questions** — one at a time, understand purpose/constraints/success criteria
 4. **Propose 2-3 approaches** — with trade-offs and your recommendation
 5. **Present design** — in sections scaled to their complexity, get user approval after each section
-6. **Post-design batch** — once the design is approved, ask in **one** batch: confirm the **branch name**, and choose the **mode** (`autonomous` | `reviewed`). When `reviewed`, the same batch also asks **"open a PR at the end?"** and **"compact before implementing?"**. Record `branch:` + `mode:` into the spec frontmatter. (autonomous → no further questions; reviewed → the PR/compact answers shape delivery.)
+6. **Post-design batch** — once the design is approved, ask in **one** batch exactly three things: confirm the **branch name**, choose the **mode** (`autonomous` | `reviewed`), and whether to **compact** before implementing. Record `branch:` + `mode:` into the spec frontmatter.
 7. **Write design doc** — save to `.vault/specs/YYYY-MM-DD-<slug>/spec-<slug>.md` (with the recorded `branch:`/`mode:`) and commit
 8. **Self-review the spec — both modes** — dispatch the spec-document-reviewer subagent (completeness/clarity; fix + re-dispatch until approved, max 3 iterations then surface to human), then run `/memex:review-spec` (constitution + vault compliance; fix any FAIL). Both passes run in **both** modes. **There is no human spec-review gate** — design approval (step 5) is the only human review.
-9. **Transition to implementation** — invoke writing-plans skill → `plan`/`tasks`, then follow the `AGENTS.md` `### Spec flow` tail: **reviewed + compact** → after plan/tasks exist, print a ```` ```txt ```` handoff prompt and stop (never compact earlier); **reviewed + no compact** → ask "start implementation?" before coding; **autonomous** → straight through to implement + quality gate + PR + code-review.
+9. **Transition to implementation** — invoke writing-plans skill → `plan`/`tasks`, then follow the `AGENTS.md` `### Spec flow` tail: **compact (either mode)** → after plan/tasks exist, print a ```` ```txt ```` handoff prompt and stop (never compact earlier); otherwise implement → quality gate → reflect, then **deliver per mode** — `autonomous` opens the PR + runs the `memex:code-review` cycle to `lgtm` on its own; `reviewed` first asks "open the PR and run code-review?".
 
 ## Process Flow
 
@@ -42,7 +42,7 @@ digraph brainstorming {
     "Propose 2-3 approaches" [shape=box];
     "Present design sections" [shape=box];
     "User approves design?" [shape=diamond];
-    "Post-design batch\n(branch/mode; reviewed +PR +compact)" [shape=box];
+    "Post-design batch\n(branch + mode + compact)" [shape=box];
     "Write design doc" [shape=box];
     "Spec self-review (both modes)" [shape=box];
     "Invoke writing-plans skill" [shape=doublecircle];
@@ -55,8 +55,8 @@ digraph brainstorming {
     "Propose 2-3 approaches" -> "Present design sections";
     "Present design sections" -> "User approves design?";
     "User approves design?" -> "Present design sections" [label="no, revise"];
-    "User approves design?" -> "Post-design batch\n(branch/mode; reviewed +PR +compact)" [label="yes"];
-    "Post-design batch\n(branch/mode; reviewed +PR +compact)" -> "Write design doc";
+    "User approves design?" -> "Post-design batch\n(branch + mode + compact)" [label="yes"];
+    "Post-design batch\n(branch + mode + compact)" -> "Write design doc";
     "Write design doc" -> "Spec self-review (both modes)";
     "Spec self-review (both modes)" -> "Spec self-review (both modes)" [label="issues, fix"];
     "Spec self-review (both modes)" -> "Invoke writing-plans skill" [label="passes"];
@@ -107,12 +107,12 @@ digraph brainstorming {
 ## After the Design
 
 **Post-design batch (ask once, right after the design is approved):**
-In **one** batch: confirm the **branch name**, and choose the **mode** (`autonomous` | `reviewed`). When `reviewed`, the same batch also asks **"open a PR at the end?"** and **"compact before implementing?"**. Record `branch:` and `mode:` in the spec frontmatter — the recorded `mode:` is registered consent for the feature branch (per `.vault/rules.md`, Git §2).
+In **one** batch, ask exactly three things: confirm the **branch name**, choose the **mode** (`autonomous` | `reviewed`), and whether to **compact** before implementing. Record `branch:` and `mode:` in the spec frontmatter — the recorded `mode:` is registered consent for the feature branch (per `.vault/rules.md`, Git §2). There is no PR question; a PR is always the delivery — the mode only decides whether the agent opens it on its own.
 
-- **`autonomous`** ⇔ direct PR — no further questions: write spec → self-review → writing-plans → implement → quality gate → open the PR (`/memex:new-pr`) → `memex:code-review` cycle to `lgtm`, all hands-off.
-- **`reviewed`** ⇔ validate-before delivery — same spec + self-review; then the PR/compact answers shape the tail (a compact handoff and/or a "start implementation?" gate; the PR is opened only if you asked for one).
+- **`autonomous`** — the recorded mode tells the agent to run all the way to delivery on its own: write spec → self-review → writing-plans → implement → quality gate → reflect → open the PR (`/memex:new-pr`) → `memex:code-review` cycle to `lgtm`, with no further prompts.
+- **`reviewed`** — identical up to and including reflect; then, before delivery, the agent **asks** "open the PR and run code-review?" and proceeds on your go-ahead.
 
-The design-approval gate (step 5) is the **only** human review and is **never** skipped. There is **no** human spec-review gate.
+Both modes self-review the spec and may use the compact handoff. The design-approval gate (step 5) is the **only** human review and is **never** skipped — there is **no** human spec-review gate and no "start implementation" gate.
 
 **Documentation:**
 
@@ -133,9 +133,9 @@ The user is **not** asked to review the spec — design approval already gated t
 
 - Invoke the writing-plans skill to create `plan-<slug>.md` + `tasks-<slug>.md`. Do NOT invoke any other skill — writing-plans is the next step.
 - Once plan + tasks exist, follow the `AGENTS.md` `### Spec flow` tail:
-  - **reviewed + compact=yes** → print a ```` ```txt ```` **handoff prompt** (a one-paragraph summary + the paths to `spec`/`plan`/`tasks` + the mode + the PR decision + "PR not open yet") and stop. The user runs `/compact` (or opens a new chat) and pastes it. **Never compact before the artifacts exist** — the preference was recorded up front; the handoff is produced only now.
-  - **reviewed + compact=no** → ask **"start implementation?"** before writing any code.
-  - **autonomous** → proceed straight through.
+  - **compact = yes (either mode)** → print a ```` ```txt ```` **handoff prompt** (a one-paragraph summary + the paths to `spec`/`plan`/`tasks` + the mode) and stop. The user runs `/compact` (or opens a new chat) and pastes it to resume. **Never compact before the artifacts exist** — the preference was recorded up front; the handoff is produced only now.
+  - **compact = no** → implement straight away.
+  - **Delivery** (after implement → quality gate → reflect): `autonomous` opens the PR (`/memex:new-pr`) and runs the `memex:code-review` cycle to `lgtm` on its own; `reviewed` first asks "open the PR and run code-review?", then does the same.
 
 ## Key Principles
 
