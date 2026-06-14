@@ -69,6 +69,6 @@ created: 2026-06-14
 
 ### Task 8: PR + review to lgtm
 
-- [ ] Step 1: `/memex:new-pr`
-- [ ] Step 2: `memex:code-review` cycle to `lgtm`, hands-off
+- [x] Step 1: `/memex:new-pr` — PR #23 opened
+- [x] Step 2: `memex:code-review` cycle to `lgtm` (0 blockers; specs-index nit fixed)
 - [ ] Step 3: Mark spec `status: shipped` + `shipped:` date once merged-ready per flow
