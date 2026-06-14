@@ -12,7 +12,7 @@ related:
 ---
 # Spec-Driven Workflow — Spec
 
-**Status:** Draft
+**Status:** Shipped
 **Scope:** Rework the memex spec-driven delivery flow into an explicit 7-step pipeline with an autonomous/reviewed execution switch, consolidate the non-negotiable rules into a single `.vault/rules.md`, restructure `AGENTS.md`, and add two bundled companion commands — `/memex:new-pr` and `/memex:code-review`. Applied to both the public scaffold/template and this repo's dogfood.
 
 > **Note on `related:`** — this spec amends `constitution.md` (git hygiene line, PR-command name) and replaces the `.vault/rules/` directory. Both backlinks are recorded above; add reciprocal links when the rules note and constitution are edited.
