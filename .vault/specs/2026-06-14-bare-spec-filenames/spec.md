@@ -1,8 +1,8 @@
 ---
-status: draft
+status: shipped
 feature: bare-spec-filenames
 created: 2026-06-14
-shipped: null
+shipped: 2026-06-14
 branch: feat/bare-spec-filenames
 mode: autonomous
 related:
@@ -13,7 +13,7 @@ related:
 ---
 # Bare Spec Filenames — Spec
 
-**Status:** Draft
+**Status:** Shipped
 **Scope:** Reverse memex's shipped spec-file naming convention from `<type>-<slug>.md` to bare `spec.md` / `plan.md` / `tasks.md`, keeping every wikilink resolvable by making the dated spec folder the link discriminator (path-qualified wikilinks) and re-keying the GC tooling on folder-relative identity.
 
 ## Context
