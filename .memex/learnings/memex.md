@@ -13,7 +13,7 @@ The **memex** is the device Vannevar Bush proposed in his July 1945 *Atlantic* e
 
 ## Context
 
-Surfaced while choosing a name for the `harness` skill in this repo. The skill scaffolds a `.vault/` vault — atomic notes, MOCs, wikilinks, an Obsidian-compatible layout — which is structurally and *conceptually* a memex: it externalizes the agent's project memory and lets future sessions re-traverse the trails left behind. "Harness" described the mechanism (idempotent scaffolder); "memex" describes the *artifact it produces and the role it plays for the agent*. Bush's essay also explicitly framed the memex as an *augmentation of human thought*, which mirrors how this vault augments an agent's reasoning across sessions.
+Surfaced while choosing a name for the `harness` skill in this repo. The skill scaffolds a `.memex/` vault — atomic notes, MOCs, wikilinks, an Obsidian-compatible layout — which is structurally and *conceptually* a memex: it externalizes the agent's project memory and lets future sessions re-traverse the trails left behind. "Harness" described the mechanism (idempotent scaffolder); "memex" describes the *artifact it produces and the role it plays for the agent*. Bush's essay also explicitly framed the memex as an *augmentation of human thought*, which mirrors how this vault augments an agent's reasoning across sessions.
 
 ## How to Apply
 

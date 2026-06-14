@@ -1,6 +1,6 @@
 # Vault Files — File Specifications
 
-All concrete file contents the orchestrator writes when scaffolding the `.vault/` vault. Load this reference only when you are creating or repairing one of these files.
+All concrete file contents the orchestrator writes when scaffolding the `.memex/` vault. Load this reference only when you are creating or repairing one of these files.
 
 ## Contents
 
@@ -20,21 +20,21 @@ Files in this reference fall into **two distinct groups**. Treat them differentl
 
 These files are templates that the user/agent will fill **later**, when creating an individual note or spec. Copy them verbatim. **Do NOT substitute any `{{}}` placeholder during scaffolding.**
 
-- `.vault/templates/learning.md` (has `{{title}}`, `{{date}}`, `{{one-paragraph technical insight}}`, …)
-- `.vault/templates/convention.md` (has `{{title}}`, `{{category}}`, …)
-- `.vault/specs/_template/spec.md` (has `{{Feature Name}}`, `{{kebab-slug-of-feature}}`, …)
-- `.vault/specs/_template/plan.md` (same)
-- `.vault/specs/_template/tasks.md` (same)
+- `.memex/templates/learning.md` (has `{{title}}`, `{{date}}`, `{{one-paragraph technical insight}}`, …)
+- `.memex/templates/convention.md` (has `{{title}}`, `{{category}}`, …)
+- `.memex/specs/_template/spec.md` (has `{{Feature Name}}`, `{{kebab-slug-of-feature}}`, …)
+- `.memex/specs/_template/plan.md` (same)
+- `.memex/specs/_template/tasks.md` (same)
 
 ### Group B — Project-bound files (substitute `{{Project Name}}` now)
 
 These files describe the current project specifically. Substitute every occurrence of `{{Project Name}}` with the actual project name from Prerequisites **before writing** the file. No `{{}}` placeholder may survive in the written file.
 
-- `.vault/_index/home.md`
-- `.vault/_index/specs.md`
-- `.vault/_index/learnings.md`
-- `.vault/_index/conventions.md`
-- `.vault/rules.md`
+- `.memex/_index/home.md`
+- `.memex/_index/specs.md`
+- `.memex/_index/learnings.md`
+- `.memex/_index/conventions.md`
+- `.memex/rules.md`
 
 Surviving `{{Project Name}}` in any Group B file is caught by Phase 5 validation (check #12) and fails the run.
 
@@ -46,7 +46,7 @@ Surviving `{{Project Name}}` in any Group B file is caught by Phase 5 validation
 
 ## Obsidian config
 
-**`.vault/.obsidian/app.json`:**
+**`.memex/.obsidian/app.json`:**
 ```json
 {
   "promptDelete": true,
@@ -58,7 +58,7 @@ Surviving `{{Project Name}}` in any Group B file is caught by Phase 5 validation
 }
 ```
 
-**`.vault/.obsidian/appearance.json`:**
+**`.memex/.obsidian/appearance.json`:**
 ```json
 {
   "baseFontSize": 16,
@@ -67,7 +67,7 @@ Surviving `{{Project Name}}` in any Group B file is caught by Phase 5 validation
 }
 ```
 
-**`.vault/.obsidian/core-plugins.json`:**
+**`.memex/.obsidian/core-plugins.json`:**
 ```json
 {
   "file-explorer": true,
@@ -95,7 +95,7 @@ Surviving `{{Project Name}}` in any Group B file is caught by Phase 5 validation
 
 ## Atomic note templates
 
-**`.vault/templates/learning.md`:**
+**`.memex/templates/learning.md`:**
 ```markdown
 ---
 tags:
@@ -117,7 +117,7 @@ created: {{date}}
 {{concrete, actionable instruction: what to do differently next time}}
 ```
 
-**`.vault/templates/convention.md`:**
+**`.memex/templates/convention.md`:**
 ```markdown
 ---
 tags:
@@ -144,7 +144,7 @@ created: {{date}}
 
 ## Spec templates
 
-**`.vault/specs/_template/spec.md`:**
+**`.memex/specs/_template/spec.md`:**
 ```markdown
 ---
 status: draft
@@ -204,7 +204,7 @@ Tick each `[x]` when verified. A spec is **not shippable** with empty or `{{plac
 {{use [NEEDS CLARIFICATION: specific question] markers for unresolved points}}
 ```
 
-**`.vault/specs/_template/plan.md`:**
+**`.memex/specs/_template/plan.md`:**
 ```markdown
 ---
 feature: {{kebab-slug-of-feature}}
@@ -236,7 +236,7 @@ created: {{YYYY-MM-DD}}
 {{list any decisions the task-writer or implementer must make}}
 ```
 
-**`.vault/specs/_template/tasks.md`:**
+**`.memex/specs/_template/tasks.md`:**
 ```markdown
 ---
 feature: {{kebab-slug-of-feature}}
@@ -269,7 +269,7 @@ created: {{YYYY-MM-DD}}
 
 The MOCs start as skeletons — they grow as notes are added. Use the project info gathered in Prerequisites (see `SKILL.md`) to fill in `{{Project Name}}`.
 
-**`.vault/_index/home.md`:**
+**`.memex/_index/home.md`:**
 ```markdown
 ---
 tags:
@@ -296,7 +296,7 @@ This vault contains all project-specific knowledge for {{Project Name}}: constit
 - Always cross-link notes using Obsidian's `[[ ]]` syntax so backlinks aggregate concepts over time.
 ```
 
-**`.vault/_index/specs.md`:**
+**`.memex/_index/specs.md`:**
 ```markdown
 ---
 tags:
@@ -321,7 +321,7 @@ _No active specs. When a request requires the spec flow, link the new spec here.
 _No shipped specs yet._
 ```
 
-**`.vault/_index/learnings.md`:**
+**`.memex/_index/learnings.md`:**
 ```markdown
 ---
 tags:
@@ -346,7 +346,7 @@ _No references yet._
 _No gotchas captured yet. Add the first one when you hit a repeatable surprise._
 ```
 
-**`.vault/_index/conventions.md`:**
+**`.memex/_index/conventions.md`:**
 ```markdown
 ---
 tags:
@@ -361,7 +361,7 @@ Deliberate code style choices that all code in {{Project Name}} must follow. The
 _No conventions yet. Add the first one when a team decision is made._
 ```
 
-**`.vault/rules.md`:**
+**`.memex/rules.md`:**
 ```markdown
 ---
 status: canonical
@@ -369,7 +369,7 @@ created: {{YYYY-MM-DD}}
 ---
 # {{Project Name}} — Rules
 
-The non-negotiable operational rules for working in {{Project Name}}: philosophy, git & delivery, and code. These are conduct rules — the *how*. Security and architecture non-negotiables are defined in detail in `.vault/constitution.md`; this file points at them, it does not restate them.
+The non-negotiable operational rules for working in {{Project Name}}: philosophy, git & delivery, and code. These are conduct rules — the *how*. Security and architecture non-negotiables are defined in detail in `.memex/constitution.md`; this file points at them, it does not restate them.
 
 A finding, review, or decision that invokes a rule here cites it by name (e.g. "Meaningful Comments rule", "Explicit Consent rule").
 
@@ -408,5 +408,5 @@ A finding, review, or decision that invokes a rule here cites it by name (e.g. "
 
 ## Security
 
-Security non-negotiables are defined in detail in `.vault/constitution.md`. A security finding cites the constitution by section.
+Security non-negotiables are defined in detail in `.memex/constitution.md`. A security finding cites the constitution by section.
 ```

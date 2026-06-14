@@ -32,7 +32,7 @@ OpenAI's specific innovation: when a custom lint fires, the **error message itse
 ```
 ERROR: file `src/auth/login.ts` exceeds the 200-line module limit.
 Fix: split into `login-handler.ts` (HTTP) and `login-service.ts` (logic).
-See `.vault/conventions/file-size-limits.md` for rationale.
+See `.memex/conventions/file-size-limits.md` for rationale.
 ```
 
 When the agent reads this message, it has both the violation and the remediation in-context simultaneously.

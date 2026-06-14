@@ -4,7 +4,7 @@ created: 2026-06-13
 ---
 # memex — Rules
 
-The non-negotiable operational rules for working in memex: philosophy, git & delivery, and code. These are conduct rules — the *how*. Security and architecture non-negotiables are defined in detail in `.vault/constitution.md`; this file points at them, it does not restate them.
+The non-negotiable operational rules for working in memex: philosophy, git & delivery, and code. These are conduct rules — the *how*. Security and architecture non-negotiables are defined in detail in `.memex/constitution.md`; this file points at them, it does not restate them.
 
 A finding, review, or decision that invokes a rule here cites it by name (e.g. "Meaningful Comments rule", "Explicit Consent rule").
 
@@ -43,4 +43,4 @@ A finding, review, or decision that invokes a rule here cites it by name (e.g. "
 
 ## Security
 
-Security non-negotiables — what must never leak, what boundaries must never be crossed — are defined in detail in `.vault/constitution.md`. Read them there; a security finding cites the constitution by section.
+Security non-negotiables — what must never leak, what boundaries must never be crossed — are defined in detail in `.memex/constitution.md`. Read them there; a security finding cites the constitution by section.

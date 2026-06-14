@@ -26,11 +26,11 @@ The four failure modes OpenAI named:
 **The fix** OpenAI converged on (and that this repo's `memex/` skill scaffolds by default):
 
 - A short `AGENTS.md` (≤ 80 lines, target 70–80) — the entry point. It states the project, the workflow trigger, the work ethic, and the locations of deeper knowledge.
-- A structured directory (`.vault/` here, `docs/` in OpenAI's case) holding the system of record: constitution, design docs, exec plans, generated artifacts, references.
+- A structured directory (`.memex/` here, `docs/` in OpenAI's case) holding the system of record: constitution, design docs, exec plans, generated artifacts, references.
 - Cross-links between them, validated mechanically (linters, CI checks).
 - Progressive disclosure: agents start with the small map and are taught where to look next.
 
-Looking at this repo's `AGENTS.md` (currently 72 lines) and `.vault/_index/home.md` MOC: this pattern is already followed and the size cap (#14) protects against future bloat. Future edits should respect the cap — never let `AGENTS.md` swell.
+Looking at this repo's `AGENTS.md` (currently 72 lines) and `.memex/_index/home.md` MOC: this pattern is already followed and the size cap (#14) protects against future bloat. Future edits should respect the cap — never let `AGENTS.md` swell.
 
 ## Note on scope
 
