@@ -23,7 +23,7 @@ These files are templates that the user/agent will fill **later**, when creating
 - `.memex/templates/learning.md` (has `{{title}}`, `{{date}}`, `{{one-paragraph technical insight}}`, …)
 - `.memex/templates/convention.md` (has `{{title}}`, `{{category}}`, …)
 - `.memex/specs/_template/spec.md` (has `{{Feature Name}}`, `{{kebab-slug-of-feature}}`, …)
-- `.memex/specs/_template/plan.md` (same)
+- `.memex/specs/_template/design.md` (same)
 - `.memex/specs/_template/tasks.md` (same)
 
 ### Group B — Project-bound files (substitute `{{Project Name}}` now)
@@ -149,6 +149,7 @@ created: {{date}}
 ---
 status: draft
 feature: {{kebab-slug-of-feature}}
+scope: {{low | medium | high | complex}}
 created: {{YYYY-MM-DD}}
 shipped: null
 branch: {{feat/kebab-slug-of-feature}}
@@ -158,21 +159,26 @@ related: []
 # {{Feature Name}} — Spec
 
 **Status:** Draft
+**Design:** [[design]]
 **Scope:** {{one-sentence scope statement}}
 
-> **Note on `related:` frontmatter** — populate the `related:` list with wikilinks to learnings, conventions, or rules this spec touches, reads, or modifies. Empty `related:` is allowed only if the spec genuinely has no vault dependencies; `/memex:sweep` will flag isolated specs.
+> **Note on `scope:` frontmatter** — `scope` is one of `low | medium | high | complex`. It is **recorded only**: reserved for a future quick-mode and does **not** yet gate which artifacts are written. Set it honestly; nothing branches on it today.
+>
+> **Note on `related:` frontmatter** — populate with wikilinks to learnings, conventions, or rules this spec touches, reads, or modifies. Empty `related:` is allowed only if the spec genuinely has no vault dependencies; `/memex:sweep` will flag isolated specs.
 
-## Context
+This is the **technical** spec — the *how*. The non-technical *why* (purpose, motivation, definitions, non-goals) lives in `[[design]]`.
 
-{{why this feature exists, what triggered it, relevant constraints}}
+## Architecture
 
-## Problem Statement
+{{the high-level technical approach and why it was chosen over alternatives; diagrams, component breakdown, data flow}}
 
-{{what specific problem this feature solves}}
+## File Structure
 
-## Non-Goals
+{{files to be created, modified, or deleted, with one-line responsibilities}}
 
-{{what this feature explicitly does NOT solve — prevents scope creep}}
+## Phase Ordering
+
+{{if the work has natural phases, list them with dependencies; otherwise "Single phase."}}
 
 ## Constraints
 
@@ -184,14 +190,14 @@ related: []
 
 ## Acceptance Criteria
 
-Each criterion must be a binary, observable check that someone other than the implementer can verify in under a minute. **No vague verbs** ("works well", "is fast", "is robust", "handles errors gracefully") — replace them with specific, measurable conditions. If a criterion cannot be verified without reading the implementation, it is not an acceptance criterion; rewrite it.
+Number each criterion `AC-1`, `AC-2`, … — the IDs are stable handles that `tasks.md` references (each task names the `AC-N` it satisfies) and that `memex-code-review` walks to prove every criterion was delivered. Each criterion must be a binary, observable check that someone other than the implementer can verify in under a minute. **No vague verbs** ("works well", "is fast", "is robust", "handles errors gracefully") — replace them with specific, measurable conditions. If a criterion cannot be verified without reading the implementation, it is not an acceptance criterion; rewrite it.
 
-- [ ] {{ e.g. `POST /users` with a duplicate email returns 409 and body `{"code":"DUPLICATE_EMAIL"}` }}
-- [ ] {{ e.g. p95 latency for `GET /feed` stays under 200ms with a 1k-row fixture }}
-- [ ] {{ e.g. the migration script runs idempotently — running it twice on the same DB yields no diff }}
-- [ ] {{ ... }}
+- [ ] **AC-1** {{ e.g. `POST /users` with a duplicate email returns 409 and body `{"code":"DUPLICATE_EMAIL"}` }}
+- [ ] **AC-2** {{ e.g. p95 latency for `GET /feed` stays under 200ms with a 1k-row fixture }}
+- [ ] **AC-3** {{ e.g. the migration script runs idempotently — running it twice on the same DB yields no diff }}
+- [ ] **AC-N** {{ ... }}
 
-Tick each `[x]` when verified. A spec is **not shippable** with empty or `{{placeholder}}` acceptance criteria — `/memex:review-spec` will reject it.
+Tick each `[x]` when verified. A spec is **not shippable** with empty or `{{placeholder}}` acceptance criteria — `.memex/scripts/validate-spec.sh` and `/memex:review-spec` will reject it.
 
 ## Risks and Mitigations
 
@@ -201,56 +207,57 @@ Tick each `[x]` when verified. A spec is **not shippable** with empty or `{{plac
 
 ## Open Questions
 
-{{use [NEEDS CLARIFICATION: specific question] markers for unresolved points}}
+{{use [NEEDS CLARIFICATION: specific question] markers for unresolved points; write `None.` if there are none — silence is not resolution}}
 ```
 
-**`.memex/specs/_template/plan.md`:**
+**`.memex/specs/_template/design.md`:**
 ```markdown
 ---
 feature: {{kebab-slug-of-feature}}
 spec: "[[spec]]"
 created: {{YYYY-MM-DD}}
 ---
-# {{Feature Name}} — Plan
+# {{Feature Name}} — Design
 
-**For this spec:** `[[spec]]`
+> Non-technical write-up of the **already-approved** design — purpose, motivation, definitions, non-goals. Created after design approval as a durable record of *why*; it is **not** a second human-review gate. The technical *how* (architecture, file structure, acceptance criteria) lives in `[[spec]]`.
 
-## Approach
+## Purpose
 
-{{2-3 paragraphs: the high-level technical approach and why it was chosen over alternatives}}
+{{what this feature is for, in plain language — the outcome a reader should understand without any code context}}
 
-## Architecture
+## Motivation
 
-{{diagrams, component breakdown, data flow}}
+{{why this exists now — what triggered it, what pain it removes, what it unlocks}}
 
-## File Structure
+## Definitions
 
-{{files to be created, modified, or deleted, with one-line responsibilities}}
+{{domain terms, named concepts, and any vocabulary the spec/tasks rely on — one line each}}
 
-## Phase Ordering
+## Non-Goals
 
-{{if the work has natural phases, list them with dependencies}}
-
-## Risks / Open Decisions
-
-{{list any decisions the task-writer or implementer must make}}
+{{what this feature explicitly does NOT do — the boundaries that keep scope honest}}
 ```
 
 **`.memex/specs/_template/tasks.md`:**
 ```markdown
 ---
 feature: {{kebab-slug-of-feature}}
-plan: "[[plan]]"
+design: "[[design]]"
 spec: "[[spec]]"
 created: {{YYYY-MM-DD}}
 ---
 # {{Feature Name}} — Tasks
 
-**For this plan:** `[[plan]]`
+**For this spec:** `[[spec]]`
+
+> Each task names the `AC:` (acceptance criteria from `[[spec]]` it satisfies — every `AC-N` must be referenced by at least one task) and `Delegable:` (whether it suits an isolated subagent, and the one-line context that subagent would receive).
 
 ## Phase 1: {{name}}
 
 ### Task 1: {{name}}
+
+**AC:** {{AC-N it satisfies, e.g. AC-1, AC-2}}
+**Delegable:** {{yes/no + one-line isolated context the subagent would receive}}
 
 - [ ] Step 1: {{action}}
 - [ ] Step 2: {{verification}}
@@ -261,7 +268,7 @@ created: {{YYYY-MM-DD}}
 
 **Spec folder naming convention:** `YYYY-MM-DD-<kebab-slug>/` where `YYYY-MM-DD` is the date the spec was created. Examples: `2026-04-15-user-auth`, `2026-04-16-mobile-responsiveness`, `2026-04-17-api-refactoring`. Use today's date when creating a new spec; if multiple specs are created on the same day, the `<kebab-slug>` disambiguates them. The `_template/` folder is excluded from listings.
 
-**Spec file naming convention:** the three files inside a spec folder keep **bare** names — `spec.md`, `plan.md`, `tasks.md`. The dated folder (`YYYY-MM-DD-<kebab-slug>/`) is the discriminator, so cross-references are **path-qualified wikilinks** that carry the folder: a sibling link is `[[YYYY-MM-DD-<kebab-slug>/spec|spec]]`, and an inbound link from elsewhere in the vault is `[[../specs/YYYY-MM-DD-<kebab-slug>/spec|<kebab-slug>]]`. This keeps every `[[ ]]` globally unique — Obsidian and the `/memex:link` resolver key on the path, not the basename — while filenames stay clean. Templates inside `_template/` keep bare, **unqualified** placeholders (`[[spec]]`, `[[plan]]`); the generating skills (`memex-brainstorming`, `memex-writing-plans`) inject the `YYYY-MM-DD-<kebab-slug>/` folder prefix when they copy the template into a real dated folder. Trade-off, accepted deliberately: editor tabs and fuzzy-finder entries show `spec.md` for every spec, distinguished only by their parent folder.
+**Spec file naming convention:** the three files inside a spec folder keep **bare** names — `spec.md`, `design.md`, `tasks.md`. The dated folder (`YYYY-MM-DD-<kebab-slug>/`) is the discriminator, so cross-references are **path-qualified wikilinks** that carry the folder: a sibling link is `[[YYYY-MM-DD-<kebab-slug>/spec|spec]]`, and an inbound link from elsewhere in the vault is `[[../specs/YYYY-MM-DD-<kebab-slug>/spec|<kebab-slug>]]`. This keeps every `[[ ]]` globally unique — Obsidian and the `/memex:link` resolver key on the path, not the basename — while filenames stay clean. Templates inside `_template/` keep bare, **unqualified** placeholders (`[[spec]]`, `[[design]]`); the generating skills (`memex-brainstorming`, `memex-writing-plans`) inject the `YYYY-MM-DD-<kebab-slug>/` folder prefix when they copy the template into a real dated folder. Trade-off, accepted deliberately: editor tabs and fuzzy-finder entries show `spec.md` for every spec, distinguished only by their parent folder.
 
 ---
 
