@@ -26,10 +26,12 @@ You MUST create a task for each of these items and complete them in order:
 3. **Ask clarifying questions** — one at a time, understand purpose/constraints/success criteria
 4. **Propose 2-3 approaches** — with trade-offs and your recommendation
 5. **Present design** — in sections scaled to their complexity, get user approval after each section
-6. **Write design doc** — save to `.vault/specs/YYYY-MM-DD-<slug>/spec-<slug>.md` and commit
-7. **Spec review loop** — dispatch spec-document-reviewer subagent with precisely crafted review context (never your session history); fix issues and re-dispatch until approved (max 3 iterations, then surface to human)
-8. **User reviews written spec** — ask user to review the spec file before proceeding
-9. **Transition to implementation** — invoke writing-plans skill to create implementation plan
+6. **Ask execution mode** — once the design is approved, ask one question: **autonomous or reviewed?** Record `branch:` + `mode:` into the spec frontmatter. `autonomous` ⇔ direct PR: from here the run is 100% hands-off — skip steps 8 and 9 and go straight to implementation. `reviewed` ⇔ validate-before PR: run steps 8 and 9.
+7. **Write design doc** — save to `.vault/specs/YYYY-MM-DD-<slug>/spec-<slug>.md` (with the recorded `branch:`/`mode:`) and commit
+8. **Spec review loop** *(reviewed mode only — skip entirely when `mode: autonomous`)* — dispatch spec-document-reviewer subagent with precisely crafted review context (never your session history); fix issues and re-dispatch until approved (max 3 iterations, then surface to human)
+9. **User reviews written spec** *(reviewed mode only — skip entirely when `mode: autonomous`)* — ask user to review the spec file before proceeding
+10. **`/memex:review-spec` external pass** *(reviewed mode only — skip entirely when `mode: autonomous`)* — run the external evaluator against `.vault/constitution.md` + the vault; fix any FAILs before handing off
+11. **Transition to implementation** — invoke writing-plans skill to create implementation plan
 
 ## Process Flow
 
@@ -42,10 +44,12 @@ digraph brainstorming {
     "Propose 2-3 approaches" [shape=box];
     "Present design sections" [shape=box];
     "User approves design?" [shape=diamond];
+    "Ask execution mode" [shape=box];
     "Write design doc" [shape=box];
     "Spec review loop" [shape=box];
     "Spec review passed?" [shape=diamond];
     "User reviews spec?" [shape=diamond];
+    "/memex:review-spec pass" [shape=box];
     "Invoke writing-plans skill" [shape=doublecircle];
 
     "Explore project context" -> "Visual questions ahead?";
@@ -56,13 +60,16 @@ digraph brainstorming {
     "Propose 2-3 approaches" -> "Present design sections";
     "Present design sections" -> "User approves design?";
     "User approves design?" -> "Present design sections" [label="no, revise"];
-    "User approves design?" -> "Write design doc" [label="yes"];
-    "Write design doc" -> "Spec review loop";
+    "User approves design?" -> "Ask execution mode" [label="yes"];
+    "Ask execution mode" -> "Write design doc";
+    "Write design doc" -> "Spec review loop" [label="reviewed"];
+    "Write design doc" -> "Invoke writing-plans skill" [label="autonomous"];
     "Spec review loop" -> "Spec review passed?";
     "Spec review passed?" -> "Spec review loop" [label="issues found,\nfix and re-dispatch"];
     "Spec review passed?" -> "User reviews spec?" [label="approved"];
     "User reviews spec?" -> "Write design doc" [label="changes requested"];
-    "User reviews spec?" -> "Invoke writing-plans skill" [label="approved"];
+    "User reviews spec?" -> "/memex:review-spec pass" [label="approved"];
+    "/memex:review-spec pass" -> "Invoke writing-plans skill";
 }
 ```
 
@@ -109,26 +116,37 @@ digraph brainstorming {
 
 ## After the Design
 
+**Execution mode (ask once, after the design is approved):**
+Ask the user: **autonomous or reviewed?** Record `branch:` and `mode:` in the spec frontmatter. The recorded `mode:` is registered consent for the feature branch (per `.vault/rules.md`, Git §2).
+
+- **`reviewed`** ⇔ validate-before PR — run the Spec Review Loop, the User Review Gate, and the `/memex:review-spec` external pass below, then hand off to writing-plans.
+- **`autonomous`** ⇔ direct PR — from here the run is 100% hands-off: **skip the Spec Review Loop and the User Review Gate**, hand straight off to writing-plans, then implement, run the quality gate, open the PR (`/memex:new-pr`), and drive the `memex:code-review` cycle to `lgtm` — all without further prompts. See `AGENTS.md` (`## Workflow Spec Driven`) for the full tail.
+
+The design-approval gate above is **never** skipped, in either mode.
+
 **Documentation:**
 
-- Write the validated design (spec) to `.vault/specs/YYYY-MM-DD-<slug>/spec-<slug>.md`
+- Write the validated design (spec) to `.vault/specs/YYYY-MM-DD-<slug>/spec-<slug>.md`, including the recorded `branch:`/`mode:`
   - (User preferences for spec location override this default)
 - Use elements-of-style:writing-clearly-and-concisely skill if available
 - Commit the design document to git
 
-**Spec Review Loop:**
+**Spec Review Loop** *(reviewed mode only — skip when `mode: autonomous`)*:
 After writing the spec document:
 
 1. Dispatch spec-document-reviewer subagent (see spec-document-reviewer-prompt.md)
 2. If Issues Found: fix, re-dispatch, repeat until Approved
 3. If loop exceeds 3 iterations, surface to human for guidance
 
-**User Review Gate:**
+**User Review Gate** *(reviewed mode only — skip when `mode: autonomous`)*:
 After the spec review loop passes, ask the user to review the written spec before proceeding:
 
 > "Spec written and committed to `<path>`. Please review it and let me know if you want to make any changes before we start writing out the implementation plan."
 
 Wait for the user's response. If they request changes, make them and re-run the spec review loop. Only proceed once the user approves.
+
+**`/memex:review-spec` external pass** *(reviewed mode only — skip when `mode: autonomous`)*:
+After the user approves the spec, run `/memex:review-spec` — the external evaluator that reads `.vault/constitution.md` + the vault and flags constitution violations, vague acceptance criteria, and duplication. Fix any `FAIL` it returns before handing off. This is a distinct pass from the spec-document-reviewer subagent above: the subagent checks completeness/clarity, `/memex:review-spec` checks constitution compliance.
 
 **Implementation:**
 

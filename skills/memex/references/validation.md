@@ -55,13 +55,9 @@ Same fix as #2.
 
 ```bash
 required=(
-  "## Before starting any work"
-  "## Work ethic — never the lazy path"
-  "## When stuck or in doubt — read the vault first"
-  "## After completing any task"
-  "## After completing a spec"
-  "## Commands (most used)"
-  "## Knowledge locations"
+  "## Workflow Spec Driven"
+  "## Non-negotiable rules"
+  "## Vault — read from it, write to it"
   "## Skills and slash commands"
 )
 missing=()
@@ -75,7 +71,7 @@ Fix: read `references/agents-md-template.md` and insert the missing sections in 
 
 ### 5. Frontmatter valid in MOCs and templates
 
-For each of `.vault/_index/{home,specs,learnings,conventions,rules}.md`, `.vault/templates/{learning,rule,convention}.md`, and `.vault/specs/_template/{spec,plan,tasks}.md`, confirm the file begins with `---` and contains a closing `---` with at least one expected field (`tags:`, `feature:`, or `status:`) between them.
+For each of `.vault/_index/{home,specs,learnings,conventions}.md`, `.vault/rules.md`, `.vault/templates/{learning,convention}.md`, and `.vault/specs/_template/{spec,plan,tasks}.md`, confirm the file begins with `---` and contains a closing `---` with at least one expected field (`tags:`, `feature:`, or `status:`) between them.
 
 ```bash
 for f in .vault/_index/*.md .vault/templates/*.md .vault/specs/_template/*.md; do
@@ -119,7 +115,7 @@ FAIL lists the offending folder names. Fix: rename per the migration prompt in `
 Skills are canonically under `.agents/skills/<name>/`. Per-agent symlinks (`.claude/skills/<name>`, etc.) are bonus exposure, not the source of truth.
 
 ```bash
-for s in memex-recall memex-brainstorming memex-writing-plans memex-link; do
+for s in memex-recall memex-brainstorming memex-writing-plans memex-link memex-new-pr memex-code-review; do
   [ -f ".agents/skills/$s/SKILL.md" ] && echo "PASS: $s" || echo "FAIL: $s"
 done
 ```
@@ -163,7 +159,7 @@ Fix: re-run the settings.json merge block from `SKILL.md` (Phase 4), which uses 
 
 ### 12. MOCs have no surviving `{{Project Name}}` placeholders
 
-The five MOCs in `.vault/_index/` belong to Group B in `references/vault-files.md` — they must have `{{Project Name}}` substituted with the actual project name. Surviving placeholders here mean the scaffold step skipped a file.
+The four MOCs in `.vault/_index/` belong to Group B in `references/vault-files.md` — they must have `{{Project Name}}` substituted with the actual project name. Surviving placeholders here mean the scaffold step skipped a file.
 
 ```bash
 grep -nH '{{' .vault/_index/*.md && echo FAIL || echo PASS
@@ -173,7 +169,7 @@ Fix: re-substitute `{{Project Name}}` (and any other surviving `{{}}` placeholde
 
 ### 13. Spec template carries an `## Acceptance Criteria` section
 
-Every spec produced from `_template/spec.md` must inherit a structured Acceptance Criteria section so the behaviour harness has something concrete to verify. If the heading was deleted from the template, every future spec loses it silently — `/memex-review-spec` would have nothing to enforce.
+Every spec produced from `_template/spec.md` must inherit a structured Acceptance Criteria section so the behaviour harness has something concrete to verify. If the heading was deleted from the template, every future spec loses it silently — `/memex:review-spec` would have nothing to enforce.
 
 ```bash
 grep -q '^## Acceptance Criteria$' .vault/specs/_template/spec.md \
@@ -185,14 +181,14 @@ Fix: re-create `_template/spec.md` from the spec block in `references/vault-file
 
 ### 14. `AGENTS.md` is at most 80 lines
 
-The file is loaded into every agent session as the entry-point contract. Letting it grow past 80 lines crowds context and reintroduces the "encyclopedia" anti-pattern that the canonical authoring rules explicitly reject (see `.vault/learnings/agents-md-as-map-not-encyclopedia.md`). Target range is 70–80 lines.
+The file is loaded into every agent session as the entry-point contract. Letting it grow past 80 lines crowds context and reintroduces the "encyclopedia" anti-pattern that the canonical authoring rules explicitly reject (see `.vault/learnings/agents-md-as-map-not-encyclopedia.md`). Target range is 45–70 lines.
 
 ```bash
 lines=$(wc -l < AGENTS.md | tr -d ' ')
 [ "$lines" -le 80 ] && echo "PASS ($lines lines)" || echo "FAIL ($lines lines, cap 80)"
 ```
 
-FAIL means `AGENTS.md` exceeded the cap. Fix: trim the body per the guidance in `references/agents-md-template.md` (`## Size constraint`) — tighten the project-description paragraph, cap `## Commands (most used)` at 5–6 entries, replace any longer narrative with a one-line pointer into `.vault/`. Never drop a required section header (check #4 enforces those).
+FAIL means `AGENTS.md` exceeded the cap. Fix: trim the body per the guidance in `references/agents-md-template.md` (`## Size constraint`) — tighten body prose and replace any longer narrative with a one-line pointer into `.vault/`. Never drop a required section header (check #4 enforces those).
 
 ### 15. No spec folder contains generic `spec.md` / `plan.md` / `tasks.md`
 

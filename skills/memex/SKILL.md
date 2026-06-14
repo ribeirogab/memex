@@ -54,7 +54,7 @@ Create or repair only the items the audit flagged. Never touch files that are al
 
 ### Vault files
 
-For `.obsidian/*.json`, atomic note templates (`templates/learning.md`, `rule.md`, `convention.md`), spec templates (`_template/spec.md`, `plan.md`, `tasks.md`), and the five MOCs in `_index/`, read `references/vault-files.md` and write each file from the spec there. Use the project name from Prerequisites to substitute `{{Project Name}}` in MOCs.
+For `.obsidian/*.json`, atomic note templates (`templates/learning.md`, `convention.md`), spec templates (`_template/spec.md`, `plan.md`, `tasks.md`), and the four MOCs in `_index/`, read `references/vault-files.md` and write each file from the spec there. Use the project name from Prerequisites to substitute `{{Project Name}}` in MOCs.
 
 ### Constitution
 
@@ -62,7 +62,7 @@ For `.vault/constitution.md`, read `references/constitution-template.md`. It con
 
 ### AGENTS.md
 
-For `AGENTS.md` at the repo root, read `references/agents-md-template.md`. Fill `{{Project Name}}`, the project description paragraph, and the `## Commands (most used)` section from Prerequisites. The reference lists all required section headers — none may be missing.
+For `AGENTS.md` at the repo root, read `references/agents-md-template.md`. Fill `{{Project Name}}` and `{{project}}` from Prerequisites; the `### Spec flow` and section structure are fixed. The reference lists all required section headers — none may be missing, and the final file must stay ≤ 80 lines.
 
 ### CLAUDE.md symlink (Claude Code back-compat)
 
@@ -93,7 +93,7 @@ All bundled skills and commands live in `scaffold/` alongside this `SKILL.md`.
 
 ```bash
 MEMEX_DIR="<directory where this SKILL.md lives>"
-SKILL_NAMES=(memex-recall memex-brainstorming memex-writing-plans memex-link)
+SKILL_NAMES=(memex-recall memex-brainstorming memex-writing-plans memex-link memex-new-pr memex-code-review)
 
 # 1. Canonical install — single source of truth on disk
 mkdir -p .agents/skills
@@ -236,7 +236,7 @@ sed -i.bak \
   .vault/_index/specs.md && rm .vault/_index/specs.md.bak
 ```
 
-After the recipe runs, also `grep -rln "\[\[spec\]\]\|\[\[plan\]\]\|\[\[tasks\]\]" .vault/learnings/ .vault/conventions/ .vault/rules/` to surface any external wikilinks that might have pointed at the old basenames; update those manually with the user's confirmation (those references are not always intra-spec — they could legitimately mean "the spec template").
+After the recipe runs, also `grep -rln "\[\[spec\]\]\|\[\[plan\]\]\|\[\[tasks\]\]" .vault/learnings/ .vault/conventions/ .vault/rules.md` to surface any external wikilinks that might have pointed at the old basenames; update those manually with the user's confirmation (those references are not always intra-spec — they could legitimately mean "the spec template").
 
 Note for the `sed` `-e` line: `[|\\]]` is a character class matching `|` or `]` — this scopes the replacement to wikilink edges so we do not match `<folder>/spec-tweaks.md` or other longer paths that happen to start with `spec`.
 
