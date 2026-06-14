@@ -65,44 +65,44 @@ memex's current artifacts mix concerns and leave verification open: `spec.md` bl
 
 **Artifact model (Phase 1)**
 
-- [ ] `.memex/specs/_template/design.md` exists with frontmatter (`feature`, `spec: "[[spec]]"`, `created`) and the sections Purpose, Motivation, Definitions, Non-Goals.
-- [ ] `.memex/specs/_template/plan.md` no longer exists (removed from the dogfood template and from the install templates in `vault-files.md`).
-- [ ] `.memex/specs/_template/spec.md` is the technical doc: frontmatter includes `scope: {{low | medium | high | complex}}`; body contains a `design: "[[design]]"` link, Architecture, File Structure, Phase Ordering, an Acceptance Criteria section using `AC-N` IDs, and Risks; it no longer contains Context/Problem Statement/Motivation (those moved to `design.md`).
-- [ ] `.memex/specs/_template/tasks.md` shows, per task, an `AC:` field listing the `AC-N` it satisfies and a `Delegable:` field (`yes`/`no` + one-line isolated-context note).
-- [ ] `skills/memex/references/vault-files.md` embeds the same four template changes (design.md added, plan.md removed, spec.md technical+scope+AC-N, tasks.md AC+Delegable) so new installs scaffold the new model.
-- [ ] `skills/memex/SKILL.md`'s legacy slug→bare rename loop (`for type in spec plan tasks`) is updated to include `design` (→ `spec design plan tasks`); `plan` is **retained** so pre-design-era specs still migrate their filenames to bare names (this loop renames filenames only; it never converts `plan.md` into `design.md`). The current artifact set scaffolds via the `_template/` copy in `vault-files.md`, not a per-type loop.
+- [x] `.memex/specs/_template/design.md` exists with frontmatter (`feature`, `spec: "[[spec]]"`, `created`) and the sections Purpose, Motivation, Definitions, Non-Goals.
+- [x] `.memex/specs/_template/plan.md` no longer exists (removed from the dogfood template and from the install templates in `vault-files.md`).
+- [x] `.memex/specs/_template/spec.md` is the technical doc: frontmatter includes `scope: {{low | medium | high | complex}}`; body contains a `design: "[[design]]"` link, Architecture, File Structure, Phase Ordering, an Acceptance Criteria section using `AC-N` IDs, and Risks; it no longer contains Context/Problem Statement/Motivation (those moved to `design.md`).
+- [x] `.memex/specs/_template/tasks.md` shows, per task, an `AC:` field listing the `AC-N` it satisfies and a `Delegable:` field (`yes`/`no` + one-line isolated-context note).
+- [x] `skills/memex/references/vault-files.md` embeds the same four template changes (design.md added, plan.md removed, spec.md technical+scope+AC-N, tasks.md AC+Delegable) so new installs scaffold the new model.
+- [x] `skills/memex/SKILL.md`'s legacy slug→bare rename loop (`for type in spec plan tasks`) is updated to include `design` (→ `spec design plan tasks`); `plan` is **retained** so pre-design-era specs still migrate their filenames to bare names (this loop renames filenames only; it never converts `plan.md` into `design.md`). The current artifact set scaffolds via the `_template/` copy in `vault-files.md`, not a per-type loop.
 
 **Flow + skills (Phase 1)**
 
-- [ ] `AGENTS.md` (root) and `skills/memex/references/agents-md-template.md` describe the reflowed flow: brainstorming → `design.md`; writing-plans → fused `spec.md` + `tasks.md`; the two-subagent code-review; and they reference where validator/test-integrity run. `AGENTS.md` is **≤ 80 lines** (`wc -l` — the enforced cap in `validation.md` check #14; target 45–70).
-- [ ] If any AGENTS.md section header changes, `validation.md` check #4's required-header list is updated in lockstep so it neither misses a renamed header nor demands a removed one.
-- [ ] `memex-brainstorming/SKILL.md` (all 3 copies) instructs writing `design.md` (not `spec.md`) as the approved-design write-up.
-- [ ] `memex-writing-plans/SKILL.md` (all 3 copies) instructs producing the fused technical `spec.md` + `tasks.md` (with `AC-N` refs + `Delegable` annotations).
-- [ ] The spec/plan reviewer prompts are reconciled into a single fused-spec reviewer (the standalone plan-document-reviewer is removed or folded), in all 3 copies.
-- [ ] `plugins/memex/commands/review-spec.md` is updated: its required-sections check (#3) lists the new `spec.md` sections (no Context/Problem Statement), and it evaluates `design.md` for its Purpose/Motivation/Definitions/Non-Goals sections.
-- [ ] The `scope` line in `_template/spec.md` carries an inline note stating it is recorded-only and reserved for a future quick-mode (not yet artifact-gating); the same note appears in `references/vault-files.md`'s embedded copy.
+- [x] `AGENTS.md` (root) and `skills/memex/references/agents-md-template.md` describe the reflowed flow: brainstorming → `design.md`; writing-plans → fused `spec.md` + `tasks.md`; the two-subagent code-review; and they reference where validator/test-integrity run. `AGENTS.md` is **≤ 80 lines** (`wc -l` — the enforced cap in `validation.md` check #14; target 45–70).
+- [x] If any AGENTS.md section header changes, `validation.md` check #4's required-header list is updated in lockstep so it neither misses a renamed header nor demands a removed one.
+- [x] `memex-brainstorming/SKILL.md` (all 3 copies) instructs writing `design.md` (not `spec.md`) as the approved-design write-up.
+- [x] `memex-writing-plans/SKILL.md` (all 3 copies) instructs producing the fused technical `spec.md` + `tasks.md` (with `AC-N` refs + `Delegable` annotations).
+- [x] The spec/plan reviewer prompts are reconciled into a single fused-spec reviewer (the standalone plan-document-reviewer is removed or folded), in all 3 copies.
+- [x] `plugins/memex/commands/review-spec.md` is updated: its required-sections check (#3) lists the new `spec.md` sections (no Context/Problem Statement), and it evaluates `design.md` for its Purpose/Motivation/Definitions/Non-Goals sections.
+- [x] The `scope` line in `_template/spec.md` carries an inline note stating it is recorded-only and reserved for a future quick-mode (not yet artifact-gating); the same note appears in `references/vault-files.md`'s embedded copy.
 
 **Code-review two-subagent (Phase 2, insight #3)**
 
-- [ ] `memex-code-review/SKILL.md` (all 3 copies) defines a two-subagent review: a law generalist (existing) and a spec-conformance reviewer that walks the spec's `AC-N` and reports Completeness/Correctness/Coherence; the skill states the main agent merges both verdicts into one of the existing templates.
+- [x] `memex-code-review/SKILL.md` (all 3 copies) defines a two-subagent review: a law generalist (existing) and a spec-conformance reviewer that walks the spec's `AC-N` and reports Completeness/Correctness/Coherence; the skill states the main agent merges both verdicts into one of the existing templates.
 
 **Validator (Phase 3, insight #4)**
 
-- [ ] The validator source lives at `skills/memex/scaffold/vault-scripts/validate-spec.sh`; a new copy step in `skills/memex/SKILL.md` writes it to `.memex/scripts/validate-spec.sh` in the target repo and `chmod +x`'s it (mirroring the existing brainstorming-scripts chmod step). The agent-independent install path `.memex/scripts/validate-spec.sh` is what the review-spec flow calls.
-- [ ] Running `.memex/scripts/validate-spec.sh <spec-folder>` on a well-formed folder exits 0; on a folder with (a) a missing required frontmatter key, (b) a surviving `{{placeholder}}`, (c) a banned vague verb in an acceptance criterion, or (d) an `AC-N` defined in `spec.md` but referenced by no task in `tasks.md`, it exits non-zero and names the failing check. Each of the four failure cases is demonstrated against a fixture (command + output recorded).
-- [ ] The validator runs cleanly under `bash -euo pipefail` on a zero-match grep (no silent death — [[bash-strict-mode-grep-filter]]).
-- [ ] `plugins/memex/commands/review-spec.md` invokes `.memex/scripts/validate-spec.sh` as a feedforward gate before the prose review and treats a non-zero exit as a blocking FAIL.
-- [ ] `references/audit-checklist.md` and `references/validation.md` list the new `.memex/scripts/validate-spec.sh` as an expected scaffolded file (so an install missing it reports `MISSING`).
+- [x] The validator source lives at `skills/memex/scaffold/vault-scripts/validate-spec.sh`; a new copy step in `skills/memex/SKILL.md` writes it to `.memex/scripts/validate-spec.sh` in the target repo and `chmod +x`'s it (mirroring the existing brainstorming-scripts chmod step). The agent-independent install path `.memex/scripts/validate-spec.sh` is what the review-spec flow calls.
+- [x] Running `.memex/scripts/validate-spec.sh <spec-folder>` on a well-formed folder exits 0; on a folder with (a) a missing required frontmatter key, (b) a surviving `{{placeholder}}`, (c) a banned vague verb in an acceptance criterion, or (d) an `AC-N` defined in `spec.md` but referenced by no task in `tasks.md`, it exits non-zero and names the failing check. Each of the four failure cases is demonstrated against a fixture (command + output recorded).
+- [x] The validator runs cleanly under `bash -euo pipefail` on a zero-match grep (no silent death — [[bash-strict-mode-grep-filter]]).
+- [x] `plugins/memex/commands/review-spec.md` invokes `.memex/scripts/validate-spec.sh` as a feedforward gate before the prose review and treats a non-zero exit as a blocking FAIL.
+- [x] `references/audit-checklist.md` and `references/validation.md` list the new `.memex/scripts/validate-spec.sh` as an expected scaffolded file (so an install missing it reports `MISSING`).
 
 **Test-integrity (Phase 4, insight #2)**
 
-- [ ] The scaffolded quality-gate text (`agents-md-template.md`) and `memex-code-review/SKILL.md` (all 3 copies) state the test-integrity rule: in a tested area the test count must not silently drop and assertions must not be weakened/skipped without an in-spec justification; a silent test deletion is classified a blocker. The rule is scoped to installed repos (not the memex repo itself).
+- [x] The scaffolded quality-gate text (`agents-md-template.md`) and `memex-code-review/SKILL.md` (all 3 copies) state the test-integrity rule: in a tested area the test count must not silently drop and assertions must not be weakened/skipped without an in-spec justification; a silent test deletion is classified a blocker. The rule is scoped to installed repos (not the memex repo itself).
 
 **Quality + sync (Phase 5)**
 
-- [ ] `diff -rq` across the three copies of every touched companion skill shows only intended differences (the documented name/path divergences), no accidental drift.
-- [ ] The Phase-5 check *commands* (not just prose) are updated for the new template set: `validation.md` check #5 (frontmatter loop over `_template/*.md`) and check #15 (bare-name list) reference `spec/design/tasks` instead of `spec/plan/tasks`; `audit-checklist.md`'s expected-file list (currently `_template/{spec,plan,tasks}.md`) becomes `_template/{spec,design,tasks}.md`; and no Phase-5 check still asserts `_template/plan.md` exists. A fresh scaffold + Phase-5 run reports the new model as `15/15 PASS` (or the new count), not a FAIL.
-- [ ] Every mermaid block added to any committed artifact parses via `npx -y @mermaid-js/mermaid-cli` (per [[validate-vault-mermaid-with-mmdc]]); command + clean output recorded.
+- [x] `diff -rq` across the three copies of every touched companion skill shows only intended differences (the documented name/path divergences), no accidental drift.
+- [x] The Phase-5 check *commands* (not just prose) are updated for the new template set: `validation.md` check #5 (frontmatter loop over `_template/*.md`) and check #15 (bare-name list) reference `spec/design/tasks` instead of `spec/plan/tasks`; `audit-checklist.md`'s expected-file list (currently `_template/{spec,plan,tasks}.md`) becomes `_template/{spec,design,tasks}.md`; and no Phase-5 check still asserts `_template/plan.md` exists. A fresh scaffold + Phase-5 run reports the new model as `15/15 PASS` (or the new count), not a FAIL.
+- [x] Every mermaid block added to any committed artifact parses via `npx -y @mermaid-js/mermaid-cli` (per [[validate-vault-mermaid-with-mmdc]]); command + clean output recorded.
 - [ ] A PR is opened via `/memex:new-pr` and the `memex:code-review` cycle reaches `lgtm`.
 
 ## Risks and Mitigations
