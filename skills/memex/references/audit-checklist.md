@@ -32,6 +32,7 @@ For each item, check existence and content correctness. Report status as:
   .memex/_index/conventions.md
   .memex/constitution.md
   .memex/rules.md
+  .memex/spec-driven-development.md   (the spec-driven workflow guide)
   .memex/specs/_template/spec.md
   .memex/specs/_template/design.md
   .memex/specs/_template/tasks.md

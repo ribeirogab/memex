@@ -7,7 +7,7 @@ Report results as a table. Any `FAIL` triggers an automatic fix attempt using th
 ## Contents
 
 - [Output format](#output-format)
-- [Checks](#checks) — 16 numbered checks (CLAUDE.md symlink, placeholder sweeps, AGENTS.md headers, frontmatter, Obsidian JSON, .gitignore, spec folder naming, canonical skills installed, Claude plugin settings, executable scripts, MOC placeholders, spec template Acceptance Criteria, AGENTS.md size cap, spec-file bare naming, spec validator scaffolded)
+- [Checks](#checks) — 17 numbered checks (CLAUDE.md symlink, placeholder sweeps, AGENTS.md headers, frontmatter, Obsidian JSON, .gitignore, spec folder naming, canonical skills installed, Claude plugin settings, executable scripts, MOC placeholders, spec template Acceptance Criteria, AGENTS.md size cap, spec-file bare naming, spec validator scaffolded, spec-driven-development guide scaffolded)
 - [When everything passes](#when-everything-passes)
 - [When something fails](#when-something-fails)
 
@@ -22,7 +22,7 @@ Report results as a table. Any `FAIL` triggers an automatic fix attempt using th
 | 2 | constitution.md has no surviving placeholders | FAIL — line 14: "{{Project Name}}" |
 | ... | ... | ... |
 
-### Result: 15/16 PASS — 1 FAIL needs attention
+### Result: 16/17 PASS — 1 FAIL needs attention
 ```
 
 ## Checks
@@ -211,12 +211,22 @@ The mechanical spec validator must be installed at `.memex/scripts/validate-spec
 
 FAIL means the validator was not scaffolded (or lost its executable bit). Fix: re-run the validator copy step in `SKILL.md` (Scaffolding section), which copies `scaffold/vault-scripts/validate-spec.sh` to `.memex/scripts/validate-spec.sh` and `chmod +x`'s it.
 
+### 17. Spec-driven-development guide scaffolded
+
+The workflow guide must be installed at `.memex/spec-driven-development.md` so every memex repo ships the human-facing explainer of the spec-driven flow (the artifact model, the 9 steps, scope/delegation tables, gates).
+
+```bash
+[ -f .memex/spec-driven-development.md ] && echo PASS || echo FAIL
+```
+
+FAIL means the guide was not scaffolded. Fix: re-run the guide copy step in `SKILL.md` (Scaffolding section), which copies `scaffold/vault-docs/spec-driven-development.md` to `.memex/spec-driven-development.md`.
+
 ## When everything passes
 
 Report:
 
 ```
-## Phase 5 — Validation: 16/16 PASS
+## Phase 5 — Validation: 17/17 PASS
 
 Memex is structurally sound.
 ```
