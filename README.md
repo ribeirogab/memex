@@ -41,14 +41,15 @@ flowchart TD
     D --> E["Write spec, then agent self-reviews it<br/>spec-document-reviewer + memex:review-spec<br/>both modes — no human spec review"]
     E --> F[memex-writing-plans: plan + tasks]
     F --> G{compact?}
-    G -- "yes — either mode" --> H["Print txt handoff, then stop<br/>you /compact or open a new chat, paste, resume"]
-    G -- "no, autonomous" --> K[Implement]
-    G -- "no, reviewed" --> J{Start implementation?}
-    J -- yes --> K
+    G -- yes --> H["Print txt handoff, then stop<br/>you /compact or open a new chat, paste, resume"]
+    G -- no --> K[Implement]
     H --> K
     K --> L[Quality gate]
     L --> M[Reflect + learnings]
-    M --> O["Deliver: memex:new-pr, then memex:code-review cycle to lgtm"]
+    M --> N{mode = autonomous?}
+    N -- yes --> O["Deliver: memex:new-pr + memex:code-review to lgtm"]
+    N -- "no (reviewed)" --> P{Open the PR and run code-review?}
+    P -- yes --> O
 ```
 
 ## Customizing
