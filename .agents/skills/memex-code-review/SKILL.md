@@ -1,6 +1,6 @@
 ---
 name: memex-code-review
-description: "Review a branch diff (or any diff/files pointed at) against the memex project law — .memex/rules.md, the constitution, and conventions — classify findings (blocker/suggestion/nitpick/question) and reply as plain text ending in a verdict. Portable: no dependency on a native code-review tool. Trigger on 'review this branch', 'code review', 'review the diff', 'review again', or step 7 of the spec flow."
+description: "Review a branch diff (or any diff/files pointed at) with specialized find-only subagents — project-law (rules/constitution/conventions), spec-conformance (the spec's AC-N), and documentation-consistency (stale or missing docs after the change) — merged into one plain-text verdict that reaches lgtm only when every lane is clean. Classify findings (blocker/suggestion/nitpick/question). Portable: no dependency on a native code-review tool. Trigger on 'review this branch', 'code review', 'review the diff', 'review again', or the delivery step of the spec flow."
 ---
 
 # code-review — review against the project's own law
@@ -92,6 +92,9 @@ A blocker MUST change before merge. Real blockers here:
 - `AGENTS.md` over its 80-line cap.
 - a broken vault cross-link (a `[[wikilink]]` or path with no target) introduced by the diff.
 - new logic with zero tests in an area that has tests.
+- an acceptance criterion (`AC-N`) in the spec satisfied by no change in the diff — the spec-conformance pass flags it by ID (Completeness miss).
+- a silent test-integrity regression in a tested area (installed repos with a test suite): the touched area's test count drops, or an assertion is weakened/`skip`ped/deleted, with no in-spec justification.
+- a live doc left contradicting the behavior this diff introduces — a stale flow/step/count/artifact reference in `README`, `AGENTS.md`, the constitution, a command/skill doc, or an `_index/` MOC (the documentation pass flags it). Frozen specs under `.memex/specs/` and notes under `.memex/learnings/` are historical record and exempt.
 
 NOT blockers — these are nits or suggestions, never request-changes:
 
@@ -114,10 +117,21 @@ Scan your draft for: any emoji; the strings `## Review` / `### Blocker` / `### S
 4. Review in order: correctness/bugs → security → tests → rules/conventions compliance → readability → DRY/SOLID. Classify each finding per the calibration list.
 5. Run the pre-reply gate, then send exactly one template.
 
-## Orchestration and degradation
+## Three-subagent review (spec flow) and degradation
 
-- In the spec flow (step 7), this runs as a **sub-agent** dispatched over the open branch. The sub-agent only *finds* — it never edits code. The **main agent** triages: fixes the findings that make sense, contests the rest until consensus, pushes the fixes, and re-requests review.
-- On an agent without sub-agent spawning, run the review inline in a delimited fresh-context pass — same templates, same law.
+In the spec flow's delivery step, code-review runs as **three** find-only sub-agents over the open branch (none edits code). Each owns **one lane** and must stay in it — do not duplicate another lane's findings or wander into its scope. The lanes are deliberately non-overlapping so the merge is clean.
+
+- **Subagent A — project-law.** *Question it answers:* does the diff obey the law the repo already defines? Reviews against `.memex/rules.md`, `.memex/constitution.md`, the area `AGENTS.md`, and `.memex/conventions/` — correctness/bugs, security, tests, rules/conventions compliance, readability, DRY/SOLID (the calibration above). **Not A's job:** whether the spec's acceptance criteria were delivered (that's B); whether docs went stale (that's C).
+- **Subagent B — spec-conformance.** *Question it answers:* does the diff deliver **this spec**? Walks the spec's Acceptance Criteria (`AC-N`) against the diff and reports three dimensions, citing each `AC-N` by ID:
+  - **Completeness** — every `AC-N` is satisfied by a concrete change; an `AC-N` with no satisfying change is a **blocker**.
+  - **Correctness** — the change actually meets the criterion (and its edge cases), not just gestures at it.
+  - **Coherence** — the spec's architecture / file-structure decisions appear in the code as written.
+  **Not B's job:** general law/style/security (that's A); documentation staleness beyond what an `AC-N` explicitly requires (that's C). If there is no spec (ad-hoc review), B does not run.
+- **Subagent C — documentation consistency.** *Question it answers:* after this diff, does the project's **live documentation** still match the code? Audits the docs the change touches or implies — `README.md`, both `AGENTS.md` homes (root + `skills/memex/references/agents-md-template.md`), `.memex/constitution.md` + `references/constitution-template.md`, `.memex/rules.md`, `skills/memex/references/*`, the plugin command docs, the `.memex/_index/*` MOCs, the spec/vault templates, and the three kept-in-sync copies of any touched companion skill — looking for: references to something the diff renamed/removed/changed, counts or lists that no longer match (step counts, check counts, file lists), a new artifact/flag/step/command left undocumented, or the 3 skill copies drifting beyond the allowed `name:` line. **Decisive rule:** flag only **live** docs; **never** flag frozen specs under `.memex/specs/` or notes under `.memex/learnings/` — those are historical record and legitimately keep their ship-time wording. **Not C's job:** code correctness (A) or AC delivery (B) — C judges only whether the docs match the shipped behavior.
+
+The **main agent merges** all three lanes into a **single** reply in one of the A/B/C/D templates: union and dedupe, blockers first, then triage — fix what makes sense, contest the rest to consensus, push, and re-request review. The verdict is `lgtm` **only when all three lanes are clean** — no open blocker from A, B, or C.
+
+Degradation: on an agent without sub-agent spawning, run the three lanes inline as three delimited fresh-context passes — project-law, then spec-conformance, then documentation — and merge into one verdict. Same templates, same law. Ad-hoc reviews with no spec run **A** (and **C** when the diff touches docs); **B** is skipped.
 
 ## Re-review
 

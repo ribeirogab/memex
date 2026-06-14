@@ -9,6 +9,7 @@ This vault contains all project-specific knowledge for memex: constitution, spec
 ## Where to go
 
 - **[[../constitution|Constitution]]** — non-negotiable project principles. Read before any substantive work.
+- **[[../spec-driven-development|Spec-Driven Development]]** — the full workflow guide: the artifact model, the 9 steps, scope/delegation tables, reviews and gates.
 - **[[specs|Specs MOC]]** — all specs, past and present, indexed by status.
 - **[[learnings|Learnings MOC]]** — architecture, patterns, gotchas.
 - **[[conventions|Conventions MOC]]** — code style choices the team has made.

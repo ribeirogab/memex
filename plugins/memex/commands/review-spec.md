@@ -5,15 +5,25 @@ argument-hint: <optional: path to spec folder, or current spec if omitted>
 
 # Review Spec — External Evaluator Pass
 
-Run an **independent** review of a spec written by the agent. This is the second pair of eyes between the spec author's own self-review and the handoff to `memex-writing-plans`. The point is to catch the things the author rationalized past.
+Run an **independent** review of a spec written by the agent. It runs inside `memex-writing-plans` after the technical `spec.md` is written — the external pass between the author's own self-review and implementation. The point is to catch the things the author rationalized past.
 
 **Announce at start:** "Reviewing spec against constitution and vault..."
 
 ## Inputs
 
-1. **Target spec.** If `$ARGUMENTS` is a path under `.memex/specs/`, read that folder. Otherwise scan `.memex/specs/` for the most recent `YYYY-MM-DD-*` folder modified and confirm with the user before proceeding.
+1. **Target spec folder.** If `$ARGUMENTS` is a path under `.memex/specs/`, read that folder. Otherwise scan `.memex/specs/` for the most recent `YYYY-MM-DD-*` folder modified and confirm with the user before proceeding. Read both the technical `spec.md` and its companion `design.md`.
 2. **Constitution.** Read `.memex/constitution.md` in full — it defines the non-negotiables this spec must respect.
 3. **Vault background.** Skim the relevant indices: `.memex/_index/learnings.md`, `.memex/_index/conventions.md`, and the rules in `.memex/rules.md`. You are looking for prior knowledge the spec may have ignored or duplicated.
+
+## Step 0 — mechanical pre-check (run first)
+
+Before the prose review, run the mechanical validator over the spec folder:
+
+```bash
+.memex/scripts/validate-spec.sh <spec-folder>
+```
+
+It deterministically checks required frontmatter keys + the `scope` enum, surviving `{{placeholder}}`s, vague-verb acceptance criteria, and `AC-N` task coverage. A **non-zero exit is a blocking FAIL** — record it as the `0. Mechanical validator` row, and the verdict is `Block` regardless of the prose findings. Still complete the prose review below so the author fixes everything in one pass. If the script is absent (older install), note `validator missing` and proceed with the prose review only.
 
 ## What to evaluate
 
@@ -33,14 +43,15 @@ Locate the `## Acceptance Criteria` section. Evaluate every bullet:
 - Is it **observable** by someone other than the implementer?
 - Could it be verified in **under a minute** with a fixture or a curl?
 - Does it avoid **vague verbs**: "works", "handles gracefully", "is robust", "is fast" (without a number), "is simple"?
+- Is each criterion **numbered** `AC-1`, `AC-2`, … (the traceability handle tasks and code-review reference)?
 
-`FAIL` if the section is missing, empty, contains only `{{placeholder}}` text, or every bullet is vague. `WARN` if some bullets are vague but at least one is testable. `PASS` if all bullets are concrete.
+`FAIL` if the section is missing, empty, contains only `{{placeholder}}` text, or every bullet is vague. `WARN` if some bullets are vague, unnumbered, but at least one is testable. `PASS` if all bullets are concrete and numbered.
 
 ### 3. Required sections present and non-empty
 
-The spec template defines: Context, Problem Statement, Non-Goals, Constraints, User Stories / Scenarios, Acceptance Criteria, Risks and Mitigations, Open Questions. For each:
+The technical `spec.md` defines: Architecture, File Structure, Phase Ordering, Constraints, User Stories / Scenarios, Acceptance Criteria, Risks and Mitigations, Open Questions. Its companion `design.md` defines: Purpose, Motivation, Definitions, Non-Goals. Check **both** files. For each heading:
 
-- `FAIL` if the heading is missing.
+- `FAIL` if the heading is missing (or `design.md` itself is absent).
 - `WARN` if the section exists but is empty or only `{{placeholder}}`.
 - `PASS` if there is real content, or the author wrote `N/A — <reason>`.
 
@@ -54,11 +65,11 @@ For each major decision in the spec, search `.memex/learnings/`, `.memex/convent
 
 ### 5. Scope discipline
 
-Compare the **Problem Statement** with the **Non-Goals** and the **Acceptance Criteria**. Look for:
+Compare `design.md`'s **Purpose** and **Non-Goals** with the spec's **Acceptance Criteria**. Look for:
 
-- Acceptance criteria that go beyond the stated problem (scope creep).
-- Non-goals that are actually implied by the acceptance criteria (lying to ourselves).
-- A problem statement so broad that no spec could close it (rewrite needed).
+- Acceptance criteria that go beyond the stated purpose (scope creep).
+- Non-goals (in `design.md`) that are actually implied by the acceptance criteria (lying to ourselves).
+- A purpose so broad that no spec could close it (rewrite needed).
 
 `FAIL` only on the third case. `WARN` on the first two.
 
@@ -75,6 +86,7 @@ Every `[NEEDS CLARIFICATION: ...]` marker is a blocker. Same for any acceptance 
 
 | # | Category                                | Status | Note |
 |---|-----------------------------------------|--------|------|
+| 0 | Mechanical validator                    | PASS   | validate-spec.sh exit 0 |
 | 1 | Constitution compliance                 | PASS   |      |
 | 2 | Acceptance Criteria — concrete/testable | FAIL   | Bullet 3: "handles errors gracefully" — no observable check |
 | 3 | Required sections present               | WARN   | Non-Goals is empty |
@@ -84,7 +96,7 @@ Every `[NEEDS CLARIFICATION: ...]` marker is a blocker. Same for any acceptance 
 
 ### Verdict
 
-**Block handoff** — 2 FAILs must be addressed before `memex-writing-plans`.
+**Block** — 2 FAILs must be addressed before implementation.
 
 ### Suggested edits
 
@@ -96,9 +108,10 @@ Every `[NEEDS CLARIFICATION: ...]` marker is a blocker. Same for any acceptance 
 
 ## Verdict rules
 
-- **Any FAIL** → `Block handoff`. Do not proceed to `memex-writing-plans`.
-- **Only WARNs** → `Approve with notes`. Author may proceed but should address WARNs in the next pass.
-- **All PASS** → `Approved`. Hand off to `memex-writing-plans`.
+- **A non-zero validator exit (Step 0)** → `Block`, always — the spec is structurally invalid.
+- **Any FAIL** → `Block`. Do not proceed to implementation; fix the spec first.
+- **Only WARNs** → `Approve with notes`. May proceed but should address WARNs in the next pass.
+- **All PASS** → `Approved`. Proceed to implementation.
 
 ## Key rule
 
