@@ -6,7 +6,7 @@
 
 - The intro is exactly two lines: `Instructions for AI coding assistants and developers working on the {{project}} codebase.` followed by a blank line and `**Never give up on the right solution.**`. No repo-structure paragraph.
 - Fill `{{Project Name}}` and `{{project}}` from the project info gathered in Prerequisites.
-- The `### Spec flow` is fixed — the same 7 steps for every project (it encodes the memex delivery pipeline, not project specifics).
+- The `### Spec flow` is fixed — the same 8 steps for every project (it encodes the memex delivery pipeline, not project specifics).
 
 Do **not** leave `{{placeholders}}` in the final file. Phase 5 validation will catch them.
 
@@ -51,13 +51,14 @@ If the user is asking, investigating, or exploring — just answer.
 
 ### Spec flow
 
-1. `memex-brainstorming` → `spec-<slug>.md`. After the design is approved, brainstorming asks the execution **mode: autonomous or reviewed**; the spec records `branch:` + `mode:`. The recorded mode is registered consent for the feature branch.
+1. `memex-brainstorming` → design. After the design is approved, the **post-design batch** confirms three things: the **branch name**, the **mode** (`autonomous` / `reviewed`), and whether to **compact** before implementing. The spec records `branch:` + `mode:`.
 2. Create the branch. **One branch + one PR per spec** — spec, plan, tasks, implementation, and learnings all live in it.
-3. **reviewed** → `/memex:review-spec` → `memex-writing-plans` → `plan-<slug>.md` + `tasks-<slug>.md` → implement. **autonomous** → skip the review, straight to `memex-writing-plans` → implement.
-4. Reflect; write learnings to `.vault/learnings/` if genuinely useful, without asking — part of delivery. Nothing useful → say "No new learnings".
-5. **Quality gate.** Detect the touched modules' code-quality processes (test, lint, typecheck, build — Makefile, `package.json` scripts, the area's CI) and run them all; nothing you did may break them. Logic added or changed in a tested area without a test → write the missing tests first.
-6. **PR via `/memex:new-pr`.** autonomous → open right after the quality gate; reviewed → wait for the user to validate and ask.
-7. **Review cycle.** Dispatch a sub-agent running `memex:code-review` over the branch. Fix the findings that make sense; contest the rest until consensus. Push, request a fresh review, repeat until `lgtm`.
+3. The agent writes `spec-<slug>.md` and **reviews its own spec** — the spec-document-reviewer subagent (clarity) **and** `/memex:review-spec` (constitution); both run in **both** modes. **No human spec review** — design approval is the only human review. Then `memex-writing-plans` → `plan-<slug>.md` + `tasks-<slug>.md`.
+4. **Compact handoff (either mode)** — if compact was chosen, once spec/plan/tasks are written print a `txt` handoff prompt (summary + the three paths + mode) and stop; you `/compact` or open a new chat and paste it to resume. Never compact before the artifacts exist.
+5. **Implement.**
+6. **Quality gate.** Detect the touched modules' code-quality processes (test, lint, typecheck, build — Makefile, `package.json` scripts, the area's CI) and run them all; nothing you did may break them. Logic added or changed in a tested area without a test → write the missing tests first.
+7. Reflect; write learnings to `.vault/learnings/` if genuinely useful, without asking — part of delivery. Nothing useful → say "No new learnings".
+8. **Deliver.** `autonomous` → open the PR (`/memex:new-pr`) and run the `memex:code-review` cycle to `lgtm`, hands-off — the recorded mode tells the agent to finish alone. `reviewed` → after reflect, ask "open the PR and run code-review?", then the same on your go-ahead.
 
 ## Non-negotiable rules
 
@@ -76,7 +77,7 @@ Commands + companion skills ship through the `memex` plugin (marketplace `memex`
 - **`/memex:writing-plans`** — turn an approved design into plan + tasks.
 - **`/memex:recall`** / **`/memex:link`** — vault reconnaissance / cross-link analysis.
 - **`/memex:spec`** — enter the spec flow from the conversation.
-- **`/memex:review-spec`** — external evaluator pass (reviewed mode).
+- **`/memex:review-spec`** — external evaluator spec pass (agent self-review, both modes).
 - **`/memex:new-pr`** — open the PR per the spec's mode.
 - **`/memex:code-review`** — bespoke, portable review cycle to `lgtm`.
 - **`/memex:sweep`** / **`/memex:learn`** — vault GC / investigate-and-save.

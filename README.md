@@ -1,6 +1,6 @@
 # memex
 
-An externalized, navigable project memory for coding agents — Claude Code, Codex, Cursor, OpenCode, Gemini CLI, Aider, and any other tool that supports the open agent skills standard. `memex` is a single skill that idempotently scaffolds a `.vault/` knowledge vault, an `AGENTS.md` (with a `CLAUDE.md` symlink for back-compat), spec/plan/task templates, and a set of bundled companion skills + slash commands into any repository — then dogfoods that same memory on its own development.
+`memex` gives any repository a durable, navigable **project memory** and an explicit **spec-driven workflow**. It idempotently scaffolds a `.vault/` knowledge vault — constitution, rules, specs, plans, and learnings — plus an `AGENTS.md` that drives every non-trivial change through one pipeline: brainstorm → spec → plan → tasks → implement → quality gate → PR → review-to-`lgtm`. It is agent-agnostic (any tool that follows the open agent skills standard) and self-hosting — it dogfoods the same vault and workflow on its own development.
 
 > Personal project, solo maintenance, best-effort, no SLA. Published so anyone can install it.
 
@@ -26,9 +26,31 @@ The skill is audit-first, autonomous-fix, and safe to re-run. After the first ru
 
 After install, the repo has an `AGENTS.md` describing a **spec-driven workflow** and a set of `/memex:*` commands and companion skills:
 
-- **The flow** — for any non-trivial change: `brainstorming` → spec → (branch) → plan + tasks → implement → quality gate → PR → review-to-`lgtm`. After the design is approved, brainstorming asks for an execution **mode**: `reviewed` (you validate the spec and ask for the PR) or `autonomous` (hands-off through to the open PR). The chosen mode is recorded in the spec and counts as consent for committing/pushing that feature branch.
+- **The flow** — for any non-trivial change: `brainstorming` → spec → (branch) → plan + tasks → implement → quality gate → PR → review-to-`lgtm`. **Design approval is the only human review** — the agent reviews its own spec (the spec-document-reviewer + `/memex:review-spec`) in both modes. Right after design approval, one batch asks exactly three things: the **branch name**, the execution **mode** (`autonomous` or `reviewed`), and whether to **compact** before implementing. The mode is recorded in the spec and counts as consent for committing/pushing that feature branch. It decides only the **delivery**: `autonomous` opens the PR and runs code-review to `lgtm` on its own; `reviewed` does everything the same but asks first ("open the PR and run code-review?"). **Compact works in either mode** — once spec/plan/tasks are written the agent prints a handoff prompt so you can `/compact` (or open a new chat) and implement with a clean context.
 - **Commands** — `/memex:spec`, `/memex:review-spec`, `/memex:sweep`, `/memex:learn`.
 - **Companion skills** — `/memex:brainstorming`, `/memex:writing-plans`, `/memex:recall`, `/memex:link`, `/memex:new-pr` (opens the spec's PR), `/memex:code-review` (reviews the branch to `lgtm`).
+
+The spec flow, end to end (design approval is the only human review):
+
+```mermaid
+flowchart TD
+    A([memex-brainstorming: explore + design]) --> B{Design approved?}
+    B -- "no, revise" --> A
+    B -- yes --> C["Post-design batch:<br/>branch + mode + compact?"]
+    C --> D[Create branch]
+    D --> E["Write spec, then agent self-reviews it<br/>spec-document-reviewer + memex:review-spec<br/>both modes — no human spec review"]
+    E --> F[memex-writing-plans: plan + tasks]
+    F --> G{compact?}
+    G -- yes --> H["Print txt handoff, then stop<br/>you /compact or open a new chat, paste, resume"]
+    G -- no --> K[Implement]
+    H --> K
+    K --> L[Quality gate]
+    L --> M[Reflect + learnings]
+    M --> N{mode = autonomous?}
+    N -- yes --> O["Deliver: memex:new-pr + memex:code-review to lgtm"]
+    N -- "no (reviewed)" --> P{Open the PR and run code-review?}
+    P -- yes --> O
+```
 
 ## Customizing
 
@@ -36,7 +58,7 @@ The workflow ships with opinionated defaults. They are plain markdown — change
 
 - **PR conventions (`/memex:new-pr`)** — title/body format, the draft-vs-ready choice, labels, the PR-template fill, push behavior all live in the `memex-new-pr` `SKILL.md`. Edit it to change how PRs are opened (e.g. write the body in another language, change the default base branch, or add labels).
 - **Code-review rules (`/memex:code-review`)** — there are two levers. (1) **What gets flagged** is the project law the reviewer reads: your installed repo's `.vault/rules.md`, `.vault/constitution.md`, and `.vault/conventions/` — edit those to change the standard. (2) **How it reviews** — the severity classes (`blocker`/`suggestion`/`nitpick`/`question`), the blocker calibration, and the output format — lives in the `memex-code-review` `SKILL.md`.
-- **The spec-flow steps** — the 7-step flow is documented in `AGENTS.md` under `### Spec flow`. To change the steps for an already-installed repo, edit that block; to change what new installs get, edit `### Spec flow` in `skills/memex/references/agents-md-template.md` (keep the two consistent). The `autonomous`/`reviewed` switch is wired across the three `memex-brainstorming` `SKILL.md` copies and the spec template's `branch:`/`mode:` fields, so deeper changes to mode behavior touch those too.
+- **The spec-flow steps** — the 8-step flow is documented in `AGENTS.md` under `### Spec flow`. To change the steps for an already-installed repo, edit that block; to change what new installs get, edit `### Spec flow` in `skills/memex/references/agents-md-template.md` (keep the two consistent). The `autonomous`/`reviewed` switch is wired across the three `memex-brainstorming` `SKILL.md` copies and the spec template's `branch:`/`mode:` fields, so deeper changes to mode behavior touch those too.
 
 ## Repository layout
 
