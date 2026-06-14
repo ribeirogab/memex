@@ -54,7 +54,7 @@ Create or repair only the items the audit flagged. Never touch files that are al
 
 ### Vault files
 
-For `.obsidian/*.json`, atomic note templates (`templates/learning.md`, `rule.md`, `convention.md`), spec templates (`_template/spec.md`, `plan.md`, `tasks.md`), and the five MOCs in `_index/`, read `references/vault-files.md` and write each file from the spec there. Use the project name from Prerequisites to substitute `{{Project Name}}` in MOCs.
+For `.obsidian/*.json`, atomic note templates (`templates/learning.md`, `convention.md`), spec templates (`_template/spec.md`, `plan.md`, `tasks.md`), and the four MOCs in `_index/`, read `references/vault-files.md` and write each file from the spec there. Use the project name from Prerequisites to substitute `{{Project Name}}` in MOCs.
 
 ### Constitution
 

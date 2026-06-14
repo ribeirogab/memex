@@ -36,7 +36,6 @@ For each item, check existence and content correctness. Report status as:
   .vault/specs/_template/plan.md
   .vault/specs/_template/tasks.md
   .vault/templates/learning.md
-  .vault/templates/rule.md
   .vault/templates/convention.md
   .vault/learnings/           (directory exists)
   .vault/conventions/         (directory exists)

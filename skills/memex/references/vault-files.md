@@ -21,7 +21,6 @@ Files in this reference fall into **two distinct groups**. Treat them differentl
 These files are templates that the user/agent will fill **later**, when creating an individual note or spec. Copy them verbatim. **Do NOT substitute any `{{}}` placeholder during scaffolding.**
 
 - `.vault/templates/learning.md` (has `{{title}}`, `{{date}}`, `{{one-paragraph technical insight}}`, …)
-- `.vault/templates/rule.md` (has `{{title}}`, `{{category}}`, `{{severity}}`, …)
 - `.vault/templates/convention.md` (has `{{title}}`, `{{category}}`, …)
 - `.vault/specs/_template/spec.md` (has `{{Feature Name}}`, `{{kebab-slug-of-feature}}`, …)
 - `.vault/specs/_template/plan.md` (same)
@@ -116,30 +115,6 @@ created: {{date}}
 ## How to Apply
 
 {{concrete, actionable instruction: what to do differently next time}}
-```
-
-**`.vault/templates/rule.md`:**
-```markdown
----
-tags:
-  - rule
-  - {{category: safety | workflow | code-style}}
-severity: {{critical | important | advisory}}
-applies-to:
-  - {{scope}}
-created: {{date}}
----
-# {{title}}
-
-{{short imperative statement of the rule}}
-
-## Why
-
-{{the reason — usually a past incident, constraint, or strong preference}}
-
-## How to Apply
-
-{{concrete instruction for when/how to apply this rule}}
 ```
 
 **`.vault/templates/convention.md`:**
