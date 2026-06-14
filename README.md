@@ -30,6 +30,29 @@ After install, the repo has an `AGENTS.md` describing a **spec-driven workflow**
 - **Commands** — `/memex:spec`, `/memex:review-spec`, `/memex:sweep`, `/memex:learn`.
 - **Companion skills** — `/memex:brainstorming`, `/memex:writing-plans`, `/memex:recall`, `/memex:link`, `/memex:new-pr` (opens the spec's PR), `/memex:code-review` (reviews the branch to `lgtm`).
 
+The spec flow, end to end (design approval is the only human review):
+
+```mermaid
+flowchart TD
+    A([memex-brainstorming: explore + design]) --> B{Design approved?}
+    B -- "no, revise" --> A
+    B -- yes --> C["Post-design batch: confirm branch + mode<br/>reviewed also asks: open a PR? compact?"]
+    C --> D[Create branch]
+    D --> E["Write spec, then agent self-reviews it<br/>spec-document-reviewer + memex:review-spec<br/>both modes — no human spec review"]
+    E --> F[memex-writing-plans: plan + tasks]
+    F --> G{mode?}
+    G -- autonomous --> K[Implement]
+    G -- "reviewed + compact" --> H["Print txt handoff, then stop<br/>you /compact or open a new chat, paste, resume"]
+    G -- "reviewed, no compact" --> I{Start implementation?}
+    H --> K
+    I -- yes --> K
+    K --> L[Quality gate]
+    L --> M[Reflect + learnings]
+    M --> N{Deliver}
+    N -- "autonomous, or reviewed with PR" --> O["memex:new-pr, then memex:code-review cycle to lgtm"]
+    N -- "reviewed, no PR" --> P[Stop: committed branch]
+```
+
 ## Customizing
 
 The workflow ships with opinionated defaults. They are plain markdown — change them to fit your team. Companion skills exist in three kept-in-sync copies: `.agents/skills/memex-<name>/` (canonical, what non-Claude agents read), `plugins/memex/skills/<name>/` (the Claude Code plugin copy), and `skills/memex/scaffold/skills/memex-<name>/` (what new installs receive). Edit the copy your agent loads; to change what **future** installs get, edit the `scaffold/` copy too, and keep the three in sync.
