@@ -42,7 +42,10 @@ Make bare `spec.md` / `plan.md` / `tasks.md` the memex convention everywhere —
 ## Constraints
 
 - **Markdown + bash only** (constitution: no JS/TS/Python tooling at repo root; no build pipeline).
-- **3-copy sync invariant** — `memex-brainstorming`, `memex-writing-plans`, and the `memex-link` `find-candidates.sh` each exist in three kept-in-sync copies (`.agents/skills/…` canonical, `plugins/memex/skills/…`, `skills/memex/scaffold/skills/…`). Edit the canonical copy, regenerate the others; bodies must stay identical (`plugins` copy differs only in the `name:` frontmatter line for SKILL.md).
+- **3-copy sync invariant** — each of these exists in three kept-in-sync copies; edit the canonical (`.agents`) copy, regenerate the others; bodies must stay identical (`plugins` SKILL.md copies differ only in the `name:` frontmatter line). Exact paths (note the plugin skill folders are **un-prefixed** — `brainstorming`, `writing-plans`, `link` — not `memex-*`):
+  - `memex-brainstorming`: `.agents/skills/memex-brainstorming/SKILL.md`, `plugins/memex/skills/brainstorming/SKILL.md`, `skills/memex/scaffold/skills/memex-brainstorming/SKILL.md`.
+  - `memex-writing-plans`: `.agents/skills/memex-writing-plans/SKILL.md`, `plugins/memex/skills/writing-plans/SKILL.md`, `skills/memex/scaffold/skills/memex-writing-plans/SKILL.md`.
+  - `find-candidates.sh`: `.agents/skills/memex-link/scripts/find-candidates.sh`, `plugins/memex/skills/link/scripts/find-candidates.sh`, `skills/memex/scaffold/skills/memex-link/scripts/find-candidates.sh`.
 - **AGENTS.md size cap** — ≤80 lines, 4 `## ` section headers (validation checks #4, #14).
 - **English** for all committed artifacts; **Conventional Commits**, no agent attribution.
 - **Recorded consent** — `mode: autonomous` authorizes committing + pushing `feat/bare-spec-filenames` and opening its PR.
@@ -53,8 +56,9 @@ Make bare `spec.md` / `plan.md` / `tasks.md` the memex convention everywhere —
 The link resolver regex already accepts an optional path prefix (`\[\[([^]|]*/)?<base>(\||\]\])`), so path-qualified links are *detected* today; the work is to (1) make the tooling's *identity* folder-aware so bare basenames don't collide across specs, and (2) flip every place that teaches, enforces, or documents the old convention.
 
 **Canonical link forms after this change:**
-- Intra-spec sibling links (in `plan`/`tasks` frontmatter + body): `[[YYYY-MM-DD-<slug>/spec|spec]]`, `[[YYYY-MM-DD-<slug>/plan|plan]]`.
+- Intra-spec sibling links (in a real spec's `plan`/`tasks` frontmatter + body): `[[YYYY-MM-DD-<slug>/spec|spec]]`, `[[YYYY-MM-DD-<slug>/plan|plan]]` — the dated folder is the discriminator.
 - Cross-vault inbound links (e.g. a learning → a spec): preserve the existing path prefix, drop the slug from the filename — `[[../specs/YYYY-MM-DD-<slug>/spec|<slug>]]`. The folder remains in the path, so `<folder>/spec` stays unique.
+- **Templates** (`_template/` and the template blocks in `vault-files.md`) keep **bare, unqualified placeholders** `[[spec]]`/`[[plan]]` — a static template cannot know the instantiation folder, and `/memex:sweep` already skips `_template/`. The folder qualification is **injected by the generating skills at instantiation time** (§B), not stored in the template. The reconcile direction in §A is therefore: bring `vault-files.md` (which currently bakes `[[spec-{{kebab-slug-of-feature}}]]`) **down to** the bare `[[spec]]`/`[[plan]]` placeholders already used by the on-disk `_template/` files.
 
 ### §A — Convention definition (the canonical statement)
 - `skills/memex/references/vault-files.md`: rewrite the "Spec file naming convention" prose (~line 264) to mandate bare names + path-qualified links, stating reason (a) solved and reason (b) accepted; update the `_template/plan.md` and `_template/tasks.md` template blocks (~lines 207–249) to the new link form.
@@ -65,7 +69,11 @@ The link resolver regex already accepts an optional path prefix (`\[\[([^]|]*/)?
 - `memex-writing-plans` (×3): write `plan.md` / `tasks.md` and inject the folder-qualified sibling links `[[<folder>/spec|spec]]` / `[[<folder>/plan|plan]]`.
 
 ### §C — GC tooling identity (the "Clean")
-- `memex-link/scripts/find-candidates.sh` (×3): for spec-folder files (`spec`/`plan`/`tasks`), key the `related[]` dedup and the wikilink-in-body evidence match on `<folder>/<base>` (folder-relative), not bare basename; update the `all_notes` exclusion filters (`plan-[^/]+\.md` → `plan\.md`, same for tasks) and the intra-pair skip (`plan-*|tasks-*` → `plan.md|tasks.md`). Non-spec notes keep basename keying.
+- `find-candidates.sh` (×3, paths in Constraints): make the matching unit folder-relative for spec-folder files. This is a **three-part** change to the script, all of which must move together:
+  1. **`related[]` extraction** (the `.related` cache builder): stop reducing every wikilink to its bare basename — **preserve the path as written** (strip `[[`, `]]`, and any `|alias`, but keep a `folder/` prefix when present). A learning linked bare as `[[foo]]` still stores `foo`; a spec linked as `[[<folder>/spec|spec]]` stores `<folder>/spec`.
+  2. **Target comparison key**: compute each target's key as `<parent-folder>/<basename>` when the target is a `spec`/`plan`/`tasks` file inside a spec folder, and as the bare `<basename>` otherwise. The dedup (`src_related_str` membership) and the wikilink-in-body evidence grep both compare against this key — so a `[[A/spec]]` link is **not** counted as evidence for, or a dedup against, `B/spec`.
+  3. **Filters**: update the `all_notes` exclusions (`plan-[^/]+\.md` → `plan\.md`, `tasks-[^/]+\.md` → `tasks\.md`) and the intra-pair skip (`plan-*|tasks-*` → `plan.md|tasks.md`).
+  Non-spec notes (learnings/conventions/rules) keep bare-basename keying unchanged.
 - `.agents/skills/memex-link/tests/`: update `fixtures/.vault` and `expected-output.json` so `run.sh` exercises and passes the folder-relative identity (including a two-spec case proving no cross-spec basename false-dedup).
 - `plugins/memex/commands/sweep.md`: make the broken-link resolution folder-aware for spec-folder links (verify the specific `…/<folder>/spec.md` exists, not just any `spec.md`); update check #5 to look for `spec.md` / `tasks.md`.
 
@@ -80,8 +88,8 @@ The link resolver regex already accepts an optional path prefix (`\[\[([^]|]*/)?
 - `plugins/memex/skills/new-pr/SKILL.md` (+ `.agents`/`scaffold` copies) and `plugins/memex/commands/review-spec.md`: filename references → bare.
 
 ### §F — Migration (this repo)
-- `git mv` the three files in each of the **10** spec folders (the 9 existing + this in-flight `bare-spec-filenames` spec) from `<type>-<slug>.md` to `<type>.md`.
-- Rewrite every wikilink that resolves to a renamed file — intra-pair (frontmatter + body) and cross-vault (learnings, `.vault/_index/specs.md` and any other MOC) — to the §A canonical forms. Leave fictional/example links untouched.
+- `git mv` each present `<type>-<slug>.md` → `<type>.md` across the **10** spec folders (the 9 existing + this in-flight `bare-spec-filenames` spec). The 9 existing folders have all three files; the in-flight folder has **only** `spec-bare-spec-filenames.md` at mv time (its `plan.md`/`tasks.md` are written bare by §B during this same flow) — `git mv` only the files that exist, do not assume three per folder.
+- Rewrite every wikilink that resolves to a renamed file — intra-pair (frontmatter + body) and cross-vault — to the §A canonical forms. Cross-vault inbound links exist in **two shapes** and both must be caught (grep-first, per `[[rename-spec-grep-first]]`): bare-basename links such as `[[spec-spec-driven-workflow]]` inside learnings (e.g. `companion-skill-distribution-topology.md`, `quick-validate-needs-pyyaml-via-uv.md`), and path-prefixed links such as `[[../specs/<folder>/spec-<slug>|alias]]` in `.vault/_index/specs.md` and other MOCs. Leave fictional/example links (`[[spec-test-spec]]`, `[[spec-island-test]]` embedded in historical tasks prose, resolving to no real file) untouched.
 
 ### §G — Sync invariant
 - After editing canonical copies, regenerate plugin + scaffold copies; verify body-identity for all multi-copy skills/scripts.
@@ -102,7 +110,7 @@ The link resolver regex already accepts an optional path prefix (`\[\[([^]|]*/)?
 - [ ] `/memex:sweep` broken-wikilink check reports zero `BROKEN` against the migrated `.vault/`.
 - [ ] The (inverted) validation check #15 bash, run against this repo's `.vault/`, prints `PASS`; the same bash prints `FAIL` when a `spec-<slug>.md` file is reintroduced (spot-checked in a temp copy).
 - [ ] `grep -rnE '(spec|plan|tasks)-<slug>\.md' AGENTS.md .vault/constitution.md skills/memex/ plugins/memex/ .agents/skills/` returns no hit inside an active convention statement (only historical/illustrative mentions, if any, remain — and those are explicitly called out).
-- [ ] 3-copy body-identity holds: `diff <(tail -n+3 .agents/skills/memex-brainstorming/SKILL.md) <(tail -n+3 plugins/memex/skills/brainstorming/SKILL.md)` is empty (same for `memex-writing-plans`); `find-candidates.sh` is byte-identical across its three copies.
+- [ ] 3-copy body-identity holds: `diff <(tail -n+3 .agents/skills/memex-brainstorming/SKILL.md) <(tail -n+3 plugins/memex/skills/brainstorming/SKILL.md)` is empty (same for `memex-writing-plans`); and `find-candidates.sh` is byte-identical across its three copies — `diff .agents/skills/memex-link/scripts/find-candidates.sh plugins/memex/skills/link/scripts/find-candidates.sh` and `diff .agents/skills/memex-link/scripts/find-candidates.sh skills/memex/scaffold/skills/memex-link/scripts/find-candidates.sh` both empty.
 - [ ] Every inbound wikilink to a renamed file resolves (a vault-wide basename/path resolution scan finds a matching file for each).
 - [ ] `AGENTS.md` is ≤80 lines and still has exactly 4 `## ` section headers.
 - [ ] `git grep -n 'spec\.md\|plan\.md\|tasks\.md'` in `skills/memex/references/vault-files.md` shows the convention prose describes bare names as the rule.
