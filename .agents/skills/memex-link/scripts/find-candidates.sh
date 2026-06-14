@@ -37,8 +37,8 @@ all_notes() {
   find .vault/learnings .vault/conventions .vault/rules .vault/specs \
     -type f -name '*.md' 2>/dev/null \
     | grep -v '^.vault/specs/_template/' \
-    | grep -Ev '/plan-[^/]+\.md$' \
-    | grep -Ev '/tasks-[^/]+\.md$' \
+    | grep -Ev '/plan\.md$' \
+    | grep -Ev '/tasks\.md$' \
     | sort
 }
 
@@ -96,7 +96,9 @@ precompute() {
     [ -f "$CACHE/$enc.title" ] || : > "$CACHE/$enc.title"
     [ -f "$CACHE/$enc.h2s" ]   || : > "$CACHE/$enc.h2s"
 
-    # related[] basenames from frontmatter.
+    # related[] link keys from frontmatter. Key rule: base = last path
+    # segment; for spec-folder files (spec/plan/tasks) key = <folder>/<base>
+    # so two bare spec.md don't collide; otherwise key = <base>.
     awk '
       BEGIN { n=0; in_rel=0 }
       /^---$/ { n++; if (n>=2) exit; next }
@@ -108,9 +110,13 @@ precompute() {
         sub(/\]\]"?[[:space:]]*$/, "")
         i = index($0, "|")
         if (i) $0 = substr($0, 1, i-1)
-        n2 = match($0, /\/[^\/]+$/)
-        if (n2) $0 = substr($0, n2+1)
-        print
+        nseg = split($0, seg, "/")
+        base = seg[nseg]
+        if (base == "spec" || base == "plan" || base == "tasks") {
+          if (nseg >= 2) print seg[nseg-1] "/" base; else print base
+        } else {
+          print base
+        }
       }
     ' "$note" > "$CACHE/$enc.related"
 
@@ -185,17 +191,24 @@ while IFS= read -r src; do
     tgt_basename="${tgt##*/}"
     tgt_basename="${tgt_basename%.md}"
 
+    # Link key: folder-qualify spec-folder files so two bare spec.md don't collide.
+    case "$tgt_basename" in
+      spec|plan|tasks)
+        tgt_parent="${tgt%/*}"; tgt_parent="${tgt_parent##*/}"
+        tgt_key="$tgt_parent/$tgt_basename" ;;
+      *) tgt_key="$tgt_basename" ;;
+    esac
+
     # Filter: target already in source's related (bash case, no fork).
     case "$src_related_str" in
-      *" $tgt_basename "*) continue ;;
+      *" $tgt_key "*) continue ;;
     esac
 
     # Filter: plan/tasks intra-pair within same spec folder.
     tgt_dir="${tgt%/*}"
     if [ "$src_dir" = "$tgt_dir" ]; then
-      tgt_base="${tgt##*/}"
-      case "$tgt_base" in
-        plan-*|tasks-*) continue ;;
+      case "$tgt_basename" in
+        plan|tasks) continue ;;
       esac
     fi
 
@@ -206,9 +219,9 @@ while IFS= read -r src; do
     evidence=""; detail=""
 
     # Evidence 1: wikilink in body. Direct grep on disk file.
-    if grep -qE "\[\[([^]|]*/)?$tgt_basename(\||\]\])" "$src_body_f"; then
-      line=$(grep -m1 -nE "\[\[([^]|]*/)?$tgt_basename(\||\]\])" "$src_body_f" | cut -d: -f1)
-      evidence="wikilink_in_body"; detail="[[$tgt_basename]] cited at body line $line"
+    if grep -qE "\[\[([^]|]*/)?$tgt_key(\||\]\])" "$src_body_f"; then
+      line=$(grep -m1 -nE "\[\[([^]|]*/)?$tgt_key(\||\]\])" "$src_body_f" | cut -d: -f1)
+      evidence="wikilink_in_body"; detail="[[$tgt_key]] cited at body line $line"
 
     # Evidence 2: filepath in body.
     elif grep -qF "$tgt" "$src_body_f"; then
