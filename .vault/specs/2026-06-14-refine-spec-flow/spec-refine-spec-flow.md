@@ -1,8 +1,8 @@
 ---
-status: draft
+status: shipped
 feature: refine-spec-flow
 created: 2026-06-14
-shipped: null
+shipped: 2026-06-14
 branch: feat/refine-spec-flow
 mode: autonomous
 related:
@@ -11,7 +11,7 @@ related:
 ---
 # Refine Spec Flow — Spec
 
-**Status:** Draft
+**Status:** Shipped
 **Scope:** Second iteration of the spec-driven flow: remove the human spec-review gate (design approval is the only human review point), make the agent self-review run in both modes, restructure the post-design questions into a single conditional batch, add branch-name validation, and add an optional `/compact` handoff that emits a resume prompt once spec/plan/tasks are written. Applied to both the dogfood and the scaffold.
 
 ## Context
@@ -103,17 +103,17 @@ The flow text makes explicit that compacting happens **at this seam, not at ques
 
 ## Acceptance Criteria
 
-- [ ] `AGENTS.md` `### Spec flow` is a numbered list of exactly 8 steps matching Design §B; the file keeps its 4 H2 headers and `wc -l AGENTS.md` ≤ 80.
-- [ ] `AGENTS.md` step 1 names the post-design batch (confirm branch + mode; reviewed also asks PR + compact); step 3 states the agent self-reviews in **both** modes and that there is **no human spec review**.
-- [ ] None of the three `memex-brainstorming` SKILL copies contains a "User reviews written spec" / user-review-gate step; a grep for `User Review Gate` / `User reviews written spec` across all three returns nothing.
-- [ ] In all three `memex-brainstorming` copies, the spec-document-reviewer loop and the `/memex:review-spec` pass are **not** marked "reviewed mode only" (they run in both modes); the dot diagram routes both `autonomous` and `reviewed` through the self-review before writing-plans.
-- [ ] All three `memex-brainstorming` copies contain a compact-handoff step that (a) is gated to reviewed+compact, (b) states the handoff is produced after spec/plan/tasks exist, and (c) prints a ```` ```txt ```` block; and a reviewed "start implementation?" gate for the no-compact path.
-- [ ] The three `memex-brainstorming` copies are body-identical except the `name:` field (`diff <(tail -n +3 A) <(tail -n +3 B)` empty for both pairs).
-- [ ] `skills/memex/references/agents-md-template.md` `### Spec flow` matches `AGENTS.md` (same 8 steps), and its Filling-rules prose no longer says "7 steps" (a grep for `7 steps` in that file returns nothing).
-- [ ] `plugins/memex/commands/spec.md` flow prose describes the both-mode self-review, the post-design batch, and the compact handoff, and no longer implies a human spec-review gate.
-- [ ] `README.md` "What you get" flow description matches the new model (no human spec review; compact handoff mentioned).
-- [ ] `python3`-via-`uv` `quick_validate.py` passes for all three `memex-brainstorming` copies.
-- [ ] No spec frontmatter field beyond `branch`/`mode` is added to `.vault/specs/_template/spec.md` for this change.
+- [x] `AGENTS.md` `### Spec flow` is a numbered list of exactly 8 steps matching Design §B; the file keeps its 4 H2 headers and `wc -l AGENTS.md` ≤ 80.
+- [x] `AGENTS.md` step 1 names the post-design batch (confirm branch + mode; reviewed also asks PR + compact); step 3 states the agent self-reviews in **both** modes and that there is **no human spec review**.
+- [x] None of the three `memex-brainstorming` SKILL copies contains a "User reviews written spec" / user-review-gate step; a grep for `User Review Gate` / `User reviews written spec` across all three returns nothing.
+- [x] In all three `memex-brainstorming` copies, the spec-document-reviewer loop and the `/memex:review-spec` pass are **not** marked "reviewed mode only" (they run in both modes); the dot diagram routes both `autonomous` and `reviewed` through the self-review before writing-plans.
+- [x] All three `memex-brainstorming` copies contain a compact-handoff step that (a) is gated to reviewed+compact, (b) states the handoff is produced after spec/plan/tasks exist, and (c) prints a ```` ```txt ```` block; and a reviewed "start implementation?" gate for the no-compact path.
+- [x] The three `memex-brainstorming` copies are body-identical except the `name:` field (`diff <(tail -n +3 A) <(tail -n +3 B)` empty for both pairs).
+- [x] `skills/memex/references/agents-md-template.md` `### Spec flow` matches `AGENTS.md` (same 8 steps), and its Filling-rules prose no longer says "7 steps" (a grep for `7 steps` in that file returns nothing).
+- [x] `plugins/memex/commands/spec.md` flow prose describes the both-mode self-review, the post-design batch, and the compact handoff, and no longer implies a human spec-review gate.
+- [x] `README.md` "What you get" flow description matches the new model (no human spec review; compact handoff mentioned).
+- [x] `python3`-via-`uv` `quick_validate.py` passes for all three `memex-brainstorming` copies.
+- [x] No spec frontmatter field beyond `branch`/`mode` is added to `.vault/specs/_template/spec.md` for this change.
 
 ## Risks and Mitigations
 
