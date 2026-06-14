@@ -103,7 +103,7 @@ memex's current artifacts mix concerns and leave verification open: `spec.md` bl
 - [x] `diff -rq` across the three copies of every touched companion skill shows only intended differences (the documented name/path divergences), no accidental drift.
 - [x] The Phase-5 check *commands* (not just prose) are updated for the new template set: `validation.md` check #5 (frontmatter loop over `_template/*.md`) and check #15 (bare-name list) reference `spec/design/tasks` instead of `spec/plan/tasks`; `audit-checklist.md`'s expected-file list (currently `_template/{spec,plan,tasks}.md`) becomes `_template/{spec,design,tasks}.md`; and no Phase-5 check still asserts `_template/plan.md` exists. A fresh scaffold + Phase-5 run reports the new model as `15/15 PASS` (or the new count), not a FAIL.
 - [x] Every mermaid block added to any committed artifact parses via `npx -y @mermaid-js/mermaid-cli` (per [[validate-vault-mermaid-with-mmdc]]); command + clean output recorded.
-- [ ] A PR is opened via `/memex:new-pr` and the `memex:code-review` cycle reaches `lgtm`.
+- [x] A PR is opened via `/memex:new-pr` and the `memex:code-review` cycle reaches `lgtm`.
 
 ## Risks and Mitigations
 
