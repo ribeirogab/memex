@@ -7,7 +7,7 @@ Report results as a table. Any `FAIL` triggers an automatic fix attempt using th
 ## Contents
 
 - [Output format](#output-format)
-- [Checks](#checks) — 15 numbered checks (CLAUDE.md symlink, placeholder sweeps, AGENTS.md headers, frontmatter, Obsidian JSON, .gitignore, spec folder naming, canonical skills installed, Claude plugin settings, executable scripts, MOC placeholders, spec template Acceptance Criteria, AGENTS.md size cap, spec-file bare naming)
+- [Checks](#checks) — 16 numbered checks (CLAUDE.md symlink, placeholder sweeps, AGENTS.md headers, frontmatter, Obsidian JSON, .gitignore, spec folder naming, canonical skills installed, Claude plugin settings, executable scripts, MOC placeholders, spec template Acceptance Criteria, AGENTS.md size cap, spec-file bare naming, spec validator scaffolded)
 - [When everything passes](#when-everything-passes)
 - [When something fails](#when-something-fails)
 
@@ -22,7 +22,7 @@ Report results as a table. Any `FAIL` triggers an automatic fix attempt using th
 | 2 | constitution.md has no surviving placeholders | FAIL — line 14: "{{Project Name}}" |
 | ... | ... | ... |
 
-### Result: 14/15 PASS — 1 FAIL needs attention
+### Result: 15/16 PASS — 1 FAIL needs attention
 ```
 
 ## Checks
@@ -71,7 +71,7 @@ Fix: read `references/agents-md-template.md` and insert the missing sections in 
 
 ### 5. Frontmatter valid in MOCs and templates
 
-For each of `.memex/_index/{home,specs,learnings,conventions}.md`, `.memex/rules.md`, `.memex/templates/{learning,convention}.md`, and `.memex/specs/_template/{spec,plan,tasks}.md`, confirm the file begins with `---` and contains a closing `---` with at least one expected field (`tags:`, `feature:`, or `status:`) between them.
+For each of `.memex/_index/{home,specs,learnings,conventions}.md`, `.memex/rules.md`, `.memex/templates/{learning,convention}.md`, and `.memex/specs/_template/{spec,design,tasks}.md`, confirm the file begins with `---` and contains a closing `---` with at least one expected field (`tags:`, `feature:`, or `status:`) between them.
 
 ```bash
 for f in .memex/_index/*.md .memex/templates/*.md .memex/specs/_template/*.md; do
@@ -190,23 +190,33 @@ lines=$(wc -l < AGENTS.md | tr -d ' ')
 
 FAIL means `AGENTS.md` exceeded the cap. Fix: trim the body per the guidance in `references/agents-md-template.md` (`## Size constraint`) — tighten body prose and replace any longer narrative with a one-line pointer into `.memex/`. Never drop a required section header (check #4 enforces those).
 
-### 15. Spec folders use bare `spec.md` / `plan.md` / `tasks.md`
+### 15. Spec folders use bare `spec.md` / `design.md` / `tasks.md`
 
-Inside any date-prefixed spec folder, the three files use **bare** names — `spec.md`, `plan.md`, `tasks.md`. The dated folder is the discriminator and cross-references are path-qualified wikilinks (`[[YYYY-MM-DD-<slug>/spec|spec]]`). A surviving `<type>-<slug>.md` file is drift from before the bare-filename convention.
+Inside any date-prefixed spec folder, the files use **bare** names — `spec.md`, `design.md`, `tasks.md` (legacy specs predating the design.md split may instead carry a bare `plan.md`). The dated folder is the discriminator and cross-references are path-qualified wikilinks (`[[YYYY-MM-DD-<slug>/spec|spec]]`). A surviving `<type>-<slug>.md` file is drift from before the bare-filename convention.
 
 ```bash
-bad=$(find .memex/specs -type f \( -name 'spec-*.md' -o -name 'plan-*.md' -o -name 'tasks-*.md' \) 2>/dev/null)
+bad=$(find .memex/specs -type f \( -name 'spec-*.md' -o -name 'design-*.md' -o -name 'plan-*.md' -o -name 'tasks-*.md' \) 2>/dev/null)
 [ -z "$bad" ] && echo PASS || { echo "FAIL:"; echo "$bad"; }
 ```
 
 FAIL lists the offending slug-named paths. Fix: run the spec-file rename migration recipe in `SKILL.md` (Phase 4 → "Spec file rename migration") for each affected folder. The recipe `git mv`s the files to bare names, rewrites `[[<type>-<slug>]]` wikilinks to the path-qualified `[[<folder>/<type>|<type>]]` form, and updates the `.memex/_index/specs.md` MOC entry. Renames are destructive — confirm with the user once per folder before running.
+
+### 16. Spec validator scaffolded and executable
+
+The mechanical spec validator must be installed at `.memex/scripts/validate-spec.sh` and be executable, so `/memex:review-spec` can run it as a feedforward gate before the prose review.
+
+```bash
+[ -x .memex/scripts/validate-spec.sh ] && echo PASS || echo FAIL
+```
+
+FAIL means the validator was not scaffolded (or lost its executable bit). Fix: re-run the validator copy step in `SKILL.md` (Scaffolding section), which copies `scaffold/vault-scripts/validate-spec.sh` to `.memex/scripts/validate-spec.sh` and `chmod +x`'s it.
 
 ## When everything passes
 
 Report:
 
 ```
-## Phase 5 — Validation: 15/15 PASS
+## Phase 5 — Validation: 16/16 PASS
 
 Memex is structurally sound.
 ```

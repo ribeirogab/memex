@@ -270,7 +270,7 @@ Note: steps 3–4 scope edits to `/<folder>/<type>-<slug>` path segments and `[[
 
 After **any** creation or fix run, and at the end of an audit-only run with all `OK`, execute the validation checklist.
 
-Read `references/validation.md` and run all 15 checks. Report results as the table specified there. If any check fails, surface the specific reason and ask "Want me to fix the failed checks?" Loop until clean or the user stops.
+Read `references/validation.md` and run all 16 checks. Report results as the table specified there. If any check fails, surface the specific reason and ask "Want me to fix the failed checks?" Loop until clean or the user stops.
 
 Validation is non-negotiable — this is what catches `{{placeholders}}` that survived scaffolding, missing AGENTS.md sections, broken symlinks, malformed JSON, and spec folders that slipped past the rename step.
 
@@ -281,7 +281,7 @@ Validation is non-negotiable — this is what catches `{{placeholders}}` that su
 
 - X/Y items OK
 - N created, M fixed, K skipped (already correct)
-- Validation: 15/15 PASS  (or list the FAILs)
+- Validation: 16/16 PASS  (or list the FAILs)
 
 {{only if first-time setup:}}
 Next steps:

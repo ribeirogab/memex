@@ -33,8 +33,9 @@ For each item, check existence and content correctness. Report status as:
   .memex/constitution.md
   .memex/rules.md
   .memex/specs/_template/spec.md
-  .memex/specs/_template/plan.md
+  .memex/specs/_template/design.md
   .memex/specs/_template/tasks.md
+  .memex/scripts/validate-spec.sh   (executable — mechanical spec validator)
   .memex/templates/learning.md
   .memex/templates/convention.md
   .memex/learnings/           (directory exists)
@@ -115,17 +116,17 @@ Actively scan `.memex/specs/` (excluding `_template/`) — any folder whose name
 
 Pull the date from the folder's `spec.md` frontmatter `created:` field when present; if absent, ask the user. **Never rename without confirmation.**
 
-### Spec file naming follows bare `spec.md` / `plan.md` / `tasks.md`
+### Spec file naming follows bare `spec.md` / `design.md` / `tasks.md`
 
-Inside any date-prefixed spec folder, the three files use **bare** names — `spec.md`, `plan.md`, `tasks.md`. The dated folder is the discriminator, so cross-references are path-qualified wikilinks (`[[YYYY-MM-DD-<slug>/spec|spec]]`). A surviving slug-named file — `spec-<slug>.md`, `plan-<slug>.md`, `tasks-<slug>.md` — inside a real spec folder is `DRIFT` from before the bare-filename convention.
+Inside any date-prefixed spec folder, the files use **bare** names — `spec.md`, `design.md`, `tasks.md` (legacy specs predating the design.md split may carry a bare `plan.md`). The dated folder is the discriminator, so cross-references are path-qualified wikilinks (`[[YYYY-MM-DD-<slug>/spec|spec]]`). A surviving slug-named file — `spec-<slug>.md`, `design-<slug>.md`, `plan-<slug>.md`, `tasks-<slug>.md` — inside a real spec folder is `DRIFT` from before the bare-filename convention.
 
-The `_template/` folder uses the same bare names — its files are blueprints with unqualified `[[spec]]` / `[[plan]]` placeholders that the generating skills qualify on copy.
+The `_template/` folder uses the same bare names — its files are blueprints with unqualified `[[spec]]` / `[[design]]` placeholders that the generating skills qualify on copy.
 
 **Detection** (run during the audit pass, alongside the date-prefix check):
 
 ```bash
 find .memex/specs -mindepth 1 -maxdepth 1 -type d -name '[0-9]*-*' 2>/dev/null | while read -r spec_dir; do
-  for f in "$spec_dir"/spec-*.md "$spec_dir"/plan-*.md "$spec_dir"/tasks-*.md; do
+  for f in "$spec_dir"/spec-*.md "$spec_dir"/design-*.md "$spec_dir"/plan-*.md "$spec_dir"/tasks-*.md; do
     [ -e "$f" ] || continue
     type="${f##*/}"; type="${type%%-*}"
     echo "DRIFT: $f → should be $type.md"
