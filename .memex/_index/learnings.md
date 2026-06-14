@@ -13,8 +13,8 @@ Learnings here are specific to memex. Code style conventions live in `[[conventi
 ### Harness engineering (the runtime pattern, not skill authoring)
 
 - [[../learnings/harness-engineering-foundations|Harness engineering — the foundation behind this repo]] — the three articles (Anthropic, Fowler, OpenAI) that inform the existing `memex/` skill (the literature pattern is still called *harness engineering*; only the skill was renamed — see [[../learnings/memex]]).
-- [[../learnings/memex|Memex — Vannevar Bush's 1945 personal memory extender]] — the canonical name for "externalized, navigable personal memory"; conceptual frame for the `.vault/` vault and the rename of `harness` → `memex`.
-- [[../learnings/agents-md-as-map-not-encyclopedia|AGENTS.md is a map, not an encyclopedia]] — keep root agent instructions ~100 lines and point into `.vault/`; the four failure modes of the monolithic approach.
+- [[../learnings/memex|Memex — Vannevar Bush's 1945 personal memory extender]] — the canonical name for "externalized, navigable personal memory"; conceptual frame for the `.memex/` vault and the rename of `harness` → `memex`.
+- [[../learnings/agents-md-as-map-not-encyclopedia|AGENTS.md is a map, not an encyclopedia]] — keep root agent instructions ~100 lines and point into `.memex/`; the four failure modes of the monolithic approach.
 - [[../learnings/mechanical-enforcement-over-prose|Mechanical enforcement beats prose rules]] — runnable checks > written rules; feedforward + feedback; embed remediation in error messages.
 - [[../learnings/vault-link-identity-is-basename-keyed|Vault link identity is basename-keyed — bare filenames need path-qualified wikilinks]] — Obsidian and the GC tooling resolve `[[ ]]` by basename; bare `spec.md` needs the dated folder as discriminator on both link text and resolver identity.
 
