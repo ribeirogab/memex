@@ -1,8 +1,8 @@
 ---
-status: draft
+status: shipped
 feature: benchmark-spec-driven-tools
 created: 2026-06-14
-shipped: null
+shipped: 2026-06-14
 branch: docs/benchmark-spec-driven-tools
 mode: autonomous
 related:
@@ -15,7 +15,7 @@ related:
 ---
 # Benchmark Spec-Driven Tools — Spec
 
-**Status:** Draft
+**Status:** Shipped (2026-06-14)
 **Scope:** Deeply analyze two comparable spec-driven workflow tools (`tlc-spec-driven` and `OpenSpec`), capture each as a detailed visual learning, then distill one insights learning of concrete, high-impact improvements for memex.
 
 ## Context
