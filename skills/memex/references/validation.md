@@ -7,7 +7,7 @@ Report results as a table. Any `FAIL` triggers an automatic fix attempt using th
 ## Contents
 
 - [Output format](#output-format)
-- [Checks](#checks) — 15 numbered checks (CLAUDE.md symlink, placeholder sweeps, AGENTS.md headers, frontmatter, Obsidian JSON, .gitignore, spec folder naming, canonical skills installed, Claude plugin settings, executable scripts, MOC placeholders, spec template Acceptance Criteria, AGENTS.md size cap, spec-file slug naming)
+- [Checks](#checks) — 15 numbered checks (CLAUDE.md symlink, placeholder sweeps, AGENTS.md headers, frontmatter, Obsidian JSON, .gitignore, spec folder naming, canonical skills installed, Claude plugin settings, executable scripts, MOC placeholders, spec template Acceptance Criteria, AGENTS.md size cap, spec-file bare naming)
 - [When everything passes](#when-everything-passes)
 - [When something fails](#when-something-fails)
 
@@ -190,24 +190,16 @@ lines=$(wc -l < AGENTS.md | tr -d ' ')
 
 FAIL means `AGENTS.md` exceeded the cap. Fix: trim the body per the guidance in `references/agents-md-template.md` (`## Size constraint`) — tighten body prose and replace any longer narrative with a one-line pointer into `.vault/`. Never drop a required section header (check #4 enforces those).
 
-### 15. No spec folder contains generic `spec.md` / `plan.md` / `tasks.md`
+### 15. Spec folders use bare `spec.md` / `plan.md` / `tasks.md`
 
-Inside any date-prefixed spec folder, the three files must use the `<type>-<slug>.md` convention (slug = the kebab slug from the folder name after the `YYYY-MM-DD-` prefix). Generic names defeat the convention's purpose (distinguishable filenames in editor tabs, file pickers, search results).
+Inside any date-prefixed spec folder, the three files use **bare** names — `spec.md`, `plan.md`, `tasks.md`. The dated folder is the discriminator and cross-references are path-qualified wikilinks (`[[YYYY-MM-DD-<slug>/spec|spec]]`). A surviving `<type>-<slug>.md` file is drift from before the bare-filename convention.
 
 ```bash
-fail=0
-find .vault/specs -mindepth 1 -maxdepth 1 -type d -name '[0-9]*-*' 2>/dev/null | while read -r spec_dir; do
-  for generic in spec.md plan.md tasks.md; do
-    if [ -f "$spec_dir/$generic" ]; then
-      echo "FAIL: $spec_dir/$generic"
-      fail=1
-    fi
-  done
-done
-[ $fail -eq 0 ] && echo PASS
+bad=$(find .vault/specs -type f \( -name 'spec-*.md' -o -name 'plan-*.md' -o -name 'tasks-*.md' \) 2>/dev/null)
+[ -z "$bad" ] && echo PASS || { echo "FAIL:"; echo "$bad"; }
 ```
 
-FAIL lists the offending paths. Fix: run the spec-file rename migration recipe in `SKILL.md` (Phase 4 → "Spec file rename migration") for each affected folder. The recipe `git mv`s the files, updates internal `[[spec]]`/`[[plan]]`/`[[tasks]]` wikilinks, and updates the `.vault/_index/specs.md` MOC entry. Renames are destructive — confirm with the user once per folder before running.
+FAIL lists the offending slug-named paths. Fix: run the spec-file rename migration recipe in `SKILL.md` (Phase 4 → "Spec file rename migration") for each affected folder. The recipe `git mv`s the files to bare names, rewrites `[[<type>-<slug>]]` wikilinks to the path-qualified `[[<folder>/<type>|<type>]]` form, and updates the `.vault/_index/specs.md` MOC entry. Renames are destructive — confirm with the user once per folder before running.
 
 ## When everything passes
 
