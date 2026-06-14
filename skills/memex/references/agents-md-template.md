@@ -12,12 +12,12 @@ Do **not** leave `{{placeholders}}` in the final file. Phase 5 validation will c
 
 ## Size constraint
 
-The final `AGENTS.md` must be **≤ 80 lines** (target 45–70). The file is loaded into every agent session as the entry-point contract; longer than that and it crowds out conversation context, restates content that belongs in `.vault/`, and starts rotting (see `.vault/learnings/agents-md-as-map-not-encyclopedia.md`). Phase 5 validation enforces the cap.
+The final `AGENTS.md` must be **≤ 80 lines** (target 45–70). The file is loaded into every agent session as the entry-point contract; longer than that and it crowds out conversation context, restates content that belongs in `.memex/`, and starts rotting (see `.memex/learnings/agents-md-as-map-not-encyclopedia.md`). Phase 5 validation enforces the cap.
 
 When trimming to fit:
 
 - Tighten body prose rather than dropping a required section header.
-- Replace any longer narrative inside a section with a one-line pointer into `.vault/` (e.g., "See `.vault/learnings/X.md` for the full story").
+- Replace any longer narrative inside a section with a one-line pointer into `.memex/` (e.g., "See `.memex/learnings/X.md` for the full story").
 - Never drop a required section header — the validator checks for all of them.
 
 ## Required section headers
@@ -40,7 +40,7 @@ Instructions for AI coding assistants and developers working on the {{project}} 
 
 ## Workflow Spec Driven
 
-Before any work, read `.vault/_index/home.md` (project knowledge), `.vault/constitution.md` (non-negotiables), and `.vault/rules.md` (operational rules).
+Before any work, read `.memex/_index/home.md` (project knowledge), `.memex/constitution.md` (non-negotiables), and `.memex/rules.md` (operational rules).
 
 Implementing, modifying, or creating something? Ask: "Can I describe the complete solution in one sentence?"
 - **Yes** → implement directly.
@@ -57,16 +57,16 @@ If the user is asking, investigating, or exploring — just answer.
 4. **Compact handoff (either mode)** — if compact was chosen, once spec/plan/tasks are written print a `txt` handoff prompt (summary + the three paths + mode) and stop; you `/compact` or open a new chat and paste it to resume. Never compact before the artifacts exist.
 5. **Implement.**
 6. **Quality gate.** Detect the touched modules' code-quality processes (test, lint, typecheck, build — Makefile, `package.json` scripts, the area's CI) and run them all; nothing you did may break them. Logic added or changed in a tested area without a test → write the missing tests first.
-7. Reflect; write learnings to `.vault/learnings/` if genuinely useful, without asking — part of delivery. Nothing useful → say "No new learnings".
+7. Reflect; write learnings to `.memex/learnings/` if genuinely useful, without asking — part of delivery. Nothing useful → say "No new learnings".
 8. **Deliver.** `autonomous` → open the PR (`/memex:new-pr`) and run the `memex:code-review` cycle to `lgtm`, hands-off — the recorded mode tells the agent to finish alone. `reviewed` → after reflect, ask "open the PR and run code-review?", then the same on your go-ahead.
 
 ## Non-negotiable rules
 
-All in `.vault/rules.md` — philosophy, git, security, code. Security and architecture are detailed in `.vault/constitution.md`.
+All in `.memex/rules.md` — philosophy, git, security, code. Security and architecture are detailed in `.memex/constitution.md`.
 
 ## Vault — read from it, write to it
 
-`.vault/` is the project brain. Stuck? Search `learnings/`, `conventions/`, `rules.md`, the relevant spec, and the constitution **before** guessing or asking the user. A non-obvious discovery (gotcha, constraint, surprising behavior) → an atomic note in `.vault/learnings/` (template in `.vault/templates/`), indexed in `.vault/_index/learnings.md`, linked to its spec with a wikilink — without asking permission. On a shipped spec, run the reflection step: one note per non-obvious thing, or say "No new learnings".
+`.memex/` is the project brain. Stuck? Search `learnings/`, `conventions/`, `rules.md`, the relevant spec, and the constitution **before** guessing or asking the user. A non-obvious discovery (gotcha, constraint, surprising behavior) → an atomic note in `.memex/learnings/` (template in `.memex/templates/`), indexed in `.memex/_index/learnings.md`, linked to its spec with a wikilink — without asking permission. On a shipped spec, run the reflection step: one note per non-obvious thing, or say "No new learnings".
 
 ## Skills and slash commands
 

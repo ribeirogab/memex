@@ -35,10 +35,10 @@ Report results as a table. Any `FAIL` triggers an automatic fix attempt using th
 
 FAIL means `CLAUDE.md` is missing, is a regular file, or points elsewhere. Fix: remove and recreate with `ln -s AGENTS.md CLAUDE.md`.
 
-### 2. `.vault/constitution.md` has no surviving `{{placeholders}}`
+### 2. `.memex/constitution.md` has no surviving `{{placeholders}}`
 
 ```bash
-grep -n '{{' .vault/constitution.md && echo FAIL || echo PASS
+grep -n '{{' .memex/constitution.md && echo FAIL || echo PASS
 ```
 
 FAIL means the scaffold left unsubstituted placeholders. Fix: ask the user for the missing info and patch the lines reported.
@@ -71,10 +71,10 @@ Fix: read `references/agents-md-template.md` and insert the missing sections in 
 
 ### 5. Frontmatter valid in MOCs and templates
 
-For each of `.vault/_index/{home,specs,learnings,conventions}.md`, `.vault/rules.md`, `.vault/templates/{learning,convention}.md`, and `.vault/specs/_template/{spec,plan,tasks}.md`, confirm the file begins with `---` and contains a closing `---` with at least one expected field (`tags:`, `feature:`, or `status:`) between them.
+For each of `.memex/_index/{home,specs,learnings,conventions}.md`, `.memex/rules.md`, `.memex/templates/{learning,convention}.md`, and `.memex/specs/_template/{spec,plan,tasks}.md`, confirm the file begins with `---` and contains a closing `---` with at least one expected field (`tags:`, `feature:`, or `status:`) between them.
 
 ```bash
-for f in .vault/_index/*.md .vault/templates/*.md .vault/specs/_template/*.md; do
+for f in .memex/_index/*.md .memex/templates/*.md .memex/specs/_template/*.md; do
   head -1 "$f" | grep -q '^---$' || { echo "FAIL: $f missing opening fence"; continue; }
   awk '/^---$/{n++} n==2{exit} {print}' "$f" | grep -qE '^(tags|feature|status):' \
     || echo "FAIL: $f missing expected frontmatter field"
@@ -86,7 +86,7 @@ Fix: re-create the file from `references/vault-files.md`.
 ### 6. Obsidian JSON files parse
 
 ```bash
-for f in .vault/.obsidian/app.json .vault/.obsidian/appearance.json .vault/.obsidian/core-plugins.json; do
+for f in .memex/.obsidian/app.json .memex/.obsidian/appearance.json .memex/.obsidian/core-plugins.json; do
   python3 -c "import json,sys; json.load(open('$f'))" 2>/dev/null && echo "PASS: $f" || echo "FAIL: $f"
 done
 ```
@@ -96,15 +96,15 @@ Fix: re-write from `references/vault-files.md`.
 ### 7. `.gitignore` ignores the entire Obsidian config directory
 
 ```bash
-grep -qE '^.vault/\.obsidian/?$' .gitignore 2>/dev/null && echo PASS || echo FAIL
+grep -qE '^.memex/\.obsidian/?$' .gitignore 2>/dev/null && echo PASS || echo FAIL
 ```
 
-FAIL means `.gitignore` is missing the `.vault/.obsidian/` line (or still has the older fine-grained patterns). Fix: replace any old per-file Obsidian patterns with the single line `.vault/.obsidian/`.
+FAIL means `.gitignore` is missing the `.memex/.obsidian/` line (or still has the older fine-grained patterns). Fix: replace any old per-file Obsidian patterns with the single line `.memex/.obsidian/`.
 
-### 8. `.vault/specs/` contains no folder without date prefix
+### 8. `.memex/specs/` contains no folder without date prefix
 
 ```bash
-ls .vault/specs/ 2>/dev/null | grep -vE '^_template$|^[0-9]{4}-[0-9]{2}-[0-9]{2}-' \
+ls .memex/specs/ 2>/dev/null | grep -vE '^_template$|^[0-9]{4}-[0-9]{2}-[0-9]{2}-' \
   && echo FAIL || echo PASS
 ```
 
@@ -159,10 +159,10 @@ Fix: re-run the settings.json merge block from `SKILL.md` (Phase 4), which uses 
 
 ### 12. MOCs have no surviving `{{Project Name}}` placeholders
 
-The four MOCs in `.vault/_index/` belong to Group B in `references/vault-files.md` — they must have `{{Project Name}}` substituted with the actual project name. Surviving placeholders here mean the scaffold step skipped a file.
+The four MOCs in `.memex/_index/` belong to Group B in `references/vault-files.md` — they must have `{{Project Name}}` substituted with the actual project name. Surviving placeholders here mean the scaffold step skipped a file.
 
 ```bash
-grep -nH '{{' .vault/_index/*.md && echo FAIL || echo PASS
+grep -nH '{{' .memex/_index/*.md && echo FAIL || echo PASS
 ```
 
 Fix: re-substitute `{{Project Name}}` (and any other surviving `{{}}` placeholder) in the offending file with the project name from Prerequisites. Note: `templates/*.md` and `specs/_template/*.md` are Group A (templates) and **legitimately retain** their `{{}}` placeholders — do not run this check against them.
@@ -172,7 +172,7 @@ Fix: re-substitute `{{Project Name}}` (and any other surviving `{{}}` placeholde
 Every spec produced from `_template/spec.md` must inherit a structured Acceptance Criteria section so the behaviour harness has something concrete to verify. If the heading was deleted from the template, every future spec loses it silently — `/memex:review-spec` would have nothing to enforce.
 
 ```bash
-grep -q '^## Acceptance Criteria$' .vault/specs/_template/spec.md \
+grep -q '^## Acceptance Criteria$' .memex/specs/_template/spec.md \
   && echo PASS \
   || echo "FAIL: missing '## Acceptance Criteria' heading in _template/spec.md"
 ```
@@ -181,25 +181,25 @@ Fix: re-create `_template/spec.md` from the spec block in `references/vault-file
 
 ### 14. `AGENTS.md` is at most 80 lines
 
-The file is loaded into every agent session as the entry-point contract. Letting it grow past 80 lines crowds context and reintroduces the "encyclopedia" anti-pattern that the canonical authoring rules explicitly reject (see `.vault/learnings/agents-md-as-map-not-encyclopedia.md`). Target range is 45–70 lines.
+The file is loaded into every agent session as the entry-point contract. Letting it grow past 80 lines crowds context and reintroduces the "encyclopedia" anti-pattern that the canonical authoring rules explicitly reject (see `.memex/learnings/agents-md-as-map-not-encyclopedia.md`). Target range is 45–70 lines.
 
 ```bash
 lines=$(wc -l < AGENTS.md | tr -d ' ')
 [ "$lines" -le 80 ] && echo "PASS ($lines lines)" || echo "FAIL ($lines lines, cap 80)"
 ```
 
-FAIL means `AGENTS.md` exceeded the cap. Fix: trim the body per the guidance in `references/agents-md-template.md` (`## Size constraint`) — tighten body prose and replace any longer narrative with a one-line pointer into `.vault/`. Never drop a required section header (check #4 enforces those).
+FAIL means `AGENTS.md` exceeded the cap. Fix: trim the body per the guidance in `references/agents-md-template.md` (`## Size constraint`) — tighten body prose and replace any longer narrative with a one-line pointer into `.memex/`. Never drop a required section header (check #4 enforces those).
 
 ### 15. Spec folders use bare `spec.md` / `plan.md` / `tasks.md`
 
 Inside any date-prefixed spec folder, the three files use **bare** names — `spec.md`, `plan.md`, `tasks.md`. The dated folder is the discriminator and cross-references are path-qualified wikilinks (`[[YYYY-MM-DD-<slug>/spec|spec]]`). A surviving `<type>-<slug>.md` file is drift from before the bare-filename convention.
 
 ```bash
-bad=$(find .vault/specs -type f \( -name 'spec-*.md' -o -name 'plan-*.md' -o -name 'tasks-*.md' \) 2>/dev/null)
+bad=$(find .memex/specs -type f \( -name 'spec-*.md' -o -name 'plan-*.md' -o -name 'tasks-*.md' \) 2>/dev/null)
 [ -z "$bad" ] && echo PASS || { echo "FAIL:"; echo "$bad"; }
 ```
 
-FAIL lists the offending slug-named paths. Fix: run the spec-file rename migration recipe in `SKILL.md` (Phase 4 → "Spec file rename migration") for each affected folder. The recipe `git mv`s the files to bare names, rewrites `[[<type>-<slug>]]` wikilinks to the path-qualified `[[<folder>/<type>|<type>]]` form, and updates the `.vault/_index/specs.md` MOC entry. Renames are destructive — confirm with the user once per folder before running.
+FAIL lists the offending slug-named paths. Fix: run the spec-file rename migration recipe in `SKILL.md` (Phase 4 → "Spec file rename migration") for each affected folder. The recipe `git mv`s the files to bare names, rewrites `[[<type>-<slug>]]` wikilinks to the path-qualified `[[<folder>/<type>|<type>]]` form, and updates the `.memex/_index/specs.md` MOC entry. Renames are destructive — confirm with the user once per folder before running.
 
 ## When everything passes
 
