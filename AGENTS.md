@@ -6,7 +6,7 @@ Instructions for AI coding assistants and developers working on the memex codeba
 
 ## Workflow Spec Driven
 
-Before any work, read `.memex/_index/home.md` (project knowledge), `.memex/constitution.md` (non-negotiables), and `.memex/rules.md` (operational rules).
+Before any work, read `.memex/_index/home.md` (project knowledge), `.memex/constitution.md` (non-negotiables), and `.memex/rules.md` (operational rules). `.memex/spec-driven-development.md` is the full guide to the flow below (artifacts, the 9 steps, scope/delegation tables, gates).
 
 Implementing, modifying, or creating something? Ask: "Can I describe the complete solution in one sentence?"
 - **Yes** → implement directly.
