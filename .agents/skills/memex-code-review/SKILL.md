@@ -93,6 +93,7 @@ A blocker MUST change before merge. Real blockers here:
 - a broken vault cross-link (a `[[wikilink]]` or path with no target) introduced by the diff.
 - new logic with zero tests in an area that has tests.
 - an acceptance criterion (`AC-N`) in the spec satisfied by no change in the diff — the spec-conformance pass flags it by ID (Completeness miss).
+- a silent test-integrity regression in a tested area (installed repos with a test suite): the touched area's test count drops, or an assertion is weakened/`skip`ped/deleted, with no in-spec justification.
 
 NOT blockers — these are nits or suggestions, never request-changes:
 
