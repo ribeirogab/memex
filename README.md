@@ -26,7 +26,7 @@ The skill is audit-first, autonomous-fix, and safe to re-run. After the first ru
 
 After install, the repo has an `AGENTS.md` describing a **spec-driven workflow** and a set of `/memex:*` commands and companion skills:
 
-- **The flow** — for any non-trivial change: `brainstorming` → spec → (branch) → plan + tasks → implement → quality gate → PR → review-to-`lgtm`. After the design is approved, brainstorming asks for an execution **mode**: `reviewed` (you validate the spec and ask for the PR) or `autonomous` (hands-off through to the open PR). The chosen mode is recorded in the spec and counts as consent for committing/pushing that feature branch.
+- **The flow** — for any non-trivial change: `brainstorming` → spec → (branch) → plan + tasks → implement → quality gate → PR → review-to-`lgtm`. **Design approval is the only human review** — the agent reviews its own spec (the spec-document-reviewer + `/memex:review-spec`) in both modes. Right after design approval, one batch confirms the **branch name** and the execution **mode**: `autonomous` (hands-off through to the open PR) or `reviewed` (which also asks whether to open a PR at the end and whether to **compact** first). The mode is recorded in the spec and counts as consent for committing/pushing that feature branch. With `reviewed` + compact, once spec/plan/tasks are written the agent prints a handoff prompt so you can `/compact` (or open a new chat) and implement with a clean context.
 - **Commands** — `/memex:spec`, `/memex:review-spec`, `/memex:sweep`, `/memex:learn`.
 - **Companion skills** — `/memex:brainstorming`, `/memex:writing-plans`, `/memex:recall`, `/memex:link`, `/memex:new-pr` (opens the spec's PR), `/memex:code-review` (reviews the branch to `lgtm`).
 
