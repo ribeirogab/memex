@@ -1,9 +1,9 @@
 ---
-status: draft
+status: shipped
 feature: memex-update-command
 scope: high
 created: 2026-06-16
-shipped: null
+shipped: 2026-06-16
 branch: feat/memex-update-command
 mode: autonomous
 related:
