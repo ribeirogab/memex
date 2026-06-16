@@ -93,7 +93,7 @@ All bundled skills and commands live in `scaffold/` alongside this `SKILL.md`.
 
 ```bash
 MEMEX_DIR="<directory where this SKILL.md lives>"
-SKILL_NAMES=(memex-recall memex-brainstorming memex-writing-plans memex-link memex-new-pr memex-code-review)
+SKILL_NAMES=(memex-recall memex-brainstorming memex-writing-plans memex-link memex-new-pr memex-code-review memex-update)
 
 # 1. Canonical install — single source of truth on disk
 mkdir -p .agents/skills
@@ -114,9 +114,23 @@ if [ ! -e .memex/scripts/validate-spec.sh ]; then
   chmod +x .memex/scripts/validate-spec.sh
 fi
 
+# Ship the upstream-reconcile engine for /memex:update (idempotent). Always
+# refresh it so an install never carries a stale engine — it is the one managed
+# file the update flow itself relies on.
+cp "$MEMEX_DIR/scaffold/vault-scripts/memex-update.sh" .memex/scripts/memex-update.sh
+chmod +x .memex/scripts/memex-update.sh
+
 # Ship the spec-driven-development guide into the vault (verbatim, idempotent).
 if [ ! -e .memex/spec-driven-development.md ]; then
   cp "$MEMEX_DIR/scaffold/vault-docs/spec-driven-development.md" .memex/spec-driven-development.md
+fi
+
+# Record the update baseline manifest so future /memex:update runs are precise
+# 3-way (stock-vs-edited) instead of degrading to 2-way. At install every
+# managed file equals its scaffold source, so the local hash IS the baseline.
+# Write it only when absent — never clobber a manifest that already tracks edits.
+if [ ! -e .memex/.update-manifest.json ]; then
+  ( bash .memex/scripts/memex-update.sh --init-manifest ) || true
 fi
 
 # 2. Per-agent symlinks — only into discovery dirs that already exist
