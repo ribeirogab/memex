@@ -61,4 +61,5 @@ Commands + companion skills ship through the `memex` plugin (marketplace `memex`
 - **`/memex:review-spec`** — external evaluator spec pass (agent self-review, both modes).
 - **`/memex:new-pr`** — open the PR per the spec's mode.
 - **`/memex:code-review`** — bespoke, portable review cycle to `lgtm`.
+- **`/memex:update`** — sync the installed memex with upstream (reconcile scaffolded files).
 - **`/memex:sweep`** / **`/memex:learn`** — vault GC / investigate-and-save.
