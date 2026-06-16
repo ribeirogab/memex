@@ -99,8 +99,8 @@ _record_one() {
 
 # Record baseline = current local hash for every managed path (install time).
 _init_manifest() {
-  local lpath kind src
-  while IFS=$'\t' read -r lpath kind src; do
+  local lpath kind _src
+  while IFS=$'\t' read -r lpath kind _src; do
     _record_one "$lpath" "$(_local_hash "$lpath" "$kind")"
   done < <(managed_pairs "${MEMEX_UPSTREAM_DIR:-.}")
 }

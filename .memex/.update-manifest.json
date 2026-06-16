@@ -9,7 +9,7 @@
     ".agents/skills/memex-update/SKILL.md": "9d3a337e9776bb8fc1ce9e6e9a1d5c6684a6cf181d20ef8c4747a599843f5675",
     ".memex/spec-driven-development.md": "c4aaa794d5e2f8e62f62cecba070de4a0d156dc78a20f832acf7606799d2133f",
     ".memex/scripts/validate-spec.sh": "37c59d9a27c6edfd16449a4dc2d0e45a7e1ff39a6a7db1e5c9b74fe9dd94e80e",
-    ".memex/scripts/memex-update.sh": "fc5be7ad26c928c700bce67bde10d2cc24f4e2dd41a5849c1669319041122437",
+    ".memex/scripts/memex-update.sh": "f356f7c5fb2106109e13970db74d14526ed21046911f26dadd27a45069a2d103",
     "AGENTS.md#spec-flow": "4cb98a3b66f55261d1a8571629b7bc56edcbcd435b7586a753355500e370e751"
   }
 }

@@ -77,7 +77,7 @@ The `--self-test` builds its fixtures **ephemerally** (a `mktemp -d` sandbox wit
 - `skills/memex/scaffold/skills/memex-update/SKILL.md` — scaffold copy (`name: memex-update`).
 
 **Created — baseline manifest (dogfood):**
-- `.memex/.update-manifest.json` — this repo's own manifest, one sha256 per managed path + the `AGENTS.md#spec-flow` key + a `memex_ref` field (the upstream ref last reconciled against).
+- `.memex/.update-manifest.json` — this repo's own manifest: `{"files": { <managed-path>: <sha256>, … }}`, one entry per managed path plus the `AGENTS.md#spec-flow` key. (v1 stores per-file hashes only — the baseline is content, not an upstream ref; pinning the last-reconciled ref is a deferred enhancement.)
 
 **Modified — installer:**
 - `skills/memex/SKILL.md` — Scaffolding section: add the `memex-update.sh` copy+chmod step (mirror validate-spec.sh), add `memex-update` to the canonical skills copy block, and add a step that writes the initial `.memex/.update-manifest.json` by hashing every managed file at scaffold time.
