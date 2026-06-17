@@ -42,6 +42,14 @@ Surviving `{{Project Name}}` in any Group B file is caught by Phase 5 validation
 
 - The 3 `.obsidian/*.json` files — pure JSON, no placeholders.
 
+### Group D — Installer-managed (copied or generated, not authored here)
+
+The installer (`skills/memex/SKILL.md`) produces these from the `scaffold/` tree, not from content in this reference. They are the **managed set** that `/memex:update` later reconciles against upstream:
+
+- `.memex/scripts/validate-spec.sh` — copied from `scaffold/vault-scripts/validate-spec.sh`, `chmod +x`. The mechanical spec gate.
+- `.memex/scripts/memex-update.sh` — copied from `scaffold/vault-scripts/memex-update.sh`, `chmod +x`. The upstream-reconcile engine behind `/memex:update`.
+- `.memex/.update-manifest.json` — generated at install by `memex-update.sh --init-manifest`: a sha256 baseline per managed file (the 7 companion skills' `SKILL.md`, `spec-driven-development.md`, the two scripts, and the `AGENTS.md` `### Spec flow` block). Lets `/memex:update` tell "user edited it" from "upstream changed it". Written only when absent — never clobbered.
+
 ---
 
 ## Obsidian config
