@@ -6,15 +6,13 @@
 
 ## Install
 
+From your project root:
+
 ```bash
 curl -fsSL https://raw.githubusercontent.com/ribeirogab/memex/main/install.sh | sh
 ```
 
-### Ways in
-
-- **`install.sh` (recommended)** — one command. Installs the scaffolder skill (`.agents/skills/memex/` plus the `.claude/skills/memex` symlink) **and** enables the marketplace plugin in `.claude/settings.json`. Then open the repo in your agent and run `/memex` to audit and scaffold the `.memex/` vault. The plugin (`/memex:spec`, `/memex:new-pr`, …) installs when Claude Code trusts the workspace.
-- **`npx skills add`** — the underlying mechanism: `npx skills add ribeirogab/memex --skill memex` installs only the scaffolder skill. Running `/memex` then scaffolds the vault and writes the plugin config itself — the same `.claude/settings.json` keys `install.sh` writes up front.
-- **Plugin marketplace** — `/plugin marketplace add ribeirogab/memex` then `/plugin install memex@memex`. Registers the `/memex:*` commands and companion skills in Claude Code only — it **creates no files in your repo** and does not scaffold the `.memex/` vault. Use it when you only want the commands available; use the scaffolder when you want the project memory.
+It installs the scaffolder skill (`.agents/skills/memex/` plus the `.claude/skills/memex` symlink) and enables the memex plugin in `.claude/settings.json`. Then open the repo in your agent and run `/memex` to audit and scaffold the `.memex/` vault. The plugin (`/memex:spec`, `/memex:new-pr`, …) installs when Claude Code trusts the workspace.
 
 ## Use
 
@@ -79,7 +77,7 @@ memex/
 └── README.md
 ```
 
-The repository also contains `.agents/`, `.claude/`, and `.memex/` — local dirs used to dogfood memex on its own development (the bundled companion skills, the per-agent symlinks, and the maintainer's knowledge vault). They are not what `npx skills add` installs.
+The repository also contains `.agents/`, `.claude/`, and `.memex/` — local dirs used to dogfood memex on its own development (the bundled companion skills, the per-agent symlinks, and the maintainer's knowledge vault). They are not what the installer puts in your repo.
 
 ## License
 
