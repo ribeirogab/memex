@@ -60,15 +60,22 @@ plugin_snippet() {
 }
 
 # Merge the two keys into $1, preserving every other top-level key. The mktemp
-# copy avoids reading and truncating the same file in one redirect.
+# copy avoids reading and truncating the same file in one redirect; writing to a
+# second temp and mv-ing only on jq success preserves a pre-existing (possibly
+# malformed) settings.json instead of emptying it when jq exits non-zero.
 merge_with_jq() {
-  settings="$1"; src="$2"; tmp="$(mktemp)"
+  settings="$1"; src="$2"; tmp="$(mktemp)"; out="$(mktemp)"
   if [ -s "$settings" ]; then cp "$settings" "$tmp"; else printf '{}' > "$tmp"; fi
-  jq --argjson src "$src" '
+  if jq --argjson src "$src" '
     .extraKnownMarketplaces["memex"] = { "source": $src }
     | .enabledPlugins["memex@memex"] = true
-  ' "$tmp" > "$settings"
-  rm -f "$tmp"
+  ' "$tmp" > "$out"; then
+    mv "$out" "$settings"
+  else
+    rm -f "$tmp" "$out"
+    return 1
+  fi
+  rm -f "$tmp" "$out"
 }
 
 merge_with_python() {
@@ -76,7 +83,8 @@ merge_with_python() {
 import json, os, pathlib
 p = pathlib.Path(os.environ["MEMEX_SETTINGS"])
 src = json.loads(os.environ["MEMEX_SRC"])
-data = json.loads(p.read_text()) if p.exists() and p.read_text().strip() else {}
+txt = p.read_text() if p.exists() else ""
+data = json.loads(txt) if txt.strip() else {}
 data.setdefault("extraKnownMarketplaces", {})["memex"] = {"source": src}
 data.setdefault("enabledPlugins", {})["memex@memex"] = True
 p.write_text(json.dumps(data, indent=2) + "\n")

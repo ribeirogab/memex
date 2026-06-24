@@ -44,6 +44,21 @@ set +eu
   cd /; rm -rf "$d"
 )
 
+# --- both engines preserve a malformed pre-existing settings.json -----------
+(
+  d="$(mktemp -d)"; cd "$d" || exit 1
+  src='{"source":"github","repo":"ribeirogab/memex"}'
+  printf 'not json{' > sj.json
+  merge_with_jq sj.json "$src" 2>/dev/null; rcj=$?
+  assert_eq "jq malformed: returns non-zero" '1' "$rcj"
+  assert_eq "jq malformed: preserved" 'not json{' "$(cat sj.json)"
+  printf 'not json{' > sp.json
+  merge_with_python sp.json "$src" 2>/dev/null; rcp=$?
+  assert_eq "python malformed: returns non-zero" '1' "$rcp"
+  assert_eq "python malformed: preserved" 'not json{' "$(cat sp.json)"
+  cd /; rm -rf "$d"
+)
+
 # --- configure_plugin: writes keys, preserves existing, idempotent ----------
 (
   d="$(mktemp -d)"; cd "$d" || exit 1
