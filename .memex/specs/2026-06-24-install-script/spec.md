@@ -1,9 +1,9 @@
 ---
-status: draft
+status: shipped
 feature: install-script
 scope: medium
 created: 2026-06-24
-shipped: null
+shipped: 2026-06-24
 branch: feat/install-script
 mode: autonomous
 worktree: null
@@ -16,7 +16,7 @@ related:
 ---
 # Per-project install.sh — Spec
 
-**Status:** Draft
+**Status:** Shipped
 **Design:** [[2026-06-24-install-script/design|design]]
 **Scope:** Add Claude Code plugin configuration to the per-project `install.sh`, and refactor it into a sourceable shape so the config logic is unit-testable without network.
 
