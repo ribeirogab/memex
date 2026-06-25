@@ -16,8 +16,6 @@ Only **file-backed scaffold content**, each compared by sha256 against a tracked
 | Local path | Upstream source (in the clone) |
 |---|---|
 | `.agents/skills/sw-<name>/SKILL.md` (brainstorming, writing-plans, new-pr, code-review, update) | `<clone>/skills/sw/scaffold/skills/sw-<name>/SKILL.md` |
-| `.specwright/scripts/validate-spec.sh` | `<clone>/skills/sw/scaffold/vault-scripts/validate-spec.sh` |
-| `skills/sw/scripts/sw-update.sh` | `<clone>/skills/sw/scripts/sw-update.sh` |
 | the `### Spec flow` block of `AGENTS.md` | the `### Spec flow` block of `<clone>/skills/sw/references/agents-md-template.md` |
 
 **Never touched:** `.specwright/conventions/*`, `.specwright/specs/*`, and the per-repo intro and non-spec-flow sections of `AGENTS.md`. This is living content — it has no single upstream file to hash.
