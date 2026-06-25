@@ -29,8 +29,18 @@ The skill is audit-first, autonomous-fix, and safe to re-run. After the first ru
 After install, the repo has an `AGENTS.md` describing a **spec-driven workflow** and a `.specwright/` vault that holds only `conventions/` (project-specific conventions) and `specs/` (dated spec folders) — plus a set of `/sw:*` commands and companion skills:
 
 - **The flow** — for any non-trivial change: `brainstorming` → design → (branch) → spec + tasks → implement → quality gate → PR → review-to-`lgtm`. **Design approval is the only human review** — the agent reviews its own spec (the spec-document-reviewer + `/sw:review-spec` + the `validate-spec.sh` mechanical gate) in both modes. Right after design approval, one batch asks exactly four things: the **branch name**, the execution **mode** (`autonomous` or `reviewed`), whether to use a **worktree** (a specwright-native checkout under `.specwright/worktrees/`, default yes unless already inside a linked worktree), and whether to **hand off** before implementing. The mode is recorded in the spec and counts as consent for committing/pushing that feature branch. It decides only the **delivery**: `autonomous` opens the PR and runs code-review to `lgtm` on its own; `reviewed` does everything the same but asks first ("open the PR and run code-review?"). **Handoff works in either mode** — once design/spec/tasks are written the agent prints a handoff prompt so you can `/compact` (or open a new chat) and implement with a clean context.
-- **Commands** — `/sw:spec`, `/sw:review-spec`.
-- **Companion skills** — `/sw:brainstorming`, `/sw:writing-plans`, `/sw:new-pr` (opens the spec's PR), `/sw:code-review` (reviews the branch to `lgtm`), `/sw:update` (syncs the install with upstream).
+- **Commands** — every `/sw:*` command and companion skill at a glance:
+
+  | Command | What it does |
+  |---|---|
+  | `/sw` | Scaffold or audit specwright in the current repo — set up, verify, or fix. Idempotent. |
+  | `/sw:brainstorming` | Explore intent and design before any non-trivial change → `design.md`. |
+  | `/sw:spec` | Turn the current conversation into a spec and enter the flow. |
+  | `/sw:writing-plans` | Turn an approved design into the technical `spec.md` + `tasks.md`. |
+  | `/sw:review-spec` | External-evaluator pass over a spec — flags vagueness, scope creep, design drift. |
+  | `/sw:new-pr` | Open the spec's PR — branch/base, push, PR template, Conventional-Commit title. |
+  | `/sw:code-review` | Review the branch diff with find-only subagents until `lgtm`. |
+  | `/sw:update` | Sync the installed specwright with upstream without clobbering local edits. |
 
 The spec flow, end to end (design approval is the only human review):
 
