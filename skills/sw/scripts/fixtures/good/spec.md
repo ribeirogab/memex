@@ -6,12 +6,11 @@ created: 2026-06-14
 shipped: null
 branch: feat/sample-feature
 mode: autonomous
-related: []
 ---
 # Sample Feature — Spec
 
 **Status:** Draft
-**Design:** [[design]]
+**Design:** design.md
 **Scope:** A sample spec used to exercise the validator fixtures.
 
 ## Architecture
@@ -38,7 +37,6 @@ None beyond the project defaults.
 
 - [ ] **AC-1** `greet("world")` returns the exact string `Hello, world`.
 - [ ] **AC-2** `greet("")` returns HTTP 400 with body `{"code":"EMPTY_NAME"}`.
-- [ ] **AC-3** `greet("  ")` trims whitespace and returns HTTP 400 with body `{"code":"EMPTY_NAME"}`.
 
 ## Risks and Mitigations
 

@@ -1,12 +1,12 @@
 ---
 feature: sample-feature
-design: "[[design]]"
-spec: "[[spec]]"
+design: "design.md"
+spec: "spec.md"
 created: 2026-06-14
 ---
 # Sample Feature — Tasks
 
-**For this spec:** `[[spec]]`
+**For this spec:** `spec.md`
 
 ## Phase 1: Build
 

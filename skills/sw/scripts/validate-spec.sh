@@ -1,11 +1,11 @@
 #!/usr/bin/env bash
-# validate-spec.sh — mechanical structural check for a memex spec folder.
+# validate-spec.sh — mechanical structural check for a specwright spec folder.
 #
 # Usage: validate-spec.sh <spec-folder>
 #
 # Exits 0 when every check passes; otherwise exits with the number of failed
 # checks and prints one "FAIL (check N): <reason>" line per failure. It is a
-# feedforward gate for /memex:review-spec — a structurally invalid spec should
+# feedforward gate for /sw:review-spec — a structurally invalid spec should
 # fail noisily here before any prose review (Rule of Repair).
 #
 # Checks:

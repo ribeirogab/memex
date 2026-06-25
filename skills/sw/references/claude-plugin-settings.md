@@ -1,33 +1,33 @@
 # Claude Plugin Settings — Reference
 
-The memex skill writes (or merges into) the target repo's `.claude/settings.json` so that Claude Code installs the upstream marketplace `memex` plus the `memex` plugin at trust time. This reference is the **single source of truth** for the marketplace coordinates, the JSON shapes, and the merge recipe.
+The specwright skill writes (or merges into) the target repo's `.claude/settings.json` so that Claude Code installs the upstream marketplace `specwright` plus the `sw` plugin at trust time. This reference is the **single source of truth** for the marketplace coordinates, the JSON shapes, and the merge recipe.
 
 ## Canonical coordinates
 
 | Key             | Value                       |
 | --------------- | --------------------------- |
-| Marketplace name | `memex`             |
-| Marketplace source (target repos) | `{ "source": "github", "repo": "ribeirogab/memex" }` |
+| Marketplace name | `specwright`             |
+| Marketplace source (target repos) | `{ "source": "github", "repo": "ribeirogab/specwright" }` |
 | Marketplace source (this repo dogfood only) | `{ "source": "directory", "path": "." }` |
-| Plugin name     | `memex`                     |
-| Enabled-plugins key | `memex@memex`    |
+| Plugin name     | `sw`                     |
+| Enabled-plugins key | `sw@specwright`    |
 
 ## JSON shapes
 
 The two keys to write under the top-level object are `extraKnownMarketplaces` and `enabledPlugins`.
 
-`extraKnownMarketplaces["memex"]` (target repos):
+`extraKnownMarketplaces["specwright"]` (target repos):
 
 ```json
 {
   "source": {
     "source": "github",
-    "repo": "ribeirogab/memex"
+    "repo": "ribeirogab/specwright"
   }
 }
 ```
 
-`enabledPlugins["memex@memex"]`:
+`enabledPlugins["sw@specwright"]`:
 
 ```json
 true
@@ -49,10 +49,10 @@ else
 fi
 
 jq '
-  .extraKnownMarketplaces["memex"] = {
-    "source": { "source": "github", "repo": "ribeirogab/memex" }
+  .extraKnownMarketplaces["specwright"] = {
+    "source": { "source": "github", "repo": "ribeirogab/specwright" }
   } |
-  .enabledPlugins["memex@memex"] = true
+  .enabledPlugins["sw@specwright"] = true
 ' "$TMP" > "$SETTINGS"
 
 rm "$TMP"
@@ -73,10 +73,10 @@ python3 - <<'PY'
 import json, pathlib
 p = pathlib.Path(".claude/settings.json")
 data = json.loads(p.read_text()) if p.exists() and p.read_text().strip() else {}
-data.setdefault("extraKnownMarketplaces", {})["memex"] = {
-    "source": {"source": "github", "repo": "ribeirogab/memex"}
+data.setdefault("extraKnownMarketplaces", {})["specwright"] = {
+    "source": {"source": "github", "repo": "ribeirogab/specwright"}
 }
-data.setdefault("enabledPlugins", {})["memex@memex"] = True
+data.setdefault("enabledPlugins", {})["sw@specwright"] = True
 p.write_text(json.dumps(data, indent=2) + "\n")
 PY
 ```
@@ -85,7 +85,7 @@ If neither `jq` nor `python3` is available, the skill must report a clear error 
 
 ## Dogfood note (this repo only)
 
-When the memex skill runs **inside `ribeirogab/memex` itself** (the marketplace repo), the dogfood `.claude/settings.json` declares the marketplace source as `{ "source": "directory", "path": "." }` instead of the GitHub source above. This keeps the maintainer's inner dev loop fast — local edits to `plugins/memex/` are picked up on `/plugin marketplace update` without commit-push-fetch. The github source is for **target repos** (every other repo). The skill detects this case by checking whether the current repo's `.claude-plugin/marketplace.json` declares `name = "memex"`; if it does, use the local source.
+When the specwright skill runs **inside `ribeirogab/specwright` itself** (the marketplace repo), the dogfood `.claude/settings.json` declares the marketplace source as `{ "source": "directory", "path": "." }` instead of the GitHub source above. This keeps the maintainer's inner dev loop fast — local edits to `plugins/sw/` are picked up on `/plugin marketplace update` without commit-push-fetch. The github source is for **target repos** (every other repo). The skill detects this case by checking whether the current repo's `.claude-plugin/marketplace.json` declares `name = "specwright"`; if it does, use the local source.
 
 ## Trade-off-rejected alternatives (from Architecture Decision 3)
 

@@ -1,13 +1,13 @@
 ---
-name: memex
-description: "Scaffold or audit the memex (vault + AGENTS.md + spec templates + bundled skills) in any repo — an externalized, navigable project memory for agents (Claude Code, Codex, Cursor, OpenCode, etc.). Agent-agnostic. Idempotent — safe to run repeatedly. Use when the user wants to set up, verify, or fix the memex in a project."
+name: sw
+description: "Scaffold or audit specwright (AGENTS.md + spec-driven workflow + bundled skills) in any repo — an explicit spec-driven workflow for agents (Claude Code, Codex, Cursor, OpenCode, etc.). Agent-agnostic. Idempotent — safe to run repeatedly. Use when the user wants to set up, verify, or fix specwright in a project."
 ---
 
-# Memex — Idempotent Agent Memory Infrastructure
+# specwright — Idempotent Spec-Driven Workflow
 
-Set up or audit the memex in the current repo. Safe to run multiple times — it checks what exists, reports what's missing or wrong, asks before making changes, then validates the result.
+Set up or audit specwright in the current repo. Safe to run multiple times — it checks what exists, reports what's missing or wrong, asks before making changes, then validates the result.
 
-**Announce at start:** "Auditing memex..."
+**Announce at start:** "Auditing specwright..."
 
 ## Mode of Operation
 
@@ -15,14 +15,14 @@ This skill is **audit-first, then autonomous**. Audit, report, and proceed to sc
 
 1. **Audit** — scan the repo and build a checklist of what exists vs what's expected.
 2. **Report** — show the checklist to the user with status per item.
-3. **Fix** — if issues are found, scaffold or repair them directly. Confirm only before destructive ops (e.g., renaming a spec folder).
+3. **Fix** — if issues are found, scaffold or repair them directly. Confirm only before destructive ops.
 4. **Validate** — after any creation or fix (and at the end of an audit-only run), run Phase 5 validation.
 
-If the audit finds nothing wrong **and** validation passes, just say "Memex is healthy." and stop.
+If the audit finds nothing wrong **and** validation passes, just say "specwright is healthy." and stop.
 
 ## Phase 1 — Audit
 
-Read `references/audit-checklist.md` for the full inventory of files and directories to check, the meaning of each status (`OK` / `MISSING` / `DRIFT`), drift criteria for `AGENTS.md` and `.memex/constitution.md`, the report format, and special handling for date-prefixed spec folders.
+Read `references/audit-checklist.md` for the full inventory of files and directories to check, the meaning of each status (`OK` / `MISSING` / `DRIFT`), drift criteria for `AGENTS.md`, the report format, and special handling for date-prefixed spec folders.
 
 Apply each check, then assemble the report described in that reference.
 
@@ -46,19 +46,20 @@ Before creating files, gather project context:
 2. Detect the package manager (`pnpm-workspace.yaml` → pnpm, `yarn.lock` → yarn, `bun.lockb` → bun, else npm).
 3. Detect the tech stack (frameworks, languages, deploy targets) from dependencies and config files.
 
-This information is required to fill `AGENTS.md` and `.memex/constitution.md` without surviving placeholders.
+This information is required to fill `AGENTS.md` without surviving placeholders.
 
 ## Phase 4 — Scaffold (only the items that need it)
 
 Create or repair only the items the audit flagged. Never touch files that are already `OK`.
 
-### Vault files
+### Vault directories
 
-For `.obsidian/*.json`, atomic note templates (`templates/learning.md`, `convention.md`), spec templates (`_template/spec.md`, `design.md`, `tasks.md`), and the four MOCs in `_index/`, read `references/vault-files.md` and write each file from the spec there. Use the project name from Prerequisites to substitute `{{Project Name}}` in MOCs.
+specwright's per-repo vault is `.specwright/` and holds exactly two living things:
 
-### Constitution
+- `.specwright/conventions/` — project-specific code/style conventions (populated by you over time).
+- `.specwright/specs/` — one dated folder per spec (`YYYY-MM-DD-<slug>/` with `design.md` + `spec.md` + `tasks.md`).
 
-For `.memex/constitution.md`, read `references/constitution-template.md`. It contains the template **and** filling rules — this is the most important file in the vault and must not be left with `{{placeholders}}`. If you don't have enough info to fill a section, ask the user; never commit unsubstituted placeholders.
+Ensure both directories exist (an empty `conventions/` is fine on first install). The spec **templates** are not scaffolded into the vault — they ship with this skill under `scaffold/spec-templates/` and the brainstorming / writing-plans skills generate specs from there. The spec **validator** ships with this skill under `scripts/validate-spec.sh`; it is not copied into the vault either.
 
 ### AGENTS.md
 
@@ -76,74 +77,42 @@ ln -s AGENTS.md CLAUDE.md
 
 ### .gitignore additions
 
-Append these lines to the repo's `.gitignore` (skip if already present):
+Append this line to the repo's `.gitignore` (skip if already present):
 
 ```
-# Obsidian vault config (machine-local — Obsidian rewrites these on every open)
-.memex/.obsidian/
-
-# memex per-spec worktrees (machine-local checkouts)
-.memex/worktrees/
+# specwright per-spec worktrees (machine-local checkouts)
+.specwright/worktrees/
 ```
-
-Rationale: Obsidian rewrites `app.json`, `appearance.json`, `core-plugins.json`, and the workspace files every time the vault is opened, which creates constant `git status` noise. The memex installer still **creates** the three config JSONs locally during scaffolding (so `useMarkdownLinks: false` / `newLinkFormat: "relative"` are set the first time Obsidian opens — wikilinks in the MOCs depend on this), but they are not tracked. Obsidian preserves existing user settings when it rewrites these files, so the defaults persist locally on subsequent opens.
 
 ### Skills and commands (copy from scaffold/)
 
-All bundled skills and commands live in `scaffold/` alongside this `SKILL.md`.
+All bundled skills live in `scaffold/skills/` alongside this `SKILL.md`.
 
-**Skills** are agent-agnostic and install canonically under `.agents/skills/<name>/` (the open agent skills standard's location, also discoverable by `npx skills` and similar tooling). For each agent-specific discovery directory already present in the repo (`.claude/`, `.codex/`, `.cursor/`, `.opencode/`, `.aider/`, `.augment/`, etc.), the memex installer adds a per-skill symlink so that agent picks up the skill without duplicating files on disk:
+**Skills** are agent-agnostic and install canonically under `.agents/skills/<name>/` (the open agent skills standard's location, also discoverable by `npx skills` and similar tooling). For each agent-specific discovery directory already present in the repo (`.codex/`, `.cursor/`, `.opencode/`, `.aider/`, `.augment/`, etc.), specwright adds a per-skill symlink so that agent picks up the skill without duplicating files on disk:
 
 ```bash
-MEMEX_DIR="<directory where this SKILL.md lives>"
-SKILL_NAMES=(memex-recall memex-brainstorming memex-writing-plans memex-link memex-new-pr memex-code-review memex-update)
+SW_DIR="<directory where this SKILL.md lives>"
+SKILL_NAMES=(sw-brainstorming sw-writing-plans sw-new-pr sw-code-review sw-update)
 
 # 1. Canonical install — single source of truth on disk
 mkdir -p .agents/skills
 for name in "${SKILL_NAMES[@]}"; do
   [ -e ".agents/skills/$name" ] && continue   # idempotent: don't overwrite
-  cp -r "$MEMEX_DIR/scaffold/skills/$name" ".agents/skills/$name"
+  cp -r "$SW_DIR/scaffold/skills/$name" ".agents/skills/$name"
 done
 
 # Ensure bundled skill scripts are executable
-[ -d .agents/skills/memex-brainstorming/scripts ] && \
-  chmod +x .agents/skills/memex-brainstorming/scripts/*.sh
-
-# Ship the spec validator into the vault (the single file only — the in-repo
-# fixtures/ sibling is for testing the validator, never scaffolded). Idempotent.
-mkdir -p .memex/scripts
-if [ ! -e .memex/scripts/validate-spec.sh ]; then
-  cp "$MEMEX_DIR/scaffold/vault-scripts/validate-spec.sh" .memex/scripts/validate-spec.sh
-  chmod +x .memex/scripts/validate-spec.sh
-fi
-
-# Ship the upstream-reconcile engine for /memex:update (idempotent). Always
-# refresh it so an install never carries a stale engine — it is the one managed
-# file the update flow itself relies on.
-cp "$MEMEX_DIR/scaffold/vault-scripts/memex-update.sh" .memex/scripts/memex-update.sh
-chmod +x .memex/scripts/memex-update.sh
-
-# Ship the spec-driven-development guide into the vault (verbatim, idempotent).
-if [ ! -e .memex/spec-driven-development.md ]; then
-  cp "$MEMEX_DIR/scaffold/vault-docs/spec-driven-development.md" .memex/spec-driven-development.md
-fi
-
-# Record the update baseline manifest so future /memex:update runs are precise
-# 3-way (stock-vs-edited) instead of degrading to 2-way. At install every
-# managed file equals its scaffold source, so the local hash IS the baseline.
-# Write it only when absent — never clobber a manifest that already tracks edits.
-if [ ! -e .memex/.update-manifest.json ]; then
-  ( bash .memex/scripts/memex-update.sh --init-manifest ) || true
-fi
+[ -d .agents/skills/sw-brainstorming/scripts ] && \
+  chmod +x .agents/skills/sw-brainstorming/scripts/*.sh
 
 # 2. Per-agent symlinks — only into discovery dirs that already exist
 #    (do NOT auto-create agent dirs; their absence means the user does
 #    not run that agent in this repo).
 #
 #    Skip .claude/ — Claude Code gets companion skills through the plugin
-#    (memex → memex), invoked as /memex:recall etc.
-#    Creating .claude/skills/memex-recall symlinks here would duplicate
-#    the skill under both `/memex-recall` (symlink) and `/memex:recall`
+#    (sw → specwright), invoked as /sw:brainstorming etc.
+#    Creating .claude/skills/sw-brainstorming symlinks here would duplicate
+#    the skill under both `/sw-brainstorming` (symlink) and `/sw:brainstorming`
 #    (plugin) in Claude Code's slash menu.
 for agent_dir in .codex .cursor .opencode .aider .augment; do
   [ -d "$agent_dir" ] || continue
@@ -155,8 +124,8 @@ for agent_dir in .codex .cursor .opencode .aider .augment; do
   done
 done
 
-# Legacy cleanup: remove any pre-plugin .claude/skills/memex-* symlinks that
-# earlier memex installs created. Plugin provides /memex:<verb> on Claude now.
+# Legacy cleanup: remove any pre-plugin .claude/skills/sw-* symlinks that
+# earlier installs created. Plugin provides /sw:<verb> on Claude now.
 if [ -d .claude/skills ]; then
   for name in "${SKILL_NAMES[@]}"; do
     rm -f ".claude/skills/$name" 2>/dev/null
@@ -166,23 +135,22 @@ if [ -d .claude/skills ]; then
 fi
 ```
 
-**Slash commands** ship as a Claude Code plugin published from the upstream marketplace `memex` (this repo's root `.claude-plugin/marketplace.json`). The four slash commands — `/memex:spec`, `/memex:learn`, `/memex:sweep`, `/memex:review-spec` — live in `plugins/memex/commands/` upstream and are fetched by Claude Code at workspace-trust time. The memex skill **does not copy command files into the target repo** — it only declares the marketplace and pre-enables the plugin via `.claude/settings.json`.
+**Slash commands** ship as a Claude Code plugin published from the upstream marketplace `specwright` (this repo's root `.claude-plugin/marketplace.json`). The slash commands — `/sw:spec`, `/sw:review-spec` — live in `plugins/sw/commands/` upstream and are fetched by Claude Code at workspace-trust time. The skill **does not copy command files into the target repo** — it only declares the marketplace and pre-enables the plugin via `.claude/settings.json`.
 
 The skill does two things at install time, both gated on the target repo having a `.claude/` directory (its absence signals the user does not run Claude Code in this repo):
 
-1. **Remove legacy command files** that pre-plugin memex installs left behind: `.claude/commands/memex-{spec,learn,sweep,review-spec}.md` and `.agents/commands/memex-{spec,learn,sweep,review-spec}.md`. This is a non-destructive op per the existing "scaffold sempre vence" policy — no prompt, no diff. `rm` works for both regular files and symlinks.
+1. **Remove legacy command files** that earlier installs left behind: `.claude/commands/sw-{spec,review-spec}.md` and `.agents/commands/sw-{spec,review-spec}.md`. This is a non-destructive op — no prompt, no diff. `rm` works for both regular files and symlinks.
 2. **Merge marketplace + plugin entries** into `.claude/settings.json`. Read `references/claude-plugin-settings.md` for the canonical coordinates, the JSON shapes, the jq merge recipe (preferred), and the Python fallback.
 
 ```bash
-# 1. Remove legacy command files for the four affected verbs.
+# 1. Remove legacy command files.
 #    rm works for files and symlinks alike. Missing files are not an error.
-for cmd in memex-spec memex-learn memex-sweep memex-review-spec; do
+for cmd in sw-spec sw-review-spec; do
   rm -f ".claude/commands/$cmd.md" 2>/dev/null
   rm -f ".agents/commands/$cmd.md" 2>/dev/null
 done
 
-# Also remove the .agents/commands/ directory if it is now empty (only the four
-# legacy files lived there; if anything else is present, leave it alone).
+# Also remove the .agents/commands/ directory if it is now empty.
 if [ -d .agents/commands ] && [ -z "$(ls -A .agents/commands 2>/dev/null)" ]; then
   rmdir .agents/commands
 fi
@@ -192,12 +160,12 @@ fi
 #    for the canonical coordinates, JSON shapes, jq recipe, and Python fallback.
 if [ -d .claude ]; then
   # Detect dogfood: if this repo's own .claude-plugin/marketplace.json declares
-  # name = "memex", use the local-path source. Otherwise use github.
+  # name = "specwright", use the local-path source. Otherwise use github.
   if [ -f .claude-plugin/marketplace.json ] && \
-     [ "$(jq -r '.name' .claude-plugin/marketplace.json 2>/dev/null)" = "memex" ]; then
+     [ "$(jq -r '.name' .claude-plugin/marketplace.json 2>/dev/null)" = "specwright" ]; then
     MARKETPLACE_SOURCE='{"source":"directory","path":"."}'
   else
-    MARKETPLACE_SOURCE='{"source":"github","repo":"ribeirogab/memex"}'
+    MARKETPLACE_SOURCE='{"source":"github","repo":"ribeirogab/specwright"}'
   fi
 
   SETTINGS=".claude/settings.json"
@@ -209,8 +177,8 @@ if [ -d .claude ]; then
   fi
 
   jq --argjson src "$MARKETPLACE_SOURCE" '
-    .extraKnownMarketplaces["memex"] = { "source": $src } |
-    .enabledPlugins["memex@memex"] = true
+    .extraKnownMarketplaces["specwright"] = { "source": $src } |
+    .enabledPlugins["sw@specwright"] = true
   ' "$TMP" > "$SETTINGS"
   rm "$TMP"
 fi
@@ -220,94 +188,36 @@ If `jq` is not installed, fall back to the Python recipe documented in `referenc
 
 Rules:
 - Skills always go to `.agents/skills/<name>` first (canonical), then symlinked into existing agent dirs.
-- Slash commands ship as a Claude Code plugin from the upstream marketplace `memex`. The skill writes `.claude/settings.json` (extraKnownMarketplaces + enabledPlugins) so Claude Code installs the plugin at workspace-trust time. No command files are copied into the target repo.
+- Slash commands ship as a Claude Code plugin from the upstream marketplace `specwright`. The skill writes `.claude/settings.json` (extraKnownMarketplaces + enabledPlugins) so Claude Code installs the plugin at workspace-trust time. No command files are copied into the target repo.
 - Existing canonical skill files are never overwritten — re-runs are no-ops on already-installed items.
-- Legacy `.claude/commands/memex-{spec,learn,sweep,review-spec}.md` and `.agents/commands/memex-*.md` files (from pre-plugin installs) are removed unconditionally on every run. `rm` works for regular files and symlinks.
+- Legacy `.claude/commands/sw-{spec,review-spec}.md` and `.agents/commands/sw-*.md` files are removed unconditionally on every run. `rm` works for regular files and symlinks.
 - Per-agent dirs that do not already exist are not auto-created by the skill copy; only an existing dir signals that agent is in use here.
 - `.claude/settings.json` is created if absent (with `{}` as the seed) or merged into if present — every unrelated top-level key survives.
 
-### Spec folder migration (if drift was reported)
+### Spec folder dating (if drift was reported)
 
-If the audit flagged any spec folder without a `YYYY-MM-DD-` prefix, migrate per the rules in `references/audit-checklist.md` (pull date from the spec file's frontmatter `created:` field, ask user when absent, never rename without confirmation).
-
-### Spec file rename migration (if drift was reported)
-
-If the audit detected a spec folder containing slug-named `spec-<slug>.md` / `design-<slug>.md` / `plan-<slug>.md` / `tasks-<slug>.md` files (instead of the bare-name convention), migrate the folder. This is a **filename** migration (slug → bare); it never converts a legacy `plan.md` into `design.md` (frozen specs keep their ship-time shape). `plan` stays in the set for pre-design-era specs; `design` covers the current artifact set. Renaming tracked files is a destructive operation — surface each detected folder, get explicit user confirmation per folder, then run the recipe below.
-
-For each confirmed `<spec_dir>` (e.g. `.memex/specs/2026-04-30-opensource-readiness/`):
-
-```bash
-spec_dir="<the folder, e.g. .memex/specs/2026-04-30-opensource-readiness>"
-slug=$(basename "$spec_dir" | sed 's/^[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]-//')
-folder=$(basename "$spec_dir")
-
-# 1. Rename each slug-named file to its bare name, preserving git history.
-#    `design` covers the current artifact set; `plan` stays for pre-design-era
-#    specs (this renames filenames only — it never rewrites plan.md as design.md).
-for type in spec design plan tasks; do
-  src="$spec_dir/${type}-${slug}.md"
-  dst="$spec_dir/${type}.md"
-  [ -f "$src" ] && [ ! -e "$dst" ] && git mv "$src" "$dst"
-done
-
-# 2. Rewrite intra-folder wikilinks: [[<type>-<slug>]] → [[<folder>/<type>|<type>]]
-for f in "$spec_dir"/*.md; do
-  sed -i.bak \
-    -e "s|\\[\\[spec-${slug}\\]\\]|[[${folder}/spec\\|spec]]|g" \
-    -e "s|\\[\\[design-${slug}\\]\\]|[[${folder}/design\\|design]]|g" \
-    -e "s|\\[\\[plan-${slug}\\]\\]|[[${folder}/plan\\|plan]]|g" \
-    -e "s|\\[\\[tasks-${slug}\\]\\]|[[${folder}/tasks\\|tasks]]|g" \
-    "$f" && rm "$f.bak"
-done
-
-# 3. Rewrite path-qualified links anywhere they kept the slugged filename:
-#    /<folder>/spec-<slug> → /<folder>/spec
-grep -rl "/${folder}/spec-${slug}\|/${folder}/design-${slug}\|/${folder}/plan-${slug}\|/${folder}/tasks-${slug}" .memex 2>/dev/null \
-  | while IFS= read -r f; do
-      sed -i.bak \
-        -e "s|/${folder}/spec-${slug}|/${folder}/spec|g" \
-        -e "s|/${folder}/design-${slug}|/${folder}/design|g" \
-        -e "s|/${folder}/plan-${slug}|/${folder}/plan|g" \
-        -e "s|/${folder}/tasks-${slug}|/${folder}/tasks|g" \
-        "$f" && rm "$f.bak"
-    done
-
-# 4. Rewrite bare-basename inbound links: [[spec-<slug>]] → [[<folder>/spec|<slug>]]
-grep -rl "\\[\\[spec-${slug}\\]\\]\|\\[\\[design-${slug}\\]\\]\|\\[\\[plan-${slug}\\]\\]\|\\[\\[tasks-${slug}\\]\\]" .memex 2>/dev/null \
-  | while IFS= read -r f; do
-      sed -i.bak \
-        -e "s|\\[\\[spec-${slug}\\]\\]|[[${folder}/spec\\|${slug}]]|g" \
-        -e "s|\\[\\[design-${slug}\\]\\]|[[${folder}/design\\|${slug}]]|g" \
-        -e "s|\\[\\[plan-${slug}\\]\\]|[[${folder}/plan\\|${slug}]]|g" \
-        -e "s|\\[\\[tasks-${slug}\\]\\]|[[${folder}/tasks\\|${slug}]]|g" \
-        "$f" && rm "$f.bak"
-    done
-```
-
-After the recipe runs, `grep -rn "spec-${slug}\|design-${slug}\|plan-${slug}\|tasks-${slug}" .memex` to confirm no slugged reference survived; update any straggler manually with the user's confirmation.
-
-Note: steps 3–4 scope edits to `/<folder>/<type>-<slug>` path segments and `[[<type>-<slug>]]` wikilink forms, so they do not match `<folder>/spec-tweaks.md` or other longer names that merely start with `spec`.
+If the audit flagged a spec folder without a `YYYY-MM-DD-` prefix, rename it to add the date (pull the date from the spec file's frontmatter `created:` field; ask the user when absent). Renaming tracked files is a destructive operation — surface each detected folder and get explicit user confirmation before renaming. Specs are self-contained (no cross-references between them), so a folder rename needs no link rewriting.
 
 ## Phase 5 — Validate
 
 After **any** creation or fix run, and at the end of an audit-only run with all `OK`, execute the validation checklist.
 
-Read `references/validation.md` and run all 17 checks. Report results as the table specified there. If any check fails, surface the specific reason and ask "Want me to fix the failed checks?" Loop until clean or the user stops.
+Read `references/validation.md` and run all its checks. Report results as the table specified there. If any check fails, surface the specific reason and ask "Want me to fix the failed checks?" Loop until clean or the user stops.
 
-Validation is non-negotiable — this is what catches `{{placeholders}}` that survived scaffolding, missing AGENTS.md sections, broken symlinks, malformed JSON, and spec folders that slipped past the rename step.
+Validation is non-negotiable — this is what catches `{{placeholders}}` that survived scaffolding, missing AGENTS.md sections, broken symlinks, malformed JSON, and spec folders that slipped past the dating step.
 
 ## Final summary (always show at the end)
 
 ```
-## Memex Audit Complete
+## specwright Audit Complete
 
 - X/Y items OK
 - N created, M fixed, K skipped (already correct)
-- Validation: 17/17 PASS  (or list the FAILs)
+- Validation: all PASS  (or list the FAILs)
 
 {{only if first-time setup:}}
 Next steps:
-1. Review .memex/constitution.md — make sure it captures your non-negotiables
-2. Run the project and start adding learnings to .memex/learnings/
-3. First feature? Copy .memex/specs/_template/ and start a spec
+1. Review AGENTS.md — make sure the spec flow and project context fit your team
+2. Add project-specific conventions to .specwright/conventions/ as you establish them
+3. First feature? Run /sw:spec (or /sw:brainstorming) to start a spec
 ```

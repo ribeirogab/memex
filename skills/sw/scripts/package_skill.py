@@ -7,7 +7,7 @@ skill-creator/scripts/package_skill.py). One change from upstream: the
 import of `validate_skill` is rewritten to use a sibling-module import
 so this file works whether invoked as `python -m scripts.package_skill`,
 `python scripts/package_skill.py`, or by absolute path. Kept inline so
-memex remains self-contained and does not depend on skill-creator
+specwright remains self-contained and does not depend on skill-creator
 being installed alongside it.
 
 Usage:

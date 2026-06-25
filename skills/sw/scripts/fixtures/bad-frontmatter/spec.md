@@ -5,12 +5,11 @@ created: 2026-06-14
 shipped: null
 branch: feat/sample-feature
 mode: autonomous
-related: []
 ---
 # Sample Feature — Spec
 
 **Status:** Draft
-**Design:** [[design]]
+**Design:** design.md
 **Scope:** A sample spec used to exercise the validator fixtures.
 
 ## Architecture

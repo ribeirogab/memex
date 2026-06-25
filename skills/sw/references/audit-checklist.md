@@ -1,14 +1,13 @@
 # Audit Checklist
 
-Full inventory of what the memex audit checks. The orchestrator (`SKILL.md`) loads this file at the start of an audit run.
+Full inventory of what the specwright audit checks. The orchestrator (`SKILL.md`) loads this file at the start of an audit run.
 
 ## Contents
 
 - [Status meanings](#status-meanings)
 - [Files and directories to check](#files-and-directories-to-check)
 - [Additional checks](#additional-checks)
-- [AGENTS.md drift detection (required headers)](#agentsmd-drift-detection-required-headers)
-- [Constitution drift detection (required sections)](#constitution-drift-detection-required-sections)
+- [AGENTS.md drift detection (required headers + size cap)](#agentsmd-drift-detection-required-headers--size-cap)
 - [Frontmatter sanity](#frontmatter-sanity)
 - [Report format](#report-format)
 
@@ -17,76 +16,56 @@ Full inventory of what the memex audit checks. The orchestrator (`SKILL.md`) loa
 For each item, check existence and content correctness. Report status as:
 - `OK` — exists and looks correct
 - `MISSING` — doesn't exist at all
-- `DRIFT` — exists but content has diverged from expected structure (e.g., missing sections in constitution, malformed frontmatter in templates, missing required headers in `AGENTS.md`)
+- `DRIFT` — exists but content has diverged from expected structure (e.g., malformed spec frontmatter, missing required headers in `AGENTS.md`, a non-date-prefixed spec folder)
 
 ## Files and directories to check
 
 ```
-.memex/
-  .memex/.obsidian/app.json
-  .memex/.obsidian/appearance.json
-  .memex/.obsidian/core-plugins.json
-  .memex/_index/home.md
-  .memex/_index/specs.md
-  .memex/_index/learnings.md
-  .memex/_index/conventions.md
-  .memex/constitution.md
-  .memex/rules.md
-  .memex/spec-driven-development.md   (the spec-driven workflow guide)
-  .memex/specs/_template/spec.md
-  .memex/specs/_template/design.md
-  .memex/specs/_template/tasks.md
-  .memex/scripts/validate-spec.sh   (executable — mechanical spec validator)
-  .memex/scripts/memex-update.sh    (executable — upstream-reconcile engine for /memex:update)
-  .memex/.update-manifest.json      (sha256 baseline per managed file — valid JSON)
-  .memex/templates/learning.md
-  .memex/templates/convention.md
-  .memex/learnings/           (directory exists)
-  .memex/conventions/         (directory exists)
+.specwright/
+  .specwright/conventions/    (directory exists)
+  .specwright/specs/          (directory exists — holds dated YYYY-MM-DD-<slug>/ folders)
 
-AGENTS.md                      (repo root)
+AGENTS.md                      (repo root — self-contained spec flow, ≤ 80 lines)
 CLAUDE.md                      (symlink → AGENTS.md, Claude Code back-compat)
 
-.agents/skills/memex-recall/SKILL.md            (canonical, agent-agnostic)
-.agents/skills/memex-brainstorming/             (full directory)
-.agents/skills/memex-writing-plans/             (full directory)
-.agents/skills/memex-link/                      (full directory — vault cross-link analyzer)
-.agents/skills/memex-new-pr/                    (full directory — opens the spec's PR)
-.agents/skills/memex-code-review/               (full directory — branch review to lgtm)
-.agents/skills/memex-update/                    (full directory — reconciles the install against upstream)
+.agents/skills/sw-brainstorming/    (full directory — design exploration)
+.agents/skills/sw-writing-plans/    (full directory — fused technical spec + tasks)
+.agents/skills/sw-new-pr/           (full directory — opens the spec's PR)
+.agents/skills/sw-code-review/      (full directory — branch review to lgtm)
+.agents/skills/sw-update/           (full directory — reconciles the install against upstream)
 
-.gitignore                     (contains obsidian workspace exclusions)
+.gitignore                     (contains .specwright/worktrees/)
 ```
+
+The spec **templates** (`design.md` / `spec.md` / `tasks.md` blueprints) and the mechanical spec **validator** are **not** scaffolded into the vault — they ship with this skill (under `scaffold/spec-templates/` and `scripts/validate-spec.sh`) and are checked by Phase 5 validation, not by this inventory.
 
 ### Per-agent skill symlinks (optional, not required) — non-Claude only
 
-For every **non-Claude** agent-specific discovery directory present in the repo (`.codex/`, `.cursor/`, `.opencode/`, `.aider/`, `.augment/`, etc.), each scaffold skill above should also be symlinked into that agent's `skills/` subdirectory so the agent can discover it. Example: when `.codex/` exists, `.codex/skills/memex-recall` is a symlink to `../../.agents/skills/memex-recall`.
+For every **non-Claude** agent-specific discovery directory present in the repo (`.codex/`, `.cursor/`, `.opencode/`, `.aider/`, `.augment/`, etc.), each scaffold skill above should also be symlinked into that agent's `skills/` subdirectory so the agent can discover it. Example: when `.codex/` exists, `.codex/skills/sw-brainstorming` is a symlink to `../../.agents/skills/sw-brainstorming`.
 
-**Claude Code is excluded from this loop.** Claude users get the companion skills through the `memex` plugin (marketplace `memex`), invoked as `/memex:recall`, `/memex:brainstorming`, `/memex:writing-plans`, `/memex:link`, `/memex:new-pr`, `/memex:code-review`, `/memex:update`. Creating `.claude/skills/memex-<name>` symlinks here would surface the same skill twice in `/help` — once as `/memex-recall` (hyphen-form symlink) and once as `/memex:recall` (plugin namespace). Legacy `.claude/skills/memex-{recall,brainstorming,writing-plans,link}` symlinks from pre-plugin installs are detected as `DRIFT` and removed by Phase 4 (`rm` works for symlinks).
+**Claude Code is excluded from this loop.** Claude users get the companion skills through the `specwright` plugin (marketplace `specwright`), invoked as `/sw:brainstorming`, `/sw:writing-plans`, `/sw:new-pr`, `/sw:code-review`, `/sw:update`. Creating `.claude/skills/sw-<name>` symlinks here would surface the same skill twice in `/help` — once as `/sw-brainstorming` (hyphen-form symlink) and once as `/sw:brainstorming` (plugin namespace). Legacy `.claude/skills/sw-<name>` symlinks from pre-plugin installs are detected as `DRIFT` and removed by Phase 4 (`rm` works for symlinks).
 
-A missing per-agent symlink is **not `DRIFT`** — only the canonical files under `.agents/skills/` are required. If a per-agent dir exists but lacks the expected symlinks, the memex installer re-creates them on the next run (no prompt needed; symlinks are non-destructive). If a per-agent dir does not exist at all, no symlinks are created (the absence signals the user does not run that agent in this repo).
+A missing per-agent symlink is **not `DRIFT`** — only the canonical files under `.agents/skills/` are required. If a per-agent dir exists but lacks the expected symlinks, the specwright installer re-creates them on the next run (no prompt needed; symlinks are non-destructive). If a per-agent dir does not exist at all, no symlinks are created (the absence signals the user does not run that agent in this repo).
 
 ## Additional checks
 
-### Legacy paths to remove (pre-plugin migration)
+### Legacy command files to remove (pre-plugin migration)
 
-The pre-plugin memex installed slash commands as files at:
+The pre-plugin specwright installed slash commands as files at:
 
-- `.agents/commands/memex-{spec,learn,sweep,review-spec}.md` (canonical)
-- `.claude/commands/memex-{spec,learn,sweep,review-spec}.md` (symlink)
+- `.agents/commands/sw-{spec,review-spec}.md` (canonical)
+- `.claude/commands/sw-{spec,review-spec}.md` (symlink)
 
-These are obsolete — slash commands now ship as a Claude Code plugin from the upstream marketplace `memex`. Any of these files (regular or symlink) is `DRIFT`. Fix: `rm` the file in Phase 4. This is a non-destructive op per the "scaffold sempre vence" policy — no prompt.
+These are obsolete — slash commands now ship as a Claude Code plugin from the upstream marketplace `specwright`. Any of these files (regular or symlink) is `DRIFT`. Fix: `rm` the file in Phase 4. This is a non-destructive op — no prompt.
 
 If `.agents/commands/` becomes empty after the removals, the directory itself is also removed (`rmdir` succeeds only on empty dirs, so this is safe even if an unrelated file still sits there).
-
-Legacy `.claude/commands/memex-open-pr.md` is **not** in scope here — orphan policy B from the previous canonical-commands spec leaves it untouched.
 
 ### Claude plugin settings present (when `.claude/` exists)
 
 When the target repo has a `.claude/` directory (signal that the user runs Claude Code in this repo), `.claude/settings.json` must declare:
 
-- `extraKnownMarketplaces["memex"]` with a non-empty `source` object (either `{ "source": "github", "repo": "ribeirogab/memex" }` for target repos, or `{ "source": "directory", "path": "." }` for this repo's own dogfood).
-- `enabledPlugins["memex@memex"]` set to `true`.
+- `extraKnownMarketplaces["specwright"]` with a non-empty `source` object (either `{ "source": "github", "repo": "ribeirogab/specwright" }` for target repos, or `{ "source": "directory", "path": "." }` for this repo's own dogfood).
+- `enabledPlugins["sw@specwright"]` set to `true`.
 
 Detection:
 
@@ -95,8 +74,8 @@ if [ -d .claude ]; then
   if [ ! -f .claude/settings.json ]; then
     echo "DRIFT — .claude/settings.json missing"
   else
-    has_mp=$(jq 'has("extraKnownMarketplaces") and (.extraKnownMarketplaces | has("memex"))' .claude/settings.json)
-    has_plugin=$(jq '.enabledPlugins["memex@memex"] == true' .claude/settings.json)
+    has_mp=$(jq 'has("extraKnownMarketplaces") and (.extraKnownMarketplaces | has("specwright"))' .claude/settings.json)
+    has_plugin=$(jq '.enabledPlugins["sw@specwright"] == true' .claude/settings.json)
     if [ "$has_mp" != "true" ] || [ "$has_plugin" != "true" ]; then
       echo "DRIFT — settings.json missing marketplace or plugin entry"
     fi
@@ -108,29 +87,27 @@ If `.claude/` is absent, this check does not run (no signal to gate on). Fix in 
 
 ### CLAUDE.md is a symlink (Claude Code back-compat)
 
-`AGENTS.md` is the universal agent entry point. Claude Code historically reads `CLAUDE.md` instead, so the memex installer keeps a `CLAUDE.md → AGENTS.md` symlink at the repo root as a back-compat concession. Other agents ignore the file.
+`AGENTS.md` is the universal agent entry point. Claude Code historically reads `CLAUDE.md` instead, so the specwright installer keeps a `CLAUDE.md → AGENTS.md` symlink at the repo root as a back-compat concession. Other agents ignore the file.
 
 `CLAUDE.md` must be a symlink pointing to `AGENTS.md` — not a copy, not a separate file. Verify with `readlink CLAUDE.md` returning `AGENTS.md`. If it is a regular file or points elsewhere, status is `DRIFT`.
 
 ### Spec folder naming follows `YYYY-MM-DD-<kebab-slug>/`
 
-Actively scan `.memex/specs/` (excluding `_template/`) — any folder whose name does **not** start with `YYYY-MM-DD-` is `DRIFT`. Report each non-conforming folder and ask the user, per folder:
+Actively scan `.specwright/specs/` — any folder whose name does **not** start with `YYYY-MM-DD-` is `DRIFT`. Report each non-conforming folder and ask the user, per folder:
 
 > "`<old-name>/` is not date-prefixed. Date prefixes prevent the naming conflicts that numeric prefixes (`01-`, `02-`) cause when multiple specs land in parallel. Rename to `<YYYY-MM-DD>-<slug>/`?"
 
-Pull the date from the folder's `spec.md` frontmatter `created:` field when present; if absent, ask the user. **Never rename without confirmation.**
+Pull the date from the folder's `spec.md` frontmatter `created:` field when present; if absent, ask the user. Specs are self-contained — a folder rename needs no cross-reference rewriting. **Never rename without confirmation.**
 
 ### Spec file naming follows bare `spec.md` / `design.md` / `tasks.md`
 
-Inside any date-prefixed spec folder, the files use **bare** names — `spec.md`, `design.md`, `tasks.md` (legacy specs predating the design.md split may carry a bare `plan.md`). The dated folder is the discriminator, so cross-references are path-qualified wikilinks (`[[YYYY-MM-DD-<slug>/spec|spec]]`). A surviving slug-named file — `spec-<slug>.md`, `design-<slug>.md`, `plan-<slug>.md`, `tasks-<slug>.md` — inside a real spec folder is `DRIFT` from before the bare-filename convention.
-
-The `_template/` folder uses the same bare names — its files are blueprints with unqualified `[[spec]]` / `[[design]]` placeholders that the generating skills qualify on copy.
+Inside any date-prefixed spec folder, the files use **bare** names — `spec.md`, `design.md`, `tasks.md`. The dated folder is the discriminator. A slug-named file — `spec-<slug>.md`, `design-<slug>.md`, `tasks-<slug>.md` — inside a real spec folder is `DRIFT` from before the bare-filename convention.
 
 **Detection** (run during the audit pass, alongside the date-prefix check):
 
 ```bash
-find .memex/specs -mindepth 1 -maxdepth 1 -type d -name '[0-9]*-*' 2>/dev/null | while read -r spec_dir; do
-  for f in "$spec_dir"/spec-*.md "$spec_dir"/design-*.md "$spec_dir"/plan-*.md "$spec_dir"/tasks-*.md; do
+find .specwright/specs -mindepth 1 -maxdepth 1 -type d -name '[0-9]*-*' 2>/dev/null | while read -r spec_dir; do
+  for f in "$spec_dir"/spec-*.md "$spec_dir"/design-*.md "$spec_dir"/tasks-*.md; do
     [ -e "$f" ] || continue
     type="${f##*/}"; type="${type%%-*}"
     echo "DRIFT: $f → should be $type.md"
@@ -138,62 +115,35 @@ find .memex/specs -mindepth 1 -maxdepth 1 -type d -name '[0-9]*-*' 2>/dev/null |
 done
 ```
 
-Report each drift with the source path and the target name. Fix logic lives in `SKILL.md` (Phase 4 → "Spec file rename migration") and is rename-then-rewrite-wikilinks. Renaming a tracked file is a destructive operation per the SKILL.md "Mode of Operation" — confirm with the user once per spec folder before applying.
-
-### .gitignore ignores the entire Obsidian config directory
-
-The repo's `.gitignore` must contain a pattern that ignores `.memex/.obsidian/` in full:
-
-```
-.memex/.obsidian/
-```
-
-Rationale: Obsidian rewrites every file under `.memex/.obsidian/` on each vault open, which creates constant `git status` noise. The whole directory is machine-local. The memex installer still scaffolds the three config JSONs locally so first-time Obsidian opens get the right wikilink defaults — they just are never tracked.
-
-If `.gitignore` is missing, or contains the older fine-grained pattern set (`workspace.json`, `cache`, `plugins/*/data.json`) instead of the directory-level ignore, status is `DRIFT`. Fix: replace the old patterns with the single `.memex/.obsidian/` line.
+Report each drift with the source path and the target name. Specs are self-contained, so the fix is a plain rename — `git mv "$f" "$spec_dir/$type.md"` — with no link rewriting. Renaming a tracked file is a destructive operation per the SKILL.md "Mode of Operation" — confirm with the user once per spec folder before applying.
 
 ## AGENTS.md drift detection (required headers + size cap)
 
 `AGENTS.md` must contain all of these section headers — missing any one is `DRIFT`:
 
 - `## Workflow Spec Driven`
-- `## Non-negotiable rules`
-- `## Vault — read from it, write to it`
+- `## Coding standard`
 - `## Skills and slash commands`
 
 When reporting drift, name the missing section(s) explicitly so the fix step knows what to insert.
 
 `AGENTS.md` must also be **≤ 80 lines** (target range 45–70). The file is loaded into every agent session as the entry-point contract; growing past this cap crowds context and reintroduces the "encyclopedia" anti-pattern that the canonical authoring rules reject. If `AGENTS.md` exceeds 80 lines, status is `DRIFT` and the fix is to trim the body per the guidance in `references/agents-md-template.md` (`## Size constraint`) — never by dropping a required section header.
 
-## Constitution drift detection (required sections)
-
-`.memex/constitution.md` must contain all of these top-level sections:
-
-- `## Why {{Project Name}} exists` (the placeholder may be substituted with the actual project name — that is `OK`, not `DRIFT`)
-- `## Scope guardrails`
-- `## Architecture principles`
-- `## Tooling and workflow principles`
-- `## Spec-Driven workflow`
-- `## Knowledge layering`
-- `## What this constitution is not`
-
-If any `{{placeholder}}` strings remain unsubstituted in the file, status is `DRIFT` — surfaces in validation as well.
-
 ## Frontmatter sanity
 
-Each MOC and template must begin with valid YAML frontmatter (between `---` fences) with the expected `tags:` or `feature:` field. Missing or malformed frontmatter is `DRIFT`.
+Each spec's `spec.md` must begin with valid YAML frontmatter (between `---` fences) with the expected `feature:` or `status:` field. Missing or malformed frontmatter is `DRIFT`.
 
 ## Report format
 
 ```
-## Harness Audit
+## specwright Audit
 
 | Status | Item |
 |--------|------|
-| OK     | .memex/constitution.md |
-| MISSING| .memex/_index/conventions.md |
-| DRIFT  | .memex/specs/old-feature/ (not date-prefixed) |
-| DRIFT  | AGENTS.md (missing section: "## Vault — read from it, write to it") |
+| OK     | AGENTS.md |
+| MISSING| .specwright/conventions/ |
+| DRIFT  | .specwright/specs/old-feature/ (not date-prefixed) |
+| DRIFT  | AGENTS.md (missing section: "## Coding standard") |
 | ...    | ... |
 
 ### Summary
@@ -201,4 +151,4 @@ Each MOC and template must begin with valid YAML frontmatter (between `---` fenc
 - N missing, M drifted
 ```
 
-After rendering this report, the orchestrator proceeds directly to Phase 3 to fix any `MISSING` or `DRIFT` items — no mid-run confirmation. Spec-folder renames (a destructive op) are the only exception and require an explicit prompt per the migration rules above. If everything passes, the orchestrator skips Phase 3 and runs Phase 5 validation (see `references/validation.md`) before reporting "Harness is healthy."
+After rendering this report, the orchestrator proceeds directly to Phase 3 to fix any `MISSING` or `DRIFT` items — no mid-run confirmation. Spec-folder renames (a destructive op) are the only exception and require an explicit prompt per the migration rules above. If everything passes, the orchestrator skips Phase 3 and runs Phase 5 validation (see `references/validation.md`) before reporting "specwright is healthy."

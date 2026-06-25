@@ -1,11 +1,10 @@
 ---
 feature: {{kebab-slug-of-feature}}
-spec: "[[spec]]"
 created: {{YYYY-MM-DD}}
 ---
 # {{Feature Name}} — Design
 
-> Non-technical write-up of the **already-approved** design — purpose, motivation, definitions, non-goals. Created after design approval as a durable record of *why*; it is **not** a second human-review gate. The technical *how* (architecture, file structure, acceptance criteria) lives in `[[spec]]`.
+> Non-technical write-up of the **already-approved** design — purpose, motivation, definitions, non-goals. Created after design approval as a durable record of *why*; it is **not** a second human-review gate. The technical *how* (architecture, file structure, acceptance criteria) lives in the sibling `spec.md`.
 
 ## Purpose
 

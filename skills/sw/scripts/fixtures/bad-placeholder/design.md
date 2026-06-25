@@ -1,13 +1,13 @@
 ---
 feature: sample-feature
-spec: "[[spec]]"
+spec: "spec.md"
 created: 2026-06-14
 ---
 # Sample Feature — Design
 
 ## Purpose
 
-Demonstrate a well-formed spec folder for validator testing.
+Demonstrate a {{TODO}} spec folder for validator testing.
 
 ## Motivation
 

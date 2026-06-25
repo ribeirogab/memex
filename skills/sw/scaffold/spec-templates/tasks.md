@@ -1,14 +1,12 @@
 ---
 feature: {{kebab-slug-of-feature}}
-design: "[[design]]"
-spec: "[[spec]]"
 created: {{YYYY-MM-DD}}
 ---
 # {{Feature Name}} — Tasks
 
-**For this spec:** `[[spec]]`
+**For this spec:** see the sibling `spec.md`.
 
-> Each task names the `AC:` (acceptance criteria from `[[spec]]` it satisfies — every `AC-N` must be referenced by at least one task) and `Delegable:` (whether it suits an isolated subagent, and the one-line context that subagent would receive).
+> Each task names the `AC:` (acceptance criteria from `spec.md` it satisfies — every `AC-N` must be referenced by at least one task) and `Delegable:` (whether it suits an isolated subagent, and the one-line context that subagent would receive).
 
 ## Phase 1: {{name}}
 
