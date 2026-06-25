@@ -1,9 +1,9 @@
 ---
-status: draft
+status: shipped
 feature: specwright-pivot
 scope: complex
 created: 2026-06-24
-shipped: null
+shipped: 2026-06-25
 branch: feat/specwright
 mode: autonomous
 worktree: null
