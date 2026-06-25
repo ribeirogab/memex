@@ -1,5 +1,5 @@
 ---
-name: memex-brainstorming
+name: sw-brainstorming
 description: "You MUST use this before any creative work - creating features, building components, adding functionality, or modifying behavior. Explores user intent, requirements and design before implementation."
 ---
 
@@ -27,8 +27,8 @@ You MUST create a task for each of these items and complete them in order:
 4. **Propose 2-3 approaches** — with trade-offs and your recommendation
 5. **Present design** — in sections scaled to their complexity, get user approval after each section
 6. **Post-design batch** — once the design is approved, ask in **one** batch exactly four things: confirm the **branch name**, choose the **mode** (`autonomous` | `reviewed`), choose whether to use a **worktree**, and whether to **hand off** before implementing. Record the branch, mode, and worktree choice — writing-plans writes them into `spec.md` frontmatter when it creates the technical spec.
-7. **Write the design doc** — save the non-technical write-up of the approved design to `.memex/specs/YYYY-MM-DD-<slug>/design.md` (Purpose/Motivation/Definitions/Non-Goals) and commit. This captures *why*; it is **not** a second human-review gate.
-8. **Transition to implementation** — invoke writing-plans skill → it writes the fused technical `spec.md` + `tasks.md`, **self-reviews the spec** (spec-document-reviewer subagent + `/memex:review-spec` + `validate-spec.sh`, both modes, no human gate), then follows the `AGENTS.md` `### Spec flow` tail: **handoff (either mode)** → after design/spec/tasks exist, print a ```` ```txt ```` handoff prompt and stop (never hand off earlier); otherwise implement → quality gate → reflect, then **deliver per mode** — `autonomous` opens the PR + runs the `memex:code-review` cycle to `lgtm` on its own; `reviewed` first asks "open the PR and run code-review?".
+7. **Write the design doc** — save the non-technical write-up of the approved design to `.specwright/specs/YYYY-MM-DD-<slug>/design.md` (Purpose/Motivation/Definitions/Non-Goals) and commit. This captures *why*; it is **not** a second human-review gate.
+8. **Transition to implementation** — invoke writing-plans skill → it writes the fused technical `spec.md` + `tasks.md`, **self-reviews the spec** (spec-document-reviewer subagent + `/sw:review-spec` + `validate-spec.sh`, both modes, no human gate), then follows the `AGENTS.md` `### Spec flow` tail: **handoff (either mode)** → after design/spec/tasks exist, print a ```` ```txt ```` handoff prompt and stop (never hand off earlier); otherwise implement → quality gate, then **deliver per mode** — `autonomous` opens the PR + runs the `sw:code-review` cycle to `lgtm` on its own; `reviewed` first asks "open the PR and run code-review?".
 
 ## Process Flow
 
@@ -103,10 +103,10 @@ digraph brainstorming {
 ## After the Design
 
 **Post-design batch (ask once, right after the design is approved):**
-In **one** batch, ask exactly four things: confirm the **branch name**, choose the **mode** (`autonomous` | `reviewed`), choose whether to use a **worktree**, and whether to **hand off** before implementing. Record the branch, mode, and worktree choice — writing-plans writes them into `spec.md` frontmatter when it creates the technical spec; the recorded `mode:` is registered consent for the feature branch (per `.memex/rules.md`, Git §2). There is no PR question; a PR is always the delivery — the mode only decides whether the agent opens it on its own.
+In **one** batch, ask exactly four things: confirm the **branch name**, choose the **mode** (`autonomous` | `reviewed`), choose whether to use a **worktree**, and whether to **hand off** before implementing. Record the branch, mode, and worktree choice — writing-plans writes them into `spec.md` frontmatter when it creates the technical spec; the recorded `mode:` is the standing authorization to commit and push the feature branch. There is no PR question; a PR is always the delivery — the mode only decides whether the agent opens it on its own.
 
-- **`autonomous`** — the recorded mode tells the agent to run all the way to delivery on its own: write design → writing-plans (spec + tasks + self-review) → implement → quality gate → reflect → open the PR (`/memex:new-pr`) → `memex:code-review` cycle to `lgtm`, with no further prompts.
-- **`reviewed`** — identical up to and including reflect; then, before delivery, the agent **asks** "open the PR and run code-review?" and proceeds on your go-ahead.
+- **`autonomous`** — the recorded mode tells the agent to run all the way to delivery on its own: write design → writing-plans (spec + tasks + self-review) → implement → quality gate → open the PR (`/sw:new-pr`) → `sw:code-review` cycle to `lgtm`, with no further prompts.
+- **`reviewed`** — identical up to and including the quality gate; then, before delivery, the agent **asks** "open the PR and run code-review?" and proceeds on your go-ahead.
 
 **Worktree (the third question):** before asking, detect whether you are already inside a linked git worktree:
 
@@ -117,32 +117,32 @@ In **one** batch, ask exactly four things: confirm the **branch name**, choose t
 - **Already in a worktree** (e.g. a harness checkout under `worktrees/`) → warn the user (name the path) and recommend **no** — work in place. The check keys on git-dir vs git-common-dir, so it is agent-agnostic and never hardcodes one agent's directory.
 - **Not in a worktree** → the default is **yes**.
 
-When worktree = **yes**, create the branch as a worktree under the git-ignored `.memex/worktrees/<slug>` (where `<slug>` is the spec's dated-folder slug) and `cd` in before writing `design.md` — the rest of the flow runs there:
+When worktree = **yes**, create the branch as a worktree under the git-ignored `.specwright/worktrees/<slug>` (where `<slug>` is the spec's dated-folder slug) and `cd` in before writing `design.md` — the rest of the flow runs there:
 
 ```bash
-git worktree add .memex/worktrees/<slug> -b <branch>
-cd .memex/worktrees/<slug>
+git worktree add .specwright/worktrees/<slug> -b <branch>
+cd .specwright/worktrees/<slug>
 ```
 
-When worktree = **no**, create the branch in place: `git checkout -b <branch>`. memex only ever **creates** a worktree — it never removes one; cleanup is the maintainer's, done manually after merge. Record the choice as `worktree:` in `spec.md` frontmatter (the path, or `null` when unused).
+When worktree = **no**, create the branch in place: `git checkout -b <branch>`. specwright only ever **creates** a worktree — it never removes one; cleanup is the maintainer's, done manually after merge. Record the choice as `worktree:` in `spec.md` frontmatter (the path, or `null` when unused).
 
 Both modes self-review the spec and may use the handoff. The design-approval gate (step 5) is the **only** human review and is **never** skipped — there is **no** human spec-review gate and no "start implementation" gate.
 
 **Documentation:**
 
-- Write the non-technical design write-up to `.memex/specs/YYYY-MM-DD-<slug>/design.md` — Purpose, Motivation, Definitions, Non-Goals. This is a durable record of the approved design's *why*; the technical *how* (architecture, file structure, acceptance criteria) is produced next by writing-plans in `spec.md`.
+- Write the non-technical design write-up to `.specwright/specs/YYYY-MM-DD-<slug>/design.md` — Purpose, Motivation, Definitions, Non-Goals. This is a durable record of the approved design's *why*; the technical *how* (architecture, file structure, acceptance criteria) is produced next by writing-plans in `spec.md`.
   - (User preferences for spec location override this default)
 - Use elements-of-style:writing-clearly-and-concisely skill if available
 - Commit `design.md` to git
-- The spec **self-review** (spec-document-reviewer subagent + `/memex:review-spec` + `.memex/scripts/validate-spec.sh`) is **not** run here — it runs inside writing-plans, after the technical `spec.md` exists. There is no human spec-review gate; design approval already gated the work.
+- The spec **self-review** (spec-document-reviewer subagent + `/sw:review-spec` + `validate-spec.sh`) is **not** run here — it runs inside writing-plans, after the technical `spec.md` exists. There is no human spec-review gate; design approval already gated the work.
 
 **Implementation handoff:**
 
 - Invoke the writing-plans skill — it writes the fused technical `spec.md` + `tasks.md` and self-reviews the spec. Do NOT invoke any other skill — writing-plans is the next step.
 - Once design + spec + tasks exist, follow the `AGENTS.md` `### Spec flow` tail:
-  - **handoff = yes (either mode)** → print a ```` ```txt ```` **handoff prompt** (a one-paragraph summary + the paths to `design`/`spec`/`tasks` + the mode; if a worktree was created, its first line is `cd .memex/worktrees/<slug>`) and stop. The user runs `/compact` (or opens a new chat) and pastes it to resume. **Never hand off before the artifacts exist** — the preference was recorded up front; the handoff is produced only now.
+  - **handoff = yes (either mode)** → print a ```` ```txt ```` **handoff prompt** (a one-paragraph summary + the paths to `design`/`spec`/`tasks` + the mode; if a worktree was created, its first line is `cd .specwright/worktrees/<slug>`) and stop. The user runs `/compact` (or opens a new chat) and pastes it to resume. **Never hand off before the artifacts exist** — the preference was recorded up front; the handoff is produced only now.
   - **handoff = no** → implement straight away.
-  - **Delivery** (after implement → quality gate → reflect): `autonomous` opens the PR (`/memex:new-pr`) and runs the `memex:code-review` cycle to `lgtm` on its own; `reviewed` first asks "open the PR and run code-review?", then does the same.
+  - **Delivery** (after implement → quality gate): `autonomous` opens the PR (`/sw:new-pr`) and runs the `sw:code-review` cycle to `lgtm` on its own; `reviewed` first asks "open the PR and run code-review?", then does the same.
 
 ## Key Principles
 

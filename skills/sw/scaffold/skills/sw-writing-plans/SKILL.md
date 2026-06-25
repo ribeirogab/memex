@@ -1,5 +1,5 @@
 ---
-name: memex-writing-plans
+name: sw-writing-plans
 description: Use when you have an approved design (design.md) for a multi-step task — produces the fused technical spec.md + tasks.md, before touching code.
 ---
 
@@ -13,11 +13,10 @@ Assume they are a skilled developer, but know almost nothing about our toolset o
 
 **Announce at start:** "I'm using the writing-plans skill to write the technical spec and tasks."
 
-**Context:** This runs after brainstorming wrote `design.md` and the branch/mode/worktree were recorded. Work in the spec's branch — or its worktree under `.memex/worktrees/<slug>`, if one was created.
+**Context:** This runs after brainstorming wrote `design.md` and the branch/mode/worktree were recorded. Work in the spec's branch — or its worktree under `.specwright/worktrees/<slug>`, if one was created.
 
-**Save to:** `.memex/specs/YYYY-MM-DD-<slug>/spec.md` (the technical spec) and `tasks.md`, alongside the `design.md` brainstorming wrote.
+**Save to:** `.specwright/specs/YYYY-MM-DD-<slug>/spec.md` (the technical spec) and `tasks.md`, alongside the `design.md` brainstorming wrote.
 - (User preferences for location override this default)
-- **Wikilinks are path-qualified** — the dated folder is the discriminator, since filenames are bare. In `spec.md`/`tasks.md` frontmatter and body, write sibling links with the folder prefix and a display alias: `[[YYYY-MM-DD-<slug>/design|design]]` and `[[YYYY-MM-DD-<slug>/spec|spec]]` (not bare `[[spec]]`, which is ambiguous across specs).
 
 ## Scope Check
 
@@ -25,7 +24,7 @@ If the design covers multiple independent subsystems, it should have been broken
 
 ## Writing the technical spec (`spec.md`)
 
-Copy `.memex/specs/_template/spec.md` into the spec folder and fill it from the approved `design.md`:
+Copy `skills/sw/scaffold/spec-templates/spec.md` into the spec folder and fill it from the approved `design.md`:
 
 - **Frontmatter** — set `status: draft`, `feature`, `created`, the recorded `branch:`/`mode:`/`worktree:`, and `scope:` — your honest sizing of the work, one of `low | medium | high | complex`. `scope` and `worktree` are **recorded only**; nothing branches on them yet (`scope` is reserved for a future quick-mode; `worktree` records the worktree path or `null`).
 - **Architecture / File Structure / Phase Ordering** — the technical *how*. Before defining tasks, map out which files will be created or modified and what each is responsible for. This is where decomposition decisions get locked in.
@@ -33,7 +32,7 @@ Copy `.memex/specs/_template/spec.md` into the spec folder and fill it from the 
   - You reason best about code you can hold in context at once, and your edits are more reliable when files are focused. Prefer smaller, focused files over large ones that do too much.
   - Files that change together live together. Split by responsibility, not by technical layer.
   - In existing codebases, follow established patterns. Don't unilaterally restructure — but a split of an unwieldy file you're modifying is reasonable.
-- **Acceptance Criteria** — number each `AC-1`, `AC-2`, …. Each must be binary, observable, verifiable in under a minute, and free of vague verbs ("works", "fast"/"robust" without a number, "gracefully"). These IDs are the contract `tasks.md` and `memex-code-review` trace against, so they must be specific enough to check.
+- **Acceptance Criteria** — number each `AC-1`, `AC-2`, …. Each must be binary, observable, verifiable in under a minute, and free of vague verbs ("works", "fast"/"robust" without a number, "gracefully"). These IDs are the contract `tasks.md` and `sw-code-review` trace against, so they must be specific enough to check.
 - The non-technical *why* (purpose, motivation, definitions, non-goals) stays in `design.md` — don't duplicate it here.
 
 ## Bite-Sized Task Granularity (`tasks.md`)
@@ -54,7 +53,7 @@ Copy `.memex/specs/_template/spec.md` into the spec folder and fill it from the 
 
 > **For agentic workers:** implement task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking. Each task names the `AC:` it satisfies and a `Delegable:` note.
 
-**For this spec:** `[[YYYY-MM-DD-<slug>/spec|spec]]`
+**For this spec:** see the sibling `spec.md`.
 
 ---
 ```
@@ -137,9 +136,9 @@ Fix issues inline.
 
 **Gates (run in order):**
 
-1. **Mechanical** — run `.memex/scripts/validate-spec.sh <spec-folder>`; a non-zero exit names a structural defect (missing frontmatter key, surviving `{{placeholder}}`, vague-verb AC, or an `AC-N` no task references). Fix and re-run until it exits 0.
+1. **Mechanical** — run `skills/sw/scripts/validate-spec.sh <spec-folder>`; a non-zero exit names a structural defect (missing frontmatter key, surviving `{{placeholder}}`, vague-verb AC, or an `AC-N` no task references). Fix and re-run until it exits 0.
 2. **Spec-document-reviewer subagent** — dispatch it (see `spec-document-reviewer-prompt.md`) over `spec.md` + `tasks.md`. If Issues Found: fix, re-dispatch, repeat until Approved (max 3 iterations, then surface to human).
-3. **`/memex:review-spec`** — the external evaluator (constitution + vault compliance, vague ACs, duplication). Fix any `FAIL`.
+3. **`/sw:review-spec`** — the external evaluator (conventions + design compliance, vague ACs, duplication). Fix any `FAIL`.
 
 ## Execution Handoff
 
@@ -150,4 +149,4 @@ After the spec self-review passes, follow the `AGENTS.md` `### Spec flow` tail:
   - **Subagent-Driven** (large, 5+ tasks, many files, complex migrations): dispatch a fresh subagent per task, review between tasks. **REQUIRED SUB-SKILL:** superpowers:subagent-driven-development
   - **Inline Execution** (small, < 5 tasks, focused changes): execute tasks in this session with checkpoints. **REQUIRED SUB-SKILL:** superpowers:executing-plans
   - Announce which approach you chose and start immediately.
-- **Delivery** (after implement → quality gate → reflect): `autonomous` opens the PR (`/memex:new-pr`) and runs the `memex:code-review` cycle to `lgtm` on its own; `reviewed` first asks "open the PR and run code-review?", then does the same.
+- **Delivery** (after implement → quality gate): `autonomous` opens the PR (`/sw:new-pr`) and runs the `sw:code-review` cycle to `lgtm` on its own; `reviewed` first asks "open the PR and run code-review?", then does the same.

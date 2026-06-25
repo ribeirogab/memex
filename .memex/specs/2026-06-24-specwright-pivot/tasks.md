@@ -489,20 +489,23 @@ Expected: no failures (or only checks N/A to this repo, noted).
 
 - [ ] **Step 3: Old-name and Obsidian guards**
 
-Run: `grep -rIl -e memex -e '\.obsidian' -e '\[\[' -e constitution -e 'rules\.md' -e spec-driven-development skills/sw plugins/sw .agents/skills AGENTS.md README.md install.sh .claude-plugin .gitignore .claude/settings.json`
+Run: `grep -rIl -e memex -e '\.obsidian' -e constitution -e 'rules\.md' -e spec-driven-development skills/sw plugins/sw .agents/skills AGENTS.md README.md install.sh .claude-plugin .gitignore .claude/settings.json`
 Expected: no output.
+Then the markdown-scoped wikilink guard: `grep -rIl --include='*.md' '\[\[' skills/sw plugins/sw .agents/skills AGENTS.md`
+Expected: no output. (Bash `[[ ]]` in `.sh` companion scripts is not a wikilink.)
 
 - [ ] **Step 4: Three-copy sync**
 
-Run, for each kept skill, a diff across canonical / plugin / scaffold SKILL.md:
+Run, for each kept skill, a diff across canonical / plugin / scaffold SKILL.md, normalizing out the required `name:` frontmatter delta:
 ```bash
+norm() { grep -v '^name:' "$1"; }
 for n in brainstorming writing-plans new-pr code-review update; do
-  diff -q ".agents/skills/sw-$n/SKILL.md" "plugins/sw/skills/$n/SKILL.md" \
-    && diff -q "plugins/sw/skills/$n/SKILL.md" "skills/sw/scaffold/skills/sw-$n/SKILL.md" \
+  diff <(norm ".agents/skills/sw-$n/SKILL.md") <(norm "plugins/sw/skills/$n/SKILL.md") >/dev/null \
+    && diff <(norm "plugins/sw/skills/$n/SKILL.md") <(norm "skills/sw/scaffold/skills/sw-$n/SKILL.md") >/dev/null \
     || echo "DRIFT: $n"
 done
 ```
-Expected: no `DRIFT` lines.
+Expected: no `DRIFT` lines. (The only allowed difference is the `name:` line — `sw-<n>` in canonical/scaffold, bare `<n>` in the plugin copy.)
 
 - [ ] **Step 5: AGENTS.md self-containment**
 

@@ -1,35 +1,34 @@
 ---
-name: memex-update
-description: "Sync an installed memex with upstream — reconcile the scaffolded files against the current upstream memex: auto-apply changes to files you never touched, agent-merge the ones you edited, and never touch living vault content. Use when upstream memex changed scaffolded content (a renamed term, a reworded skill) and you want it pulled in without clobbering local edits."
+name: sw-update
+description: "Sync an installed specwright with upstream — reconcile the scaffolded files against the current upstream specwright: auto-apply changes to files you never touched, agent-merge the ones you edited, and never touch living spec content. Use when upstream specwright changed scaffolded content (a renamed term, a reworded skill) and you want it pulled in without clobbering local edits."
 ---
 
-# update — Reconcile the installed memex against upstream
+# update — Reconcile the installed specwright against upstream
 
-Pull upstream changes into an installed memex's **scaffolded** content without clobbering local edits. The deterministic work (fetch, classify, auto-apply the safe cases) is the engine's; you only merge the files that genuinely conflict.
+Pull upstream changes into an installed specwright's **scaffolded** content without clobbering local edits. The deterministic work (fetch, classify, auto-apply the safe cases) is the engine's; you only merge the files that genuinely conflict.
 
-**Announce at start:** "Reconciling memex against upstream..."
+**Announce at start:** "Reconciling specwright against upstream..."
 
 ## What is managed
 
-Only **file-backed scaffold content**, each compared by sha256 against a tracked baseline (`.memex/.update-manifest.json`):
+Only **file-backed scaffold content**, each compared by sha256 against a tracked baseline (the update manifest, kept under the skill at `skills/sw/.update-manifest.json`):
 
 | Local path | Upstream source (in the clone) |
 |---|---|
-| `.agents/skills/memex-<name>/SKILL.md` (recall, brainstorming, writing-plans, link, new-pr, code-review, update) | `<clone>/skills/memex/scaffold/skills/memex-<name>/SKILL.md` |
-| `.memex/spec-driven-development.md` | `<clone>/skills/memex/scaffold/vault-docs/spec-driven-development.md` |
-| `.memex/scripts/validate-spec.sh` | `<clone>/skills/memex/scaffold/vault-scripts/validate-spec.sh` |
-| `.memex/scripts/memex-update.sh` | `<clone>/skills/memex/scaffold/vault-scripts/memex-update.sh` |
-| the `### Spec flow` block of `AGENTS.md` | the `### Spec flow` block of `<clone>/skills/memex/references/agents-md-template.md` |
+| `.agents/skills/sw-<name>/SKILL.md` (brainstorming, writing-plans, new-pr, code-review, update) | `<clone>/skills/sw/scaffold/skills/sw-<name>/SKILL.md` |
+| `.specwright/scripts/validate-spec.sh` | `<clone>/skills/sw/scaffold/vault-scripts/validate-spec.sh` |
+| `skills/sw/scripts/sw-update.sh` | `<clone>/skills/sw/scripts/sw-update.sh` |
+| the `### Spec flow` block of `AGENTS.md` | the `### Spec flow` block of `<clone>/skills/sw/references/agents-md-template.md` |
 
-**Never touched:** `.memex/_index/*`, `.memex/learnings/*`, `.memex/conventions/*`, `.memex/specs/*`, the per-repo intro and non-spec-flow sections of `AGENTS.md`, and `constitution.md`. Prose-generated content (templates, `rules.md`, MOCs, the constitution) is out of scope — it has no single upstream file to hash.
+**Never touched:** `.specwright/conventions/*`, `.specwright/specs/*`, and the per-repo intro and non-spec-flow sections of `AGENTS.md`. This is living content — it has no single upstream file to hash.
 
 ## Run the engine
 
 ```bash
-bash .memex/scripts/memex-update.sh --run
+bash skills/sw/scripts/sw-update.sh --run
 ```
 
-It fetches the current upstream memex (`git clone --depth 1` — needs network), classifies every managed path, **auto-applies** the safe updates, and prints a report. No network → it stops with a clear message; re-run when online.
+It fetches the current upstream specwright (`git clone --depth 1` — needs network), classifies every managed path, **auto-applies** the safe updates, and prints a report. No network → it stops with a clear message; re-run when online.
 
 Read the report. The first line is the clone location:
 
@@ -54,14 +53,14 @@ For every `conflict` line, keep the clone path from the report's first line and:
 4. Record the new baseline so the next run is precise (records the upstream hash you reconciled against):
 
 ```bash
-bash .memex/scripts/memex-update.sh --record <local-path> <clone>
+bash skills/sw/scripts/sw-update.sh --record <local-path> <clone>
 ```
 
 You are the only non-deterministic actor, and only on conflicts. If a "conflict" turns out to be a file you don't recognize (e.g. a skill that was never installed locally), treat upstream as the source of truth and write it in.
 
 ## First run with no manifest (2-way)
 
-A legacy install (scaffolded before this command existed) has no `.memex/.update-manifest.json`. The first run degrades to **2-way**: files equal to upstream report `current`; everything else reports `conflict` (the engine cannot tell "you edited it" from "upstream changed it" without a baseline). Merge those conflicts as above; the run writes a manifest, so the **next** update is fully 3-way and precise. Say this explicitly when you see an all-`conflict` first run.
+A legacy install (scaffolded before this command existed) has no manifest at `skills/sw/.update-manifest.json`. The first run degrades to **2-way**: files equal to upstream report `current`; everything else reports `conflict` (the engine cannot tell "you edited it" from "upstream changed it" without a baseline). Merge those conflicts as above; the run writes a manifest, so the **next** update is fully 3-way and precise. Say this explicitly when you see an all-`conflict` first run.
 
 ## Report the summary
 
@@ -71,6 +70,6 @@ Print counts built from the report's `STATUS\tpath` lines, categorized as **curr
 
 ## Boundaries
 
-- **No commit, no push, no PR.** This is a maintenance command, not the spec-flow delivery — `/memex:new-pr` stays the only PR path.
+- **No commit, no push, no PR.** This is a maintenance command, not the spec-flow delivery — `/sw:new-pr` stays the only PR path.
 - **Only the managed set.** Never read-for-overwrite anything under the "never touched" list.
 - The temp clone is left in place for the merge step; it is disposable (under `/tmp`).

@@ -1,26 +1,26 @@
 ---
-description: External evaluator that reviews a spec against the constitution and the vault, flagging violations, vagueness, and duplication
+description: External evaluator that reviews a spec against the project conventions and its design, flagging vagueness, scope creep, and unresolved questions
 argument-hint: <optional: path to spec folder, or current spec if omitted>
 ---
 
 # Review Spec — External Evaluator Pass
 
-Run an **independent** review of a spec written by the agent. It runs inside `memex-writing-plans` after the technical `spec.md` is written — the external pass between the author's own self-review and implementation. The point is to catch the things the author rationalized past.
+Run an **independent** review of a spec written by the agent. It runs inside `/sw:writing-plans` after the technical `spec.md` is written — the external pass between the author's own self-review and implementation. The point is to catch the things the author rationalized past.
 
-**Announce at start:** "Reviewing spec against constitution and vault..."
+**Announce at start:** "Reviewing spec against conventions and design..."
 
 ## Inputs
 
-1. **Target spec folder.** If `$ARGUMENTS` is a path under `.memex/specs/`, read that folder. Otherwise scan `.memex/specs/` for the most recent `YYYY-MM-DD-*` folder modified and confirm with the user before proceeding. Read both the technical `spec.md` and its companion `design.md`.
-2. **Constitution.** Read `.memex/constitution.md` in full — it defines the non-negotiables this spec must respect.
-3. **Vault background.** Skim the relevant indices: `.memex/_index/learnings.md`, `.memex/_index/conventions.md`, and the rules in `.memex/rules.md`. You are looking for prior knowledge the spec may have ignored or duplicated.
+1. **Target spec folder.** If `$ARGUMENTS` is a path under `.specwright/specs/`, read that folder. Otherwise scan `.specwright/specs/` for the most recent `YYYY-MM-DD-*` folder modified and confirm with the user before proceeding. Read both the technical `spec.md` and its companion `design.md`.
+2. **Project conventions.** Skim `.specwright/conventions/` — the project-specific standards this spec must respect and must not duplicate or contradict.
 
 ## Step 0 — mechanical pre-check (run first)
 
-Before the prose review, run the mechanical validator over the spec folder:
+Before the prose review, run the mechanical validator over the spec folder. It ships with the `sw` skill:
 
 ```bash
-.memex/scripts/validate-spec.sh <spec-folder>
+.agents/skills/sw/scripts/validate-spec.sh <spec-folder>
+# (in the specwright dev repo the script is at skills/sw/scripts/validate-spec.sh)
 ```
 
 It deterministically checks required frontmatter keys + the `scope` enum, surviving `{{placeholder}}`s, vague-verb acceptance criteria, and `AC-N` task coverage. A **non-zero exit is a blocking FAIL** — record it as the `0. Mechanical validator` row, and the verdict is `Block` regardless of the prose findings. Still complete the prose review below so the author fixes everything in one pass. If the script is absent (older install), note `validator missing` and proceed with the prose review only.
@@ -29,11 +29,11 @@ It deterministically checks required frontmatter keys + the `scope` enum, surviv
 
 For the target `spec.md`, return a finding for each of the categories below. Each finding is one of `PASS`, `WARN`, or `FAIL`. Reserve `FAIL` for issues that should block handoff.
 
-### 1. Constitution compliance
+### 1. Conventions compliance
 
-Read every rule in `.memex/constitution.md`. For each rule, ask: does this spec violate, weaken, or sidestep it? Quote the constitution line and the spec line when reporting.
+Read the project conventions under `.specwright/conventions/`. For each, ask: does this spec violate, weaken, or sidestep it? Quote the convention line and the spec line when reporting.
 
-`FAIL` if any rule is violated. `WARN` if a rule is sidestepped without acknowledgement. `PASS` otherwise.
+`FAIL` if a convention is violated. `WARN` if one is sidestepped without acknowledgement. `PASS` otherwise (including when there are no conventions that apply).
 
 ### 2. Acceptance Criteria — concrete and testable
 
@@ -57,13 +57,7 @@ The technical `spec.md` defines: Architecture, File Structure, Phase Ordering, C
 
 `Open Questions` is allowed to be empty if and only if the author wrote `None.`; silence is not the same as resolution.
 
-### 4. Duplication of existing knowledge
-
-For each major decision in the spec, search `.memex/learnings/`, `.memex/conventions/`, and `.memex/rules.md` for prior notes covering the same ground. If a learning already answers a question the spec re-litigates, surface it.
-
-`FAIL` if the spec contradicts an existing learning without acknowledging it. `WARN` if it duplicates without citing. `PASS` if existing notes are correctly referenced.
-
-### 5. Scope discipline
+### 4. Scope discipline
 
 Compare `design.md`'s **Purpose** and **Non-Goals** with the spec's **Acceptance Criteria**. Look for:
 
@@ -73,7 +67,7 @@ Compare `design.md`'s **Purpose** and **Non-Goals** with the spec's **Acceptance
 
 `FAIL` only on the third case. `WARN` on the first two.
 
-### 6. Open Questions left unresolved
+### 5. Open Questions left unresolved
 
 Every `[NEEDS CLARIFICATION: ...]` marker is a blocker. Same for any acceptance criterion that references an open question.
 
@@ -87,12 +81,11 @@ Every `[NEEDS CLARIFICATION: ...]` marker is a blocker. Same for any acceptance 
 | # | Category                                | Status | Note |
 |---|-----------------------------------------|--------|------|
 | 0 | Mechanical validator                    | PASS   | validate-spec.sh exit 0 |
-| 1 | Constitution compliance                 | PASS   |      |
+| 1 | Conventions compliance                  | PASS   |      |
 | 2 | Acceptance Criteria — concrete/testable | FAIL   | Bullet 3: "handles errors gracefully" — no observable check |
 | 3 | Required sections present               | WARN   | Non-Goals is empty |
-| 4 | Duplication of existing knowledge       | PASS   |      |
-| 5 | Scope discipline                        | PASS   |      |
-| 6 | Open Questions resolved                 | FAIL   | Line 47: [NEEDS CLARIFICATION: which auth provider?] |
+| 4 | Scope discipline                        | PASS   |      |
+| 5 | Open Questions resolved                 | FAIL   | Line 47: [NEEDS CLARIFICATION: which auth provider?] |
 
 ### Verdict
 
@@ -103,7 +96,7 @@ Every `[NEEDS CLARIFICATION: ...]` marker is a blocker. Same for any acceptance 
 1. Rewrite Acceptance Criteria bullet 3:
    - Was: "Handles errors gracefully"
    - Suggested: "On a 5xx upstream response, the endpoint returns 502 with body `{\"code\":\"UPSTREAM_ERROR\"}` and emits a `upstream_error` log line"
-2. Resolve [NEEDS CLARIFICATION: which auth provider?] before continuing — propose: "Use the same provider as the rest of the project (see `.memex/learnings/auth-stack.md`)"
+2. Resolve [NEEDS CLARIFICATION: which auth provider?] before continuing — propose a concrete default consistent with the project conventions.
 ```
 
 ## Verdict rules
@@ -115,4 +108,4 @@ Every `[NEEDS CLARIFICATION: ...]` marker is a blocker. Same for any acceptance 
 
 ## Key rule
 
-This command is a **second opinion**, not a rubber stamp. If the spec author already self-reviewed and approved, that is exactly when the external pass is most valuable — the failure mode is the author rationalizing past their own gaps. Be specific, quote line numbers, and never say "looks good" without checking against the constitution and the vault.
+This command is a **second opinion**, not a rubber stamp. If the spec author already self-reviewed and approved, that is exactly when the external pass is most valuable — the failure mode is the author rationalizing past their own gaps. Be specific, quote line numbers, and never say "looks good" without checking against the conventions and the design.
