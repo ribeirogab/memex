@@ -367,3 +367,8 @@ Append-only — one line per orchestrator event: date, issue, event (`dispatched
 > - 2026-07-02 — task-priority — shipped — priority read only via `taskPriority()` (missing → `medium`, never normalized into the store; `PRIORITIES`/`DEFAULT_PRIORITY` exported from `lib/tasks.js`); 15 tests green, frozen test byte-identical. PR: branch `feat/task-priority` pushed to origin (local bare remote, no GitHub) — full record in the issue's `pr.md`.
 > 
 (diff exit: 1)
+
+== QUALITY GATE (T4 owner) ==
+captured: 2026-07-02T12:45:29Z
+validate-spec.sh on this issue folder: PASS (exit 0)
+sandbox main npm test after round 1: 5 tests, 5 pass, 0 fail (frozen suite intact on main; owner changes live on feat/task-priority)
