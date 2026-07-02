@@ -40,17 +40,7 @@ Copy the bundled template (`scaffold/templates/spec.md`, under the installed `sw
 
 **Each step is one action (2-5 minutes):** "Write the failing test" — step. "Run it to make sure it fails" — step. "Implement the minimal code to make the test pass" — step. "Run the tests" — step. "Commit" — step.
 
-**Every `tasks.md` MUST start with this header:**
-
-```markdown
-# [Issue Name] — Tasks
-
-> **For agentic workers:** implement task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking. Each task names the `AC:` it satisfies and a `Delegable:` note.
-
-**For this issue:** see the sibling `issue.md` (acceptance criteria) and `spec.md`.
-
----
-```
+**Start `tasks.md` from the bundled template** (`scaffold/templates/tasks.md`) — keep its frontmatter and header note verbatim; the template is the single source of truth for the artifact's shape.
 
 **Task structure:**
 

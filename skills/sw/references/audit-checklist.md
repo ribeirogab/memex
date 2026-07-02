@@ -62,6 +62,10 @@ These are obsolete — slash commands now ship as a Claude Code plugin from the 
 
 If `.agents/commands/` becomes empty after the removals, the directory itself is also removed (`rmdir` succeeds only on empty dirs, so this is safe even if an unrelated file still sits there).
 
+### Legacy skill directories to remove (pre-rename installs)
+
+Installs scaffolded before the issue-driven rename carry old-name skill directories: `.agents/skills/sw-{brainstorming,writing-plans,new-pr,code-review}/` (and matching symlinks in per-agent dirs). Each is `DRIFT` — the current set is `sw-{brainstorm,plan,pr,review,run,update}`. Fix in Phase 4: after the current skills are installed, remove each old-name directory and any per-agent symlink pointing at it. Deleting a directory is a **destructive** op per the SKILL.md "Mode of Operation" — surface the list and confirm once before removing (the user may have local edits worth merging into the renamed skill first; `/sw:update` handles that merge).
+
 ### Claude plugin settings present (when `.claude/` exists)
 
 When the target repo has a `.claude/` directory (signal that the user runs Claude Code in this repo), `.claude/settings.json` must declare:

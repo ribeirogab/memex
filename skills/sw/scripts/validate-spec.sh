@@ -50,7 +50,7 @@ else
     | head -n1 \
     | sed -E 's/^status:[[:space:]]*//; s/[[:space:]]*$//')
   case "$status_val" in
-    pending|in-progress|shipped|blocked|"") : ;;
+    pending|in-progress|shipped|blocked) : ;;
     *) fail 1 "issue.md status must be one of pending|in-progress|shipped|blocked (got: '${status_val}')" ;;
   esac
 fi

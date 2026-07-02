@@ -136,6 +136,8 @@ if [ -d .claude/skills ]; then
 fi
 ```
 
+Pre-rename installs also leave old-name skill directories behind (`sw-brainstorming`, `sw-writing-plans`, `sw-new-pr`, `sw-code-review`) — the audit flags them as `DRIFT`; removing a directory is destructive, so list them and confirm with the user before `rm -rf` (see `references/audit-checklist.md`, "Legacy skill directories to remove").
+
 **Slash commands** ship as a Claude Code plugin published from the upstream marketplace `specwright` (this repo's root `.claude-plugin/marketplace.json`). The slash commands — `/sw:spec`, `/sw:review-spec` — live in `plugins/sw/commands/` upstream and are fetched by Claude Code at workspace-trust time. The skill **does not copy command files into the target repo** — it only declares the marketplace and pre-enables the plugin via `.claude/settings.json`.
 
 The skill does two things at install time, both gated on the target repo having a `.claude/` directory (its absence signals the user does not run Claude Code in this repo):
