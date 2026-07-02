@@ -1,8 +1,8 @@
 ---
 feature: blocked-recovery
 created: 2026-07-02
-status: in-progress
-shipped: null
+status: shipped
+shipped: 2026-07-02
 ---
 # Blocked Recovery (T7) — Issue
 
