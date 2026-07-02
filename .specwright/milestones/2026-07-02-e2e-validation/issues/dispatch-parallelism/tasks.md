@@ -20,7 +20,8 @@ Shorthand used below: `SANDBOX=/Users/gabriel/www/ribeirogab/specwright-sandbox/
 - [ ] Step 1: Capture pre-round sandbox state into `ISSUE/evidence/round1-sandbox-state.txt` (section `== PRE-ROUND ==`, timestamped):
 
 ```bash
-cd $SANDBOX && git status --porcelain --branch && git log --oneline -3 && git worktree list && git branch -a && shasum -a 256 .specwright/milestones/2026-07-02-grow-taskr/board.md .specwright/milestones/2026-07-02-grow-taskr/issues/*/issue.md && grep -H '^status:' .specwright/milestones/2026-07-02-grow-taskr/issues/*/issue.md && ls .specwright/worktrees 2>/dev/null || echo 'no .specwright/worktrees'
+cd $SANDBOX && git status --porcelain --branch && git log --oneline -3 && git worktree list && git branch -a && shasum -a 256 .specwright/milestones/2026-07-02-grow-taskr/board.md .specwright/milestones/2026-07-02-grow-taskr/issues/*/issue.md && grep -H '^status:' .specwright/milestones/2026-07-02-grow-taskr/issues/*/issue.md
+ls $SANDBOX/.specwright/worktrees 2>/dev/null || echo 'no .specwright/worktrees'
 ```
 
 Expected: clean tree on `main` at `aaa117b` (ahead 1 of origin — baseline), no worktrees beyond the main tree, all five issues `status: pending`, empty Dispatch Log.
@@ -28,7 +29,8 @@ Expected: clean tree on `main` at `aaa117b` (ahead 1 of origin — baseline), no
 - [ ] Step 2: Byte-copy `board.md` and the five `issue.md` to `SCRATCH/pre/`.
 - [ ] Step 3: Create the degradation clone **before the real round**: `git clone $SANDBOX $SCRATCH/taskr-degradation`.
 - [ ] Step 4: Verify the clone carries the fixture and the skills: `git -C $SCRATCH/taskr-degradation log --oneline -2` shows `aaa117b`; `ls $SCRATCH/taskr-degradation/.agents/skills/` lists `sw-run`; the milestone folder exists with all five tickets. Expected: all present (vault dirs survive clones via `.gitkeep` — sandbox-setup learning).
-- [ ] Step 5: Commit the evidence baseline on `chore/e2e-dispatch-parallelism` (spec, tasks, pre-round state).
+- [ ] Step 5: Isolate the clone from the live sandbox: `git -C $SCRATCH/taskr-degradation remote remove origin`, then verify `git -C $SCRATCH/taskr-degradation remote -v` prints nothing. Rationale: the clone's default `origin` is the live sandbox and the sandbox's sw-pr skill pushes to origin — a degradation-round push would silently contaminate the real sandbox after the audit. Record the removal in `ISSUE/evidence/degradation-state.txt`, noting that `ahead 1` no longer displays because `main` lost its upstream (expected, not pollution).
+- [ ] Step 6: Commit the evidence baseline on `chore/e2e-dispatch-parallelism` (spec, tasks, pre-round state).
 
 ## Phase 2: The real round
 
@@ -63,7 +65,7 @@ cd $SANDBOX && date -u +%FT%TZ && git worktree list && git branch -a && sed -n '
 
 Expected while owner lives: `.specwright/worktrees/task-priority` in `git worktree list` on its own branch — that snapshot is AC-1's worktree evidence.
 
-- [ ] Step 5: At each subsequent yield, reply per policy: intermediate approval asks → approve (`Approved.`); owner outcome reported + logged and session asks to continue → `Stop here for today — don't start anything new.` and end; session reports blocked/nothing-ready and stops on its own → acknowledge (`Understood, stop here.`). Capture every turn (both directions) verbatim.
+- [ ] Step 5: At each subsequent yield, reply per policy: intermediate approval asks → approve (`Approved.`); owner outcome reported + logged and session asks to continue → `Stop here for today — don't start anything new.` and end; session reports blocked/nothing-ready and stops on its own → acknowledge (`Understood, stop here.`). Capture every turn (both directions) verbatim — in particular, the session's **round-outcome announcement** (the turn reporting the owner's shipped/blocked result and the board logging) must appear as a verbatim quote in `round1-session.md`; it is AC-3's transcript-side anchor.
 - [ ] Step 6: After the session ends, extract the full assistant-turn transcript from the sub-agent JSONL with the T3 recipe and fold it into `evidence/round1-session.md`:
 
 ```bash
@@ -117,7 +119,7 @@ Verdict rule: every Write/Edit/mutating-Bash by the **orchestrator** targets `$S
 **AC:** AC-5 (and closes AC-1..AC-4 verdicts)
 **Delegable:** no — verdicts are the owner's.
 
-- [ ] Step 1: Write `ISSUE/findings.md`: one verdict (PASS / FAIL / DIVERGENCE / UNVERIFIABLE) per check in AC-1..AC-4, each citing its evidence file+section; one Expected / Observed / Proposed-fix entry per failure or divergence — including the known AC-1 expectation-vs-fixture divergence (single-dispatch round 1; concurrency observation re-scoped to round 2 / T5) and whatever the task-priority owner did with the validator defect.
+- [ ] Step 1: Write `ISSUE/findings.md`: one verdict (PASS / FAIL / DIVERGENCE / UNVERIFIABLE) per check in AC-1..AC-4, each citing its evidence file+section; one Expected / Observed / Proposed-fix entry per failure or divergence — including the known AC-1 expectation-vs-fixture divergence (single-dispatch round 1; concurrency observation re-scoped to round 2) and whatever the task-priority owner did with the validator defect. Also spell out the **T-label drift**: scope-detection's and milestone-planning's learnings refer to this issue as "T5" while this issue's ticket and resume's learnings call it "T4" — name both labels so the next issue's owner maps the sibling references correctly.
 - [ ] Step 2: Cross-check every finding cites evidence that actually contains the quoted material.
 - [ ] Step 3: Commit.
 

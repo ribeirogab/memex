@@ -1,0 +1,8 @@
+== CLONE REMOTE ISOLATION ==
+recorded: 2026-07-02T06:17:39Z
+Ran: git -C $SCRATCH/taskr-degradation remote remove origin
+Reason: the clone's default origin pointed at the LIVE sandbox (git clone from the working repo); the sandbox's sw-pr skill pushes to origin, so a degradation-round push would have silently written a branch into the real sandbox after the post-round audit (spec-document-reviewer blocker).
+Verification (git remote -v prints nothing):
+(no output above = no remotes)
+Side effect: 'git status' on the clone no longer shows 'ahead 1' — main lost its upstream tracking. Expected, not pollution.
+
