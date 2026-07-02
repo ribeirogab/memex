@@ -14,7 +14,7 @@ Evidence citations point into `evidence/` in this folder.
 | AC-2 — orchestrator purity (transcript + git + per-branch commits) | **PASS** (caveat: shared git author identity — proven by branch provenance + transcript, not `%an`) | `purity-audit.md` |
 | AC-3 — board gained one `dispatched` + one outcome line, append-only | **PASS** (nuance: log lines stay uncommitted until round close — Finding 6) | `round1-sandbox-state.txt` `== POST-ROUND ==` board diff (additions only); `round1-session.md` round-close report |
 | AC-3 (stop) — session stopped after logging round-1 outcomes, before round 2 | **PASS** (stop point harness-scripted via pacing constraint — by design, since unattended runs have no natural pause) | `round1-session.md` closing turns ("Nada mais foi despachado") + post-round state (no new worktrees/branches) |
-| AC-4 — degradation round serial, in place, no worktrees, same pipeline | **PASS** (caveat: session externally stopped at the delivery step, so ship/outcome-logging unobserved — harness interruption, not skill failure) | `degradation-session.md`; `degradation-state.txt` `== POST-DEGRADATION ==` |
+| AC-4 — degradation round serial, in place, no worktrees, same pipeline | **PASS** (caveats: the "one at a time" clause is only trivially exercised at N=1 — same fixture limit as Finding 1; and the session was externally stopped at the delivery step, so ship/outcome-logging unobserved — harness interruption, not skill failure) | `degradation-session.md`; `degradation-state.txt` `== POST-DEGRADATION ==` |
 | AC-5 — findings verdicts + Expected/Observed/Proposed fix per failure | **PASS** | this file |
 
 ## Finding 1 — Round-1 parallelism is unobservable in this fixture (expectation vs board reality)
