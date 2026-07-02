@@ -16,7 +16,7 @@ Full inventory of what the specwright audit checks. The orchestrator (`SKILL.md`
 For each item, check existence and content correctness. Report status as:
 - `OK` — exists and looks correct
 - `MISSING` — doesn't exist at all
-- `DRIFT` — exists but content has diverged from expected structure (e.g., malformed spec frontmatter, missing required headers in `AGENTS.md`, a non-date-prefixed spec folder)
+- `DRIFT` — exists but content has diverged from expected structure (e.g., malformed spec frontmatter, missing required headers in `AGENTS.md`, a non-date-prefixed issue or milestone folder)
 
 ## Files and directories to check
 
@@ -154,4 +154,4 @@ Each issue's `issue.md` must begin with valid YAML frontmatter (between `---` fe
 - N missing, M drifted
 ```
 
-After rendering this report, the orchestrator proceeds directly to Phase 3 to fix any `MISSING` or `DRIFT` items — no mid-run confirmation. Spec-folder renames (a destructive op) are the only exception and require an explicit prompt per the migration rules above. If everything passes, the orchestrator skips Phase 3 and runs Phase 5 validation (see `references/validation.md`) before reporting "specwright is healthy."
+After rendering this report, the orchestrator proceeds directly to Phase 3 to fix any `MISSING` or `DRIFT` items — no mid-run confirmation. Issue- and milestone-folder renames (a destructive op) are the only exception and require an explicit prompt per the migration rules above. If everything passes, the orchestrator skips Phase 3 and runs Phase 5 validation (see `references/validation.md`) before reporting "specwright is healthy."

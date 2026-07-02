@@ -1,9 +1,9 @@
 ---
 name: sw
-description: "Scaffold or audit specwright (AGENTS.md + spec-driven workflow + bundled skills) in any repo — an explicit spec-driven workflow for agents (Claude Code, Codex, Cursor, OpenCode, etc.). Agent-agnostic. Idempotent — safe to run repeatedly. Use when the user wants to set up, verify, or fix specwright in a project."
+description: "Scaffold or audit specwright (AGENTS.md + issue-driven workflow + bundled skills) in any repo — an explicit issue-driven workflow for agents (Claude Code, Codex, Cursor, OpenCode, etc.). Agent-agnostic. Idempotent — safe to run repeatedly. Use when the user wants to set up, verify, or fix specwright in a project."
 ---
 
-# specwright — Idempotent Spec-Driven Workflow
+# specwright — Idempotent Issue-Driven Workflow
 
 Set up or audit specwright in the current repo. Safe to run multiple times — it checks what exists, reports what's missing or wrong, asks before making changes, then validates the result.
 
@@ -22,7 +22,7 @@ If the audit finds nothing wrong **and** validation passes, just say "specwright
 
 ## Phase 1 — Audit
 
-Read `references/audit-checklist.md` for the full inventory of files and directories to check, the meaning of each status (`OK` / `MISSING` / `DRIFT`), drift criteria for `AGENTS.md`, the report format, and special handling for date-prefixed spec folders.
+Read `references/audit-checklist.md` for the full inventory of files and directories to check, the meaning of each status (`OK` / `MISSING` / `DRIFT`), drift criteria for `AGENTS.md`, the report format, and special handling for date-prefixed issue and milestone folders.
 
 Apply each check, then assemble the report described in that reference.
 
@@ -64,7 +64,7 @@ Ensure all three directories exist (empty is fine on first install). The artifac
 
 ### AGENTS.md
 
-For `AGENTS.md` at the repo root, read `references/agents-md-template.md`. Fill `{{Project Name}}` and `{{project}}` from Prerequisites; the `### Spec flow` and section structure are fixed. The reference lists all required section headers — none may be missing, and the final file must stay ≤ 80 lines.
+For `AGENTS.md` at the repo root, read `references/agents-md-template.md`. Fill `{{Project Name}}` and `{{project}}` from Prerequisites; the `### Issue flow` and section structure are fixed. The reference lists all required section headers — none may be missing, and the final file must stay ≤ 80 lines.
 
 ### CLAUDE.md symlink (Claude Code back-compat)
 
