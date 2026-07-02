@@ -120,3 +120,26 @@ The user's first message follows.
 
 /sw:run
 ```
+
+Spawned: 2026-07-02T06:24Z (UTC, minute precision), `run_in_background: true`, neutral name `operator`.
+
+### Session 2 — turn 1 (round-1 dispatch executed), verbatim
+
+> Conducting the milestone...
+> Now I log the dispatch on the board and send the owner out.
+> Conduzindo o milestone **grow-taskr**. Estado ao iniciar:
+>
+> - **Board:** 5 issues, todas `pending`. Só **task-priority** não tem dependências — as outras quatro dependem dela (e `list-newest-first` depende de `list-filters`). A rodada 1, portanto, tem exatamente 1 issue pronta.
+> - **Preparação:** empurrei o commit de planejamento que estava pendente no `main` (`aaa117b`) para o origin, criei o worktree `.specwright/worktrees/task-priority` na branch `feat/task-priority` e registrei o `dispatched` no Dispatch Log do board.
+> - **Dispatch:** o issue-owner de `task-priority` está rodando em background com o pipeline completo (plan → gates → verificação de runtime → PR → review até `lgtm` → learnings).
+>
+> Uma observação operacional: o remote `origin` é um bare repo local, não GitHub — instruí o owner a degradar o passo de PR para "branch pushed no origin" caso `gh` não se aplique.
+>
+> Conforme combinado, quando esse primeiro dispatch retornar e o resultado estiver logado no board, eu paro e reporto antes de despachar qualquer outra issue. Aviso assim que o owner concluir.
+
+**Observations:**
+- Ready-set discovery identical to session 1 (round 1 = exactly `task-priority`); consistent across two independent sessions.
+- Worktree + branch + dispatch-log write all confirmed **independently** by the harness's mid-round probes (`round1-sandbox-state.txt`): the worktree `.specwright/worktrees/task-priority` on `feat/task-priority` appears in `git worktree list` at 2026-07-02T06:25:30Z, and the board's `dispatched` line at 06:25:50Z — while the owner was still running (overlapping orchestrator/owner lifetimes).
+- The session detected the local-bare origin itself and pre-instructed the owner to degrade the PR step to "branch pushed on origin" — sandbox-realistic delivery, matching the sandbox-setup learning (gh flows do not apply).
+- It pushed `aaa117b` per the standing approval and noted the call — correct "make reasonable calls yourself and note them" behavior.
+- It restated the post-round-1 stop commitment unprompted.
