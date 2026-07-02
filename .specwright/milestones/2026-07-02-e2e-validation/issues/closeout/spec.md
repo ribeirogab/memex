@@ -49,7 +49,7 @@ Audit checks (each becomes a findings.md verdict):
 
 **Part B — the consolidated dossier (`dossier.md`).**
 
-Inputs: the ten findings.md that exist (8 in this worktree: sandbox-setup, scope-detection, milestone-planning, resume, dispatch-parallelism, issue-pipeline, circuit-breaker, blocked-recovery; 2 read from their unmerged branches via `git show`: `chore/e2e-command-surface:…/command-surface/findings.md`, `chore/e2e-docs-coherence:…/docs-coherence/findings.md`) — standalone-regression (T9/T10) has not run and is recorded as out of dossier scope — plus the orchestrator's **Conduction notes** on this milestone's live board (parent checkout `board.md`), including the two user-requested skill improvements (visual progress panel in the run skill; stall-proof conduction/watchdog guidance) as first-class dossier items, and Part A's fresh findings.
+Inputs: the ten findings.md that exist (8 in this worktree: sandbox-setup, scope-detection, milestone-planning, resume, dispatch-parallelism, issue-pipeline, circuit-breaker, blocked-recovery; 2 read from their unmerged branches via `git show`: `chore/e2e-command-surface:…/command-surface/findings.md`, `chore/e2e-docs-coherence:…/docs-coherence/findings.md`) — standalone-regression has not run and is recorded as out of dossier scope — plus the orchestrator's **Conduction notes** on this milestone's live board (parent checkout `board.md`), including the two user-requested skill improvements (visual progress panel in the run skill; stall-proof conduction/watchdog guidance) as first-class dossier items, and Part A's fresh findings.
 
 Shape: every finding keeps source issue + Expected/Observed/Proposed fix; duplicates collapse into one entry with the full evidence trail (the recurring patterns get consolidated entries: name-alias expiry ×4+, owner-stall 6/6 → 7/7 if Part A reproduces it, notification routing, approval-in-spawn-prompt, verbatim-vs-synthesis, driver-name leak ×4, pt-BR bleed). Grouped by theme: **skill wording**, **skill behavior/mechanics**, **command surface & install parity**, **docs drift**, **validator**, **fixture design (test-plan, not specwright)**, **harness/conduction mechanics**, **new capabilities requested**. Each entry carries a proposed severity (`high | medium | low`) and the recommendation section proposes the follow-up fixes decomposition (issue vs milestone, with a suggested grouping).
 
@@ -63,7 +63,7 @@ All created under this issue's folder `.specwright/milestones/2026-07-02-e2e-val
 - Create: `evidence/post-state.txt` — post-closeout snapshot + `diff` of board.md pre/post (appends only), final git state, no-writes-after corroboration.
 - Create: `findings.md` — verdict per check C1–C5 + one Expected/Observed/Proposed-fix entry per failure/divergence.
 - Create: `dossier.md` — the consolidated dossier (Part B).
-- Create: `learnings.md` — sandbox final state for T9/T10 (which must find the sandbox idle post-closeout) + durable harness facts.
+- Create: `learnings.md` — sandbox final state for standalone-regression (which must find the sandbox idle post-closeout) + durable harness facts.
 - Modify: `issue.md` — status flips + AC ticks at ship time.
 - Scratch only (never committed): `/private/tmp/claude-501/…/scratchpad/` for branch-extracted findings and monitor logs.
 
