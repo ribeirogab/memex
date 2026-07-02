@@ -6,3 +6,44 @@ Verification (git remote -v prints nothing):
 (no output above = no remotes)
 Side effect: 'git status' on the clone no longer shows 'ahead 1' — main lost its upstream tracking. Expected, not pollution.
 
+== PRE-DEGRADATION (clone) ==
+captured: 2026-07-02T12:22:20Z
+--- git status --porcelain --branch ---
+## main
+--- git log --oneline -2 ---
+aaa117b chore(vault): plan the grow-taskr milestone — 5 issues from the approved brainstorm
+e57a024 chore: bootstrap taskr sandbox with specwright
+--- git worktree list ---
+/private/tmp/claude-501/-Users-gabriel-www-ribeirogab-specwright--claude-worktrees-pensive-bose-7ba1c1/35a26153-a526-40df-b10c-9d60f5037d86/scratchpad/taskr-degradation  aaa117b [main]
+--- git branch -a ---
+* main
+--- .specwright/worktrees ---
+(empty / gitkeep only)
+--- dispatch log section ---
+## Dispatch Log
+
+Append-only — one line per orchestrator event: date, issue, event (`dispatched` / `shipped` / `blocked` / `resumed`), short note (for `shipped`: the owner's one-line learnings summary and the PR URL).
+
+## Blockers
+--- issue statuses ---
+.specwright/milestones/2026-07-02-grow-taskr/issues/export-json-csv/issue.md:status: pending
+.specwright/milestones/2026-07-02-grow-taskr/issues/list-filters/issue.md:status: pending
+.specwright/milestones/2026-07-02-grow-taskr/issues/list-newest-first/issue.md:status: pending
+.specwright/milestones/2026-07-02-grow-taskr/issues/task-priority/issue.md:status: pending
+.specwright/milestones/2026-07-02-grow-taskr/issues/web-page/issue.md:status: pending
+
+== MID-DEGRADATION PROBES ==
+
+--- probe 2026-07-02T12:23:13Z ---
+/private/tmp/claude-501/-Users-gabriel-www-ribeirogab-specwright--claude-worktrees-pensive-bose-7ba1c1/35a26153-a526-40df-b10c-9d60f5037d86/scratchpad/taskr-degradation  aaa117b [main]
+* main
+## Dispatch Log
+
+Append-only — one line per orchestrator event: date, issue, event (`dispatched` / `shipped` / `blocked` / `resumed`), short note (for `shipped`: the owner's one-line learnings summary and the PR URL).
+
+## Blockers
+.specwright/milestones/2026-07-02-grow-taskr/issues/export-json-csv/issue.md:status: pending
+.specwright/milestones/2026-07-02-grow-taskr/issues/list-filters/issue.md:status: pending
+.specwright/milestones/2026-07-02-grow-taskr/issues/list-newest-first/issue.md:status: pending
+.specwright/milestones/2026-07-02-grow-taskr/issues/task-priority/issue.md:status: pending
+.specwright/milestones/2026-07-02-grow-taskr/issues/web-page/issue.md:status: pending

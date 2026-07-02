@@ -151,3 +151,147 @@ Append-only — one line per orchestrator event: date, issue, event (`dispatched
 .specwright/milestones/2026-07-02-grow-taskr/issues/list-newest-first/issue.md:status: pending
 .specwright/milestones/2026-07-02-grow-taskr/issues/task-priority/issue.md:status: pending
 .specwright/milestones/2026-07-02-grow-taskr/issues/web-page/issue.md:status: pending
+
+--- probe 2026-07-02T06:32:51Z ---
+/Users/gabriel/www/ribeirogab/specwright-sandbox/taskr                                      aaa117b [main]
+/Users/gabriel/www/ribeirogab/specwright-sandbox/taskr/.specwright/worktrees/task-priority  714178a [feat/task-priority]
++ feat/task-priority
+* main
+  remotes/origin/main
+task-priority
+## Dispatch Log
+
+Append-only — one line per orchestrator event: date, issue, event (`dispatched` / `shipped` / `blocked` / `resumed`), short note (for `shipped`: the owner's one-line learnings summary and the PR URL).
+
+- 2026-07-02 — task-priority — dispatched — round 1; only issue with no dependencies; worktree `.specwright/worktrees/task-priority`, branch `feat/task-priority`.
+
+## Blockers
+.specwright/milestones/2026-07-02-grow-taskr/issues/export-json-csv/issue.md:status: pending
+.specwright/milestones/2026-07-02-grow-taskr/issues/list-filters/issue.md:status: pending
+.specwright/milestones/2026-07-02-grow-taskr/issues/list-newest-first/issue.md:status: pending
+.specwright/milestones/2026-07-02-grow-taskr/issues/task-priority/issue.md:status: pending
+.specwright/milestones/2026-07-02-grow-taskr/issues/web-page/issue.md:status: pending
+
+--- probe 2026-07-02T06:33:51Z ---
+/Users/gabriel/www/ribeirogab/specwright-sandbox/taskr                                      aaa117b [main]
+/Users/gabriel/www/ribeirogab/specwright-sandbox/taskr/.specwright/worktrees/task-priority  5e5d02e [feat/task-priority]
++ feat/task-priority
+* main
+  remotes/origin/main
+task-priority
+## Dispatch Log
+
+Append-only — one line per orchestrator event: date, issue, event (`dispatched` / `shipped` / `blocked` / `resumed`), short note (for `shipped`: the owner's one-line learnings summary and the PR URL).
+
+- 2026-07-02 — task-priority — dispatched — round 1; only issue with no dependencies; worktree `.specwright/worktrees/task-priority`, branch `feat/task-priority`.
+
+## Blockers
+.specwright/milestones/2026-07-02-grow-taskr/issues/export-json-csv/issue.md:status: pending
+.specwright/milestones/2026-07-02-grow-taskr/issues/list-filters/issue.md:status: pending
+.specwright/milestones/2026-07-02-grow-taskr/issues/list-newest-first/issue.md:status: pending
+.specwright/milestones/2026-07-02-grow-taskr/issues/task-priority/issue.md:status: pending
+.specwright/milestones/2026-07-02-grow-taskr/issues/web-page/issue.md:status: pending
+
+--- probe 2026-07-02T06:34:11Z ---
+/Users/gabriel/www/ribeirogab/specwright-sandbox/taskr                                      aaa117b [main]
+/Users/gabriel/www/ribeirogab/specwright-sandbox/taskr/.specwright/worktrees/task-priority  3bf283e [feat/task-priority]
++ feat/task-priority
+* main
+  remotes/origin/main
+task-priority
+## Dispatch Log
+
+Append-only — one line per orchestrator event: date, issue, event (`dispatched` / `shipped` / `blocked` / `resumed`), short note (for `shipped`: the owner's one-line learnings summary and the PR URL).
+
+- 2026-07-02 — task-priority — dispatched — round 1; only issue with no dependencies; worktree `.specwright/worktrees/task-priority`, branch `feat/task-priority`.
+
+## Blockers
+.specwright/milestones/2026-07-02-grow-taskr/issues/export-json-csv/issue.md:status: pending
+.specwright/milestones/2026-07-02-grow-taskr/issues/list-filters/issue.md:status: pending
+.specwright/milestones/2026-07-02-grow-taskr/issues/list-newest-first/issue.md:status: pending
+.specwright/milestones/2026-07-02-grow-taskr/issues/task-priority/issue.md:status: pending
+.specwright/milestones/2026-07-02-grow-taskr/issues/web-page/issue.md:status: pending
+
+--- probe 2026-07-02T06:34:52Z ---
+/Users/gabriel/www/ribeirogab/specwright-sandbox/taskr                                      aaa117b [main]
+/Users/gabriel/www/ribeirogab/specwright-sandbox/taskr/.specwright/worktrees/task-priority  3bf283e [feat/task-priority]
++ feat/task-priority
+* main
+  remotes/origin/feat/task-priority
+  remotes/origin/main
+task-priority
+## Dispatch Log
+
+Append-only — one line per orchestrator event: date, issue, event (`dispatched` / `shipped` / `blocked` / `resumed`), short note (for `shipped`: the owner's one-line learnings summary and the PR URL).
+
+- 2026-07-02 — task-priority — dispatched — round 1; only issue with no dependencies; worktree `.specwright/worktrees/task-priority`, branch `feat/task-priority`.
+
+## Blockers
+.specwright/milestones/2026-07-02-grow-taskr/issues/export-json-csv/issue.md:status: pending
+.specwright/milestones/2026-07-02-grow-taskr/issues/list-filters/issue.md:status: pending
+.specwright/milestones/2026-07-02-grow-taskr/issues/list-newest-first/issue.md:status: pending
+.specwright/milestones/2026-07-02-grow-taskr/issues/task-priority/issue.md:status: pending
+.specwright/milestones/2026-07-02-grow-taskr/issues/web-page/issue.md:status: pending
+
+--- probe 2026-07-02T06:35:32Z ---
+/Users/gabriel/www/ribeirogab/specwright-sandbox/taskr                                      aaa117b [main]
+/Users/gabriel/www/ribeirogab/specwright-sandbox/taskr/.specwright/worktrees/task-priority  f1fef23 [feat/task-priority]
++ feat/task-priority
+* main
+  remotes/origin/feat/task-priority
+  remotes/origin/main
+task-priority
+## Dispatch Log
+
+Append-only — one line per orchestrator event: date, issue, event (`dispatched` / `shipped` / `blocked` / `resumed`), short note (for `shipped`: the owner's one-line learnings summary and the PR URL).
+
+- 2026-07-02 — task-priority — dispatched — round 1; only issue with no dependencies; worktree `.specwright/worktrees/task-priority`, branch `feat/task-priority`.
+
+## Blockers
+.specwright/milestones/2026-07-02-grow-taskr/issues/export-json-csv/issue.md:status: pending
+.specwright/milestones/2026-07-02-grow-taskr/issues/list-filters/issue.md:status: pending
+.specwright/milestones/2026-07-02-grow-taskr/issues/list-newest-first/issue.md:status: pending
+.specwright/milestones/2026-07-02-grow-taskr/issues/task-priority/issue.md:status: pending
+.specwright/milestones/2026-07-02-grow-taskr/issues/web-page/issue.md:status: pending
+
+--- probe 2026-07-02T06:36:32Z ---
+/Users/gabriel/www/ribeirogab/specwright-sandbox/taskr                                      aaa117b [main]
+/Users/gabriel/www/ribeirogab/specwright-sandbox/taskr/.specwright/worktrees/task-priority  2ae507a [feat/task-priority]
++ feat/task-priority
+* main
+  remotes/origin/feat/task-priority
+  remotes/origin/main
+task-priority
+## Dispatch Log
+
+Append-only — one line per orchestrator event: date, issue, event (`dispatched` / `shipped` / `blocked` / `resumed`), short note (for `shipped`: the owner's one-line learnings summary and the PR URL).
+
+- 2026-07-02 — task-priority — dispatched — round 1; only issue with no dependencies; worktree `.specwright/worktrees/task-priority`, branch `feat/task-priority`.
+
+## Blockers
+.specwright/milestones/2026-07-02-grow-taskr/issues/export-json-csv/issue.md:status: pending
+.specwright/milestones/2026-07-02-grow-taskr/issues/list-filters/issue.md:status: pending
+.specwright/milestones/2026-07-02-grow-taskr/issues/list-newest-first/issue.md:status: pending
+.specwright/milestones/2026-07-02-grow-taskr/issues/task-priority/issue.md:status: pending
+.specwright/milestones/2026-07-02-grow-taskr/issues/web-page/issue.md:status: pending
+
+--- probe 2026-07-02T06:37:12Z ---
+/Users/gabriel/www/ribeirogab/specwright-sandbox/taskr                                      aaa117b [main]
+/Users/gabriel/www/ribeirogab/specwright-sandbox/taskr/.specwright/worktrees/task-priority  b9d7c80 [feat/task-priority]
++ feat/task-priority
+* main
+  remotes/origin/feat/task-priority
+  remotes/origin/main
+task-priority
+## Dispatch Log
+
+Append-only — one line per orchestrator event: date, issue, event (`dispatched` / `shipped` / `blocked` / `resumed`), short note (for `shipped`: the owner's one-line learnings summary and the PR URL).
+
+- 2026-07-02 — task-priority — dispatched — round 1; only issue with no dependencies; worktree `.specwright/worktrees/task-priority`, branch `feat/task-priority`.
+
+## Blockers
+.specwright/milestones/2026-07-02-grow-taskr/issues/export-json-csv/issue.md:status: pending
+.specwright/milestones/2026-07-02-grow-taskr/issues/list-filters/issue.md:status: pending
+.specwright/milestones/2026-07-02-grow-taskr/issues/list-newest-first/issue.md:status: pending
+.specwright/milestones/2026-07-02-grow-taskr/issues/task-priority/issue.md:status: pending
+.specwright/milestones/2026-07-02-grow-taskr/issues/web-page/issue.md:status: pending
