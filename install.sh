@@ -128,7 +128,7 @@ print_next_steps() {
   say "Next: open this repo in your coding agent and run  /sw"
   say "  (audits the specwright setup and scaffolds whatever is missing)"
   say ""
-  say "The specwright plugin (/sw:spec, /sw:new-pr, ...) installs when Claude Code"
+  say "The specwright plugin (/sw:spec, /sw:pr, ...) installs when Claude Code"
   say "trusts this workspace — reopen the repo or accept the trust prompt."
 }
 

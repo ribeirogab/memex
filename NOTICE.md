@@ -16,15 +16,15 @@ specwright bundles two scripts vendored from `anthropics/skills` so the skill is
 | Copyright holder | Anthropic |
 | Modifications | `quick_validate.py` is verbatim. `package_skill.py` has one change vs upstream: the `from scripts.quick_validate import validate_skill` line is replaced with `sys.path.insert(0, str(Path(__file__).parent))` followed by `from quick_validate import validate_skill`, so the file works whether invoked as `python -m scripts.package_skill`, `python scripts/package_skill.py`, or by absolute path. The change is documented inline in the file's module docstring. |
 
-## Adapted under the `sw` skills (`brainstorming`, `writing-plans`)
+## Adapted under the `sw` skills (`brainstorm`, `plan`)
 
-The `brainstorming` and `writing-plans` skills are adapted from the **superpowers** project by Jesse Vincent (obra). The brainstorming visual companion (its HTML/CSS/scripts) and the plan-writing flow originate there; specwright has rebranded the user-facing surfaces, removed the dependencies on superpowers-only sub-skills, and rewired runtime paths to `.specwright/`.
+The `brainstorm` and `plan` skills are adapted from the **superpowers** project by Jesse Vincent (obra). The brainstorming visual companion (its HTML/CSS/scripts) and the plan-writing flow originate there; specwright has rebranded the user-facing surfaces, removed the dependencies on superpowers-only sub-skills, and rewired runtime paths to `.specwright/`.
 
 | Field | Value |
 |---|---|
 | Source | [https://github.com/obra/superpowers](https://github.com/obra/superpowers) |
 | Original license | MIT |
-| Modifications | Rebranded the brainstorm UI ("Superpowers Brainstorming" → "specwright Brainstorming"); moved the runtime mockup path `.superpowers/brainstorm/` → `.specwright/brainstorm/`; removed the `superpowers:*` sub-skill dependencies by inlining the execution-approach guidance; integrated both skills into the specwright spec-driven flow. |
+| Modifications | Rebranded the brainstorm UI ("Superpowers Brainstorming" → "specwright Brainstorming"); moved the runtime mockup path `.superpowers/brainstorm/` → `.specwright/brainstorm/`; removed the `superpowers:*` sub-skill dependencies by inlining the execution-approach guidance; integrated both skills into the specwright issue-driven flow. |
 
 ## License compatibility
 

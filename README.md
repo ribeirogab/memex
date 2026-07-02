@@ -1,6 +1,6 @@
 # specwright
 
-`specwright` gives any repository an explicit **spec-driven workflow** — every non-trivial change runs through one pipeline: brainstorm → design → spec + tasks → implement → quality gate → PR → review-to-`lgtm`. Agent-agnostic and self-hosting.
+`specwright` gives any repository an explicit **issue-driven workflow** — every non-trivial change becomes an **issue** (1 issue = 1 branch = 1 PR) running through one pipeline: brainstorm → issue → spec + tasks → implement → quality gate → runtime verification → PR → review-to-`lgtm`. Large deliveries become **milestones**: a goal, a live board, and issues conducted in a loop by an orchestrator. Agent-agnostic and self-hosting.
 
 ---
 
@@ -17,7 +17,7 @@ This:
 - installs the scaffolder skill — `.agents/skills/sw/`, plus the `.claude/skills/sw` symlink, and
 - enables the `sw` plugin in `.claude/settings.json`.
 
-Then open the repo in your agent and run `/sw` to audit and scaffold the `.specwright/` vault. The plugin commands (`/sw:spec`, `/sw:new-pr`, …) load once Claude Code trusts the workspace.
+Then open the repo in your agent and run `/sw` to audit and scaffold the `.specwright/` vault. The plugin commands (`/sw:spec`, `/sw:pr`, …) load once Claude Code trusts the workspace.
 
 ## Use
 
@@ -33,50 +33,48 @@ The skill is audit-first, autonomous-fix, and safe to re-run. After the first ru
 
 After install the repo has:
 
-- an **`AGENTS.md`** describing the spec-driven workflow,
-- a **`.specwright/` vault** holding just `conventions/` (project-specific conventions) and `specs/` (dated spec folders), and
+- an **`AGENTS.md`** describing the issue-driven workflow,
+- a **`.specwright/` vault** holding `conventions/` (project-specific conventions), `issues/` (dated standalone-issue folders), and `milestones/` (dated milestone folders), and
 - a set of **`/sw:*` commands** and companion skills:
 
 | Command | What it does |
 |---|---|
 | `/sw` | Scaffold or audit specwright in the current repo — set up, verify, or fix. Idempotent. |
-| `/sw:brainstorming` | Explore intent and design before any non-trivial change → `design.md`. |
-| `/sw:spec` | Turn the current conversation into a spec and enter the flow. |
-| `/sw:writing-plans` | Turn an approved design into the technical `spec.md` + `tasks.md`. |
-| `/sw:review-spec` | External-evaluator pass over a spec — flags vagueness, scope creep, design drift. |
-| `/sw:new-pr` | Open the spec's PR — branch/base, push, PR template, Conventional-Commit title. |
-| `/sw:code-review` | Review the branch diff with find-only subagents until `lgtm`. |
+| `/sw:brainstorm` | Explore intent and design before any non-trivial change → an issue or a milestone. |
+| `/sw:spec` | Turn the current conversation into an issue and enter the flow. |
+| `/sw:plan` | The issue pipeline: just-in-time `spec.md` + `tasks.md`, gates, delivery. |
+| `/sw:run` | Conduct a milestone: dispatch every ready issue, track the board, close out. |
+| `/sw:review` | Review the branch diff with find-only subagents until `lgtm`. |
+| `/sw:review-spec` | External-evaluator pass over an issue's plan — flags vagueness, scope creep, drift. |
+| `/sw:pr` | Open the issue's PR — branch/base, push, PR template, Conventional-Commit title. |
 | `/sw:update` | Sync the installed specwright with upstream without clobbering local edits. |
 
 ## How the flow works
 
-Every non-trivial change runs through one pipeline. **Design approval is the only human review** — everything after it can run on its own.
+Every non-trivial change runs through one pipeline. **Design approval is the only human review** — everything after it runs on its own; your other control points are merging the PRs and the circuit-breaker reports.
 
 ```mermaid
 flowchart TD
-    A([sw-brainstorming: explore + design → design.md]) --> B{Design approved?}
+    A(["sw:brainstorm — explore + design"]) --> B{"Design approved?"}
     B -- "no, revise" --> A
-    B -- yes --> C["Post-design batch:<br/>branch + mode + worktree + handoff?"]
-    C --> D[Create branch]
-    D --> E["sw-writing-plans: spec + tasks<br/>then self-reviews the spec<br/>spec-document-reviewer + sw:review-spec + validate-spec.sh<br/>both modes — no human spec review"]
-    E --> G{handoff?}
-    G -- yes --> H["Print txt handoff, then stop<br/>you /compact or open a new chat, paste, resume"]
-    G -- no --> K[Implement]
-    H --> K
-    K --> L[Quality gate]
-    L --> N{mode = autonomous?}
-    N -- yes --> O["Deliver: sw:new-pr + sw:code-review to lgtm → shipped"]
-    N -- "no (reviewed)" --> P{Open the PR and run code-review?}
-    P -- yes --> O
+    B -- yes --> C{"Scope: single issue or milestone?<br/>(agent suggests, you decide)"}
+    C -- "single issue" --> D["Batch: branch + worktree + handoff<br/>→ issues/YYYY-MM-DD-slug/issue.md"]
+    D --> E["sw:plan — just-in-time spec + tasks<br/>self-reviewed: reviewer subagent +<br/>sw:review-spec + validate-spec.sh"]
+    E --> F["Implement → quality gate →<br/>runtime verification (run it for real;<br/>UI via browser or needs-human-verification)"]
+    F --> G(["sw:pr + sw:review to lgtm → shipped"])
+    C -- milestone --> H["Batch: worktree<br/>→ goal.md + board.md + N issue.md<br/>→ mandatory handoff, planning stops"]
+    H --> I["sw:run — the orchestrator loop:<br/>dispatch every ready issue to an owner<br/>(parallel, one worktree each) → each owner<br/>runs the pipeline → learnings feed later issues"]
+    I --> G
 ```
 
 A few things worth knowing:
 
-- **One human gate.** You approve the design — nothing else. The agent reviews its *own* spec (the spec-document-reviewer subagent + `/sw:review-spec` + the `validate-spec.sh` mechanical gate), in both modes.
-- **The post-design batch.** Right after design approval, one batch asks four things: the **branch name**, the **mode**, whether to use a **worktree**, and whether to **hand off**.
-- **Two modes.** The mode decides only the **delivery**: `autonomous` opens the PR and runs code-review to `lgtm` on its own; `reviewed` does the same but asks first (*"open the PR and run code-review?"*). It is recorded in the spec and counts as consent to commit/push that feature branch.
-- **Worktree.** A specwright-native checkout under `.specwright/worktrees/` — default yes, unless you're already inside a linked worktree.
-- **Handoff (either mode).** Once design/spec/tasks are written, the agent prints a handoff prompt so you can `/compact` (or open a new chat) and implement with a clean context.
+- **One human gate.** You approve the design — nothing else. The agent reviews its *own* plan (the spec-document-reviewer subagent + `/sw:review-spec` + the `validate-spec.sh` mechanical gate). Design approval is the standing consent to commit, push, open the PR, and review to `lgtm`.
+- **Issues everywhere.** The unit of work is one folder — `issue.md` (ticket + `AC-N` + `status:`), `spec.md`, `tasks.md`, optional `learnings.md` — identical standalone and inside milestones.
+- **Milestones run as a loop.** The orchestrator (`/sw:run`) never touches code: it dispatches issue owners, tracks the live `board.md`, carries curated learnings from shipped issues into later plans, and stops on circuit breakers (three identical failures → `blocked` + a report) instead of thrashing.
+- **Runtime verification.** Before any PR, the agent executes what it built and checks each `AC-N` by observed behavior — UI through a browser when the agent has one, otherwise the criterion is marked `needs-human-verification`, never faked.
+- **Worktree.** A specwright-native checkout under `.specwright/worktrees/` — default yes; mandatory for parallel milestone dispatch.
+- **Handoff.** Fresh context per phase: optional for a standalone issue, mandatory after milestone planning (the planning session never conducts — `/sw:run` resumes from the board in any new session).
 
 ## Customizing
 
@@ -90,9 +88,10 @@ Companion skills live in **three kept-in-sync copies**:
 
 Edit the copy your agent loads. To change what **future** installs get, edit the `scaffold/` copy too — and keep the three in sync.
 
-- **PR conventions (`/sw:new-pr`)** — title/body format, the draft-vs-ready choice, labels, the PR-template fill, push behavior all live in the `sw-new-pr` `SKILL.md`. Edit it to change how PRs are opened (e.g. write the body in another language, change the default base branch, or add labels).
-- **Code-review rules (`/sw:code-review`)** — there are two levers. (1) **Project conventions** the reviewer reads: your installed repo's `.specwright/conventions/` — edit those to change the project-specific standard. (2) **The universal rubric** — the embedded rubric and severity classes (`blocker`/`suggestion`/`nitpick`/`question`), the blocker calibration, and the output format — live in the `sw-code-review` `SKILL.md` (Unix philosophy + meaningful comments + security are baked into code-review now).
-- **The spec-flow steps** — the flow is documented in `AGENTS.md` under `### Spec flow`. To change the steps for an already-installed repo, edit that block; to change what new installs get, edit `### Spec flow` in `skills/sw/references/agents-md-template.md` (keep the two consistent). The `autonomous`/`reviewed` switch is wired across the three `sw-brainstorming` `SKILL.md` copies and the spec template's `branch:`/`mode:` fields, so deeper changes to mode behavior touch those too.
+- **PR conventions (`/sw:pr`)** — title/body format, the draft-vs-ready choice, labels, the PR-template fill, push behavior all live in the `sw-pr` `SKILL.md`. Edit it to change how PRs are opened (e.g. write the body in another language, change the default base branch, or add labels).
+- **Review rules (`/sw:review`)** — there are two levers. (1) **Project conventions** the reviewer reads: your installed repo's `.specwright/conventions/` — edit those to change the project-specific standard. (2) **The universal rubric** — the embedded rubric and severity classes (`blocker`/`suggestion`/`nitpick`/`question`), the blocker calibration, and the output format — live in the `sw-review` `SKILL.md` (Unix philosophy + meaningful comments + security are baked in).
+- **Orchestration (`/sw:run`)** — the dispatch rules, circuit-breaker thresholds, and closeout behavior live in the `sw-run` `SKILL.md`; the board/goal/issue shapes live in `skills/sw/scaffold/templates/`.
+- **The issue-flow steps** — the flow is documented in `AGENTS.md` under `### Issue flow`. To change the steps for an already-installed repo, edit that block; to change what new installs get, edit `### Issue flow` in `skills/sw/references/agents-md-template.md` (keep the two consistent).
 
 ## Repository layout
 
