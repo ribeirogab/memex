@@ -13,7 +13,7 @@ Audited issues: `task-priority` (round 1, branch `feat/task-priority`, base `aaa
 | export-json-csv | `afb28b6` "plan export-json-csv" | 10:09:03 | `463e1b1` 10:14:25 |
 | web-page | `5ae05e2` "plan the web-page issue" | 10:09:35 | `837eb8c` 10:14:27 |
 
-**list-filters commit-order anomaly:** its plan commit (10:16:40) postdates its implementation commits (10:14:20–10:15:33). The plan was nonetheless *written* before the code: this owner's live probe at ~13:11Z (10:11 local) recorded `spec.md`/`tasks.md` as untracked files in the list-filters worktree while the branch still sat at `b9d7c80` with zero commits. JIT-by-write holds; JIT-by-commit does not. See findings F1.
+**list-filters commit-order anomaly:** its plan commit (10:16:40) postdates its implementation commits (10:14:20–10:15:33). The plan was nonetheless *written* before the code: an ad-hoc `git status` check run by this owner at ~13:11Z (recorded in this session's transcript — `round2-probes.txt` captures only worktrees/branches/board/statuses, not per-worktree file status) showed `spec.md`/`tasks.md` as untracked files in the list-filters worktree; `round2-probes.txt` independently proves the branch still sat at `b9d7c80` with zero commits at that time. JIT-by-write holds; JIT-by-commit does not. See findings F1.
 
 **Gate execution evidence per issue:**
 

@@ -8,7 +8,7 @@ Round 2 shipped 3/3, so no verdict needed the blocked-round UNOBSERVABLE form (r
 
 | Check | Verdict | Evidence |
 |---|---|---|
-| AC-1 — spec/tasks JIT per shipped issue, gates named as run | **PASS + divergence F1** (JIT 4/4 proven vs base; gates ran 4/4 by transcript, artifact-recorded only 2/4; list-filters committed plan after code) | `pipeline-audit.md` §AC-1; `round2-probes.txt` ~13:11Z; `round2-session.md` |
+| AC-1 — spec/tasks JIT per shipped issue, gates named as run | **PASS + divergence F1** (JIT 4/4 proven vs base; gates ran 4/4 by transcript, artifact-recorded only 2/4; list-filters committed plan after code) | `pipeline-audit.md` §AC-1; owner-session check ~13:11Z + `round2-probes.txt` (zero commits); `round2-session.md` |
 | AC-2 — epoch fact in producer learnings + respected in export spec | **FAIL (producer half) / PASS (consumer half)** — F2 | `pipeline-audit.md` §AC-2 |
 | AC-3 — suites green, no count drop, no weakened assertions, per-AC CLI evidence | **PASS** (5→15→25/30/27, additions only, frozen file byte-identical 4/4, observed-behavior records complete) | `pipeline-audit.md` §AC-3 |
 | AC-4 — web page browser-verified or needs-human-verification | **PASS against the ticket, divergence F3 against the intent** (curl everywhere; no silent tick — every tick evidence-backed; fixture has no true rendering criterion) | `pipeline-audit.md` §AC-4 |
@@ -16,12 +16,12 @@ Round 2 shipped 3/3, so no verdict needed the blocked-round UNOBSERVABLE form (r
 | AC-6 — learnings are facts; status only in issue.md; board status-free | **PASS** | `pipeline-audit.md` §AC-6 |
 | AC-7 — export fan-out: ≥2 Delegable yes, workers ran, no worker learnings | **FAIL (no workers ran) — F5**, markers PASS (3/4), worker-learnings clause holds (vacuous + reviewers 0 writes) | `pipeline-audit.md` §AC-7 |
 | AC-8 — verdicts + Expected/Observed/Proposed fix per failure | **PASS** | this file |
-| Round-2 conduction (context): parallel dispatch, stacking, stop-before-trap | **PASS** (3-way concurrent worktrees at 13:04:36Z; stacked on `b9d7c80` per run-skill clause with no harness coaching; trap left undispatched, explicitly deferred) | `round2-probes.txt`; `round2-session.md` final report; `round2-post-state.txt` |
+| Round-2 conduction (context): parallel dispatch, stacking, stop-before-trap | **PASS** (3-way concurrent worktrees at 13:04:13Z; stacked on `b9d7c80` per run-skill clause with no harness coaching; trap left undispatched, explicitly deferred) | `round2-probes.txt`; `round2-session.md` final report; `round2-post-state.txt` |
 
 ## F1 — Gate execution is real but unevenly recorded; one owner committed its plan after its code
 
 - **Expected** (plan-skill order + AC-1's evidentiary bar): spec/tasks written *and committed* before implementation; the three self-review gates named in transcript/evidence per issue — ideally in a durable artifact.
-- **Observed:** JIT-by-write held 4/4 (list-filters' plan files were on disk, uncommitted, before any code commit — live probe ~13:11Z). But list-filters committed its plan (`667192b`, 10:16:40) after its three implementation commits (10:14:20–10:15:33), and is the only issue with zero artifact record of its gates (no pr.md gate line, no advisory commit) — the gates provably ran (its reviewer's Approved verdict passed through this harness's relay; owner reported "triple-gated plan") but a repo-only auditor could not know. Gate recording across issues: export = pr.md line; web-page = advisory commit; task-priority = transcript only; list-filters = nothing.
+- **Observed:** JIT-by-write held 4/4 (list-filters' plan files were on disk, uncommitted, before any code commit — owner-session ad-hoc `git status` check ~13:11Z, session transcript; `round2-probes.txt` proves zero commits at `b9d7c80` then). But list-filters committed its plan (`667192b`, 10:16:40) after its three implementation commits (10:14:20–10:15:33), and is the only issue with zero artifact record of its gates (no pr.md gate line, no advisory commit) — the gates provably ran (its reviewer's Approved verdict passed through this harness's relay; owner reported "triple-gated plan") but a repo-only auditor could not know. Gate recording across issues: export = pr.md line; web-page = advisory commit; task-priority = transcript only; list-filters = nothing.
 - **Proposed fix:** plan skill: (a) make "Commit" an explicit step at the end of the spec-writing stage (before implementation), not just within tasks; (b) require the pr.md quality-gate section to name the three plan gates and their outcomes (the export owner's `pr.md:31` is the model). Cheap, mechanical, closes the evidence gap.
 
 ## F2 — The learnings channel never carried the planted epoch-seconds fact
