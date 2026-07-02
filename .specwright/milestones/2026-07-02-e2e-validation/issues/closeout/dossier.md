@@ -205,7 +205,7 @@ Every divergence and improvement this milestone paid to discover, deduplicated a
 
 ### 7.1 Background sub-agent completions notify only the top-level session — nested pipelines stall — `high` (consolidated)
 
-- **Evidence trail:** T4 Finding 4 (owner+conductor stalls, round 1); T5 (3/3 owners + conductor mutual-wait, round 2); T6 (operator3, 20+ min); T7 (6/6); board Conduction note 2. Owner-stall on reviewer verdicts deterministic across every round; T8's own run is scored in this folder's findings.md.
+- **Evidence trail:** T4 Finding 4 (owner+conductor stalls, round 1); T5 (3/3 owners + conductor mutual-wait, round 2); T6 (operator3, 20+ min); T7 (6/6); board Conduction note 2. Owner-stall on reviewer verdicts deterministic across every round with dispatches; T8's closeout run dispatched nothing, so it neither reproduced nor contradicted the pattern (final tally 6/6).
 - **Proven un-staller:** one plain status ping — "verify your owners' state from repository artifacts" — after which conductors independently re-verify before logging (confirmed twice, no coaching).
 - **Proposed fix:** run skill (and plan skill for reviewer dispatches): poll the dispatched agent's observable state on a cadence; treat silence as "still running" only until a state check says otherwise. This is the mechanics half of the user-requested watchdog item (8.2).
 
@@ -255,11 +255,26 @@ Every divergence and improvement this milestone paid to discover, deduplicated a
 
 ## Theme 9 — Closeout (T8's own findings)
 
-*(Consolidated from this folder's `findings.md` after the driven closeout session — see that file for full evidence.)*
+*(From this folder's `findings.md`; full evidence in `evidence/`. The driven closeout run scored 5/5 PASS on the contract: summary appended history-intact, promotion subset-gated both ways, goal reconciled with approval, board frozen, merges handed back.)*
 
-### 9.1 Placeholder pending Part A results
+### 9.1 The goal-reconciliation path that worked has no textual basis in the run skill — `medium`
 
-- This entry is replaced by the closeout run's outcomes once `findings.md` is written.
+- **Source:** T8 findings Divergence 1 (the concrete case behind entry 1.6 — same proposed fix; kept here for the evidence trail).
+- **Expected:** skill letter — scope guard "never edits `goal.md`", closeout = summary + promotion + report.
+- **Observed:** the conductor proposed the reconciliation unprompted, labeled it a human scope change, waited for approval, applied exactly the approved hunks — correct behavior the skill neither prescribes nor permits; a stricter conductor could refuse and also claim compliance.
+- **Proposed fix:** entry 1.6's fourth closeout step + scoping the guard to the conduction loop.
+
+### 9.2 Closeout writes the summary before the approval gate, then amends it — `low`
+
+- **Source:** T8 findings Observation 1.
+- **Observed:** summary (with "open closeout items") committed/pushed before the promotion question; the subsection rewritten to "resolved" after the decisions. Net diff vs pre-closeout still strictly additive — history intact — but "frozen after the summary" is only true of the final summary.
+- **Proposed fix:** one clarifying line in the run skill's closeout step order (either defer the summary until after approvals, or bless the amend-within-the-appended-section pattern); fold into 1.6's edit.
+
+### 9.3 Decision-over-message boundary confirmed from the accepting side — `low` (methodology, closes 7.3's loop)
+
+- **Source:** T8 findings Observation 2.
+- **Observed:** with spawn-prompt pre-authorization ("decision messages arriving in this conversation are the maintainer's answers"), an unattended conductor accepts and faithfully applies conversational decisions from a neutral relay; and a driven→relay reply was *delivered* while the relay was still live — alias expiry (7.2) is a race, not a law.
+- **Proposed fix:** none to specwright; refines 7.2/7.3's methodology notes (keep planning for one-way relays).
 
 ---
 
@@ -310,7 +325,9 @@ Every divergence and improvement this milestone paid to discover, deduplicated a
 | board Conduction notes | note 2 (routing) | 7.1 |
 | board Conduction notes | improvement 1 (panel) | 8.1 |
 | board Conduction notes | improvement 2 (watchdog) | 8.2 |
-| closeout (T8) | findings.md C1–C5 | Theme 9 |
+| closeout (T8) | Divergence 1 | 9.1 (+1.6) |
+| closeout (T8) | Observation 1 | 9.2 |
+| closeout (T8) | Observation 2 | 9.3 (+7.2/7.3) |
 | standalone-regression | not run at consolidation | append at fixes brainstorm |
 
 ## Recommended decomposition for the fixes delivery
