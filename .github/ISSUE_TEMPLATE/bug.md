@@ -7,7 +7,7 @@ labels: ["bug"]
 
 ## Component affected
 
-The `sw` skill, a bundled companion (`sw-brainstorming`, `sw-writing-plans`, `sw-new-pr`, `sw-code-review`, `sw-update`), or a `/sw:*` command.
+The `sw` skill, a bundled companion (`sw-brainstorm`, `sw-plan`, `sw-pr`, `sw-review`, `sw-run`, `sw-update`), or a `/sw:*` command.
 
 ## Agent and version
 
