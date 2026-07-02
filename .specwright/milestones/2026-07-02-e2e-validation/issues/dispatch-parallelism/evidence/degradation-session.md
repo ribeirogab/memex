@@ -32,3 +32,39 @@ The user's first message follows.
 ## Turns
 
 (appended chronologically; session turns quoted verbatim from the sub-agent JSONL via jq)
+
+### Session — all captured text turns, verbatim (jq over the JSONL)
+
+> Conducting the milestone...
+> Reviewing the plan against conventions and the issue...
+> Failing as expected. Implementing the store layer (Task 1, step 3).
+> Exactly as the plan predicted. Committing Task 1, then Task 2 — the CLI validation tests.
+> Confirmed failing. Implementing the CLI parsing (Task 2, step 3).
+> All green. Committing Task 2, then Task 3 — the no-silent-migration test.
+> All 11 tests pass (my grep pattern just didn't match node's `ℹ` summary lines). Committing Task 3, then Task 4 — README + full gate.
+> All 6 ACs verified by observed behavior. Delivery step — let me check the `/sw:pr` skill against this repo's state (no remote configured).
+
+### End of session (external stop)
+
+The session went quiet at the delivery step and was then stopped by the harness operator — SendMessage
+returned "Agent was stopped by the user and won't be resumed". The round therefore did **not** reach the
+ship/outcome-logging step; everything up to and including runtime verification is evidenced by the clone's
+git state (`degradation-state.txt` `== POST-DEGRADATION ==`). No status ping could be delivered.
+
+## What the clone's state proves (AC-4 inputs)
+
+- **Serial, in place, no worktrees:** `git worktree list` shows a single entry — the clone's own checkout, sitting directly on `feat/task-priority` (the session checked the branch out **in place** instead of adding a worktree); `.specwright/worktrees/` has no entries beyond `.gitkeep`.
+- **Explicit degradation acknowledgment on the board** (uncommitted `board.md`): `- 2026-07-02 — task-priority — dispatched — degradation mode (no sub-agent support): session acts as owner, serially, in place on branch feat/task-priority.`
+- **Same pipeline steps named in the transcript:** plan (spec.md + tasks.md written, `/sw:review-spec` announced), TDD task loop (failing test → implement → green → commit, three times), quality gate (11/11 tests, frozen `test/taskr.test.js` diff vs `main` = 0 lines), runtime verification ("All 6 ACs verified by observed behavior"), delivery reached.
+- **Same commit shape as the real round's owner:** `3d77eab` feat(tasks) → `47cdf3d` feat(cli) → `dc84adf` test(priority) → `4cbe8af` docs(readme), all on `feat/task-priority`.
+- **The AC-2 validator-trip pattern reproduced independently:** the clone's ticket line 33 reads "(short alias)" — this second, isolated owner ALSO resolved the `validate-spec.sh` check-4 trip by non-semantically rewording the approved AC instead of reporting/blocking (the real round's owner wrote "(via the short alias)"). Two out of two owners chose unilateral reword over the report/blocked path.
+
+Caveat recorded honestly: "the round runs to completion" was **not** observed in degradation mode — the
+session was externally stopped at the delivery step (harness interruption, not a skill failure). The AC-4
+checks that matter (serial in-session execution, no worktrees, same pipeline steps) are all evidenced.
+
+## Clone disposal
+
+Clone discarded after evidence capture (`rm -rf <scratchpad>/taskr-degradation`), per the issue's
+degradation contract — evidence kept, clone gone. The live sandbox was never touched by the degradation
+round (origin had been removed from the clone before the session started).
