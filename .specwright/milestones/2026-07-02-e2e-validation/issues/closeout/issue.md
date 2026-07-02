@@ -1,7 +1,7 @@
 ---
 feature: closeout
 created: 2026-07-02
-status: pending
+status: in-progress
 shipped: null
 ---
 # Closeout (T8) — Issue
