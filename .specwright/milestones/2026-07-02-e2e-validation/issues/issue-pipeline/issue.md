@@ -1,7 +1,7 @@
 ---
 feature: issue-pipeline
 created: 2026-07-02
-status: pending
+status: in-progress
 shipped: null
 ---
 # Issue Pipeline (T5) — Issue
