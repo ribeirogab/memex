@@ -1,7 +1,7 @@
 ---
 feature: circuit-breaker
 created: 2026-07-02
-status: pending
+status: in-progress
 shipped: null
 ---
 # Circuit Breaker (T6) — Issue
