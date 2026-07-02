@@ -101,7 +101,7 @@ Expected: only `>` (added) lines — a final-summary section; zero `<` (removed)
 - Create: `.specwright/milestones/2026-07-02-e2e-validation/issues/closeout/learnings.md`
 - Modify: `.specwright/milestones/2026-07-02-e2e-validation/issues/closeout/issue.md`
 
-- [x] Step 1: Curate `learnings.md` — sandbox final state (post-closeout, for T9/T10 which must find it idle), promotion/goal outcomes, durable harness facts, dossier path + fixes recommendation one-liner.
-- [ ] Step 2: `/sw:pr` — base `chore/e2e-blocked-recovery`, stacking noted in the body, runtime-verification results included.
-- [ ] Step 3: `/sw:review` to `lgtm`.
-- [ ] Step 4: Flip `issue.md` to `status: shipped` + `shipped: 2026-07-02`, tick verified ACs; commit (`chore(vault): ship the closeout (T8) issue`).
+- [x] Step 1: Curate `learnings.md` — sandbox final state (post-closeout, for standalone-regression which must find it idle), promotion/goal outcomes, durable harness facts, dossier path + fixes recommendation one-liner.
+- [x] Step 2: `/sw:pr` — base `chore/e2e-blocked-recovery`, stacking noted in the body, runtime-verification results included.
+- [x] Step 3: `/sw:review` to `lgtm`.
+- [x] Step 4: Flip `issue.md` to `status: shipped` + `shipped: 2026-07-02`, tick verified ACs; commit (`chore(vault): ship the closeout (T8) issue`).
