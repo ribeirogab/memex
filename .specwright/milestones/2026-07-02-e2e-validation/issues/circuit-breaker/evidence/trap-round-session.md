@@ -22,8 +22,6 @@ End your final message by quoting the board's Dispatch Log section verbatim.
 
 ## Key turns (verbatim)
 
-(to be appended after the round)
-
 ### Timeline (harness log, times UTC)
 
 - **13:55:29Z** — `operator3` spawned (fresh session; T5's `operator2` not resumed).
