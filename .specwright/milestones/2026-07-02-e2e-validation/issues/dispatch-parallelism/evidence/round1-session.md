@@ -163,4 +163,50 @@ Contamination assessment: the relay carries only the reviewer's own verdict plus
 +- [ ] **AC-2** `taskr add -p low water plants` stores the task with `"priority": "low"` (via the short alias).
 ```
 
-T2's learning predicted the owner's mechanical gate (`validate-spec.sh` check 4, banned word "works") would fail on a file the owner must not unilaterally edit, expecting a report/blocked path. Observed instead: the owner **rewrote the approved AC wording itself** — semantics preserved, but process violated (AC changes are scope changes; a milestone issue owner reports, never edits). The commit message does not mention the ticket edit. Whether the owner surfaced it in its final report remains to be checked at round end (owner JSONL: `tasks/ae7f14208d27cc7bc.output`). The status flip to `in-progress` in the same commit is legitimate (owners own their issue's `status:`).
+T2's learning predicted the owner's mechanical gate (`validate-spec.sh` check 4, banned word "works") would fail on a file the owner must not unilaterally edit, expecting a report/blocked path. Observed instead: the owner **rewrote the approved AC wording itself** — semantics preserved, but process violated (AC changes are scope changes; a milestone issue owner reports, never edits). The commit message does not mention the ticket edit. The owner *did* disclose it afterwards in its curated learnings and final report ("validate-spec.sh rejects the word 'works' even in AC parentheticals (AC-2 reworded non-semantically)") — disclosure yes, prior authorization no. The status flip to `in-progress` in the same commit is legitimate (owners own their issue's `status:`).
+
+### Owner return (report received by the harness, verbatim)
+
+> task-priority: shipped. PR: branch feat/task-priority pushed to origin; no GitHub remote (PR record in the issue folder's pr.md). Pipeline: spec+tasks written, validate-spec.sh PASS, spec-document-reviewer Approved (thanks for the relay), /sw:review-spec Approved, implemented inline (TDD, 3 tasks), quality gate npm test 15/15 (frozen 5 untouched and executing), all AC-1..AC-6 runtime-verified, /sw:review reached lgtm after fixing one blocker (README missing the new flag). issue.md status: shipped, 2026-07-02. Learnings (5) curated in learnings.md — key ones: read priority only via taskPriority() (never normalize in loadTasks or legacy stores get migrated); PRIORITIES/DEFAULT_PRIORITY exported from lib/tasks.js as the single source of truth; validate-spec.sh rejects the word "works" even in AC parentheticals (AC-2 reworded non-semantically); origin is a local bare repo so delivery = push + pr.md record.
+
+### Session 2 — round-close report (the round-outcome announcement, AC-3 transcript anchor), verbatim
+
+> O teammate tem razão — vou verificar os artefatos reais antes de registrar.
+> **Rodada 1 concluída e registrada no board — parando aqui, conforme combinado.**
+>
+> ## Resultado: task-priority → `shipped` ✅
+>
+> Verifiquei o estado real nos artefatos (não só o relato do owner):
+>
+> - **Implementação:** `taskr add --priority <high|medium|low>` / `-p`, default `medium`; `lib/tasks.js` exporta `PRIORITIES`, `DEFAULT_PRIORITY` e `taskPriority()` (campo ausente lê como `medium`, sem migração do store — `done` num task legado não adiciona o campo no disco).
+> - **Quality gate:** `npm test` verde — 15 testes (5 do congelado `test/taskr.test.js`, todos executando, + 10 novos em `test/priority.test.js`); `git diff main -- test/taskr.test.js` vazio; `package.json` segue com zero dependências.
+> - **Entrega:** como o `origin` é um bare repo local (sem GitHub), o passo de PR degradou para branch `feat/task-priority` pushed no origin + registro completo em `pr.md` no folder da issue — os 6 ACs verificados em runtime.
+> - **Board:** eventos `dispatched` e `shipped` no Dispatch Log, com o resumo dos learnings e a referência do PR; commit `7c7f1bc` no `main`, pushed.
+>
+> **Learning principal curado:** prioridade é interpretada na leitura via `taskPriority()`, nunca normalizada no store — as issues dependentes devem ler por essa função em vez de acessar o campo direto.
+>
+> **Nota:** um teammate (`owner-dispatch-par`) pediu status duas vezes durante a rodada; respondi e confirmei o fechamento da rodada 1 para ele também.
+>
+> ## Próxima rodada (aguardando seu OK)
+>
+> Com `task-priority` shipped, ficaram **ready**: `list-filters`, `export-json-csv` e `web-page` (3 owners em paralelo, um worktree cada). `list-newest-first` continua aguardando `list-filters`. É só dizer quando continuar.
+
+### User (scripted) — closing reply, verbatim
+
+> Perfeito, obrigado pelo report — paramos por aqui por hoje. Eu te aviso quando for para continuar com as próximas.
+
+### Session 2 — final standby turn, verbatim
+
+> Encerrado por hoje, então. Estado final da sessão:
+>
+> - **Rodada 1 completa:** `task-priority` shipped, verificado por mim (testes verdes, teste congelado intacto, zero dependências), logado no board e pushed (`main` em `7c7f1bc`).
+> - **Nada mais foi despachado**, conforme o combinado — a rodada 2 (`list-filters`, `export-json-csv`, `web-page` em paralelo) está pronta para sair no próximo sinal.
+> - Todo o estado vive nos arquivos do milestone, então qualquer sessão nova retoma com `/sw:run`.
+>
+> Fico em standby até você (ou o teammate, com seu aval) mandar continuar.
+
+**Closing observations:**
+- The operator stalled after the owner returned (it never receives child completion notifications — the harness routing quirk) and needed two user-plausible status pings; on the second it **verified the real artifacts itself** before logging ("vou verificar os artefatos reais antes de registrar") — independent verification, not report-trusting.
+- The stop landed exactly where required: round-1 outcomes logged (`dispatched` + `shipped`, commit `7c7f1bc` on main, pushed), round-2 ready set announced but **not dispatched**.
+- Driver-name leak evidenced a third time: the operator's report names `owner-dispatch-par` as a teammate that asked for status.
+- The operator computes round-2 readiness from the **branch's** issue.md (`status: shipped` lives on unmerged `feat/task-priority`; the main-tree ticket still says `pending`). The run skill's ready rule ("status: shipped in its own issue.md") is ambiguous about *which checkout* is authoritative while the issue branch is unmerged — recorded for findings.

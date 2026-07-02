@@ -47,3 +47,37 @@ Append-only — one line per orchestrator event: date, issue, event (`dispatched
 .specwright/milestones/2026-07-02-grow-taskr/issues/list-newest-first/issue.md:status: pending
 .specwright/milestones/2026-07-02-grow-taskr/issues/task-priority/issue.md:status: pending
 .specwright/milestones/2026-07-02-grow-taskr/issues/web-page/issue.md:status: pending
+
+--- probe 2026-07-02T12:24:44Z ---
+/private/tmp/claude-501/-Users-gabriel-www-ribeirogab-specwright--claude-worktrees-pensive-bose-7ba1c1/35a26153-a526-40df-b10c-9d60f5037d86/scratchpad/taskr-degradation  aaa117b [feat/task-priority]
+* feat/task-priority
+  main
+## Dispatch Log
+
+Append-only — one line per orchestrator event: date, issue, event (`dispatched` / `shipped` / `blocked` / `resumed`), short note (for `shipped`: the owner's one-line learnings summary and the PR URL).
+
+- 2026-07-02 — task-priority — dispatched — degradation mode (no sub-agent support): session acts as owner, serially, in place on branch `feat/task-priority`.
+
+## Blockers
+.specwright/milestones/2026-07-02-grow-taskr/issues/export-json-csv/issue.md:status: pending
+.specwright/milestones/2026-07-02-grow-taskr/issues/list-filters/issue.md:status: pending
+.specwright/milestones/2026-07-02-grow-taskr/issues/list-newest-first/issue.md:status: pending
+.specwright/milestones/2026-07-02-grow-taskr/issues/task-priority/issue.md:status: pending
+.specwright/milestones/2026-07-02-grow-taskr/issues/web-page/issue.md:status: pending
+
+--- probe 2026-07-02T12:25:14Z ---
+/private/tmp/claude-501/-Users-gabriel-www-ribeirogab-specwright--claude-worktrees-pensive-bose-7ba1c1/35a26153-a526-40df-b10c-9d60f5037d86/scratchpad/taskr-degradation  aaa117b [feat/task-priority]
+* feat/task-priority
+  main
+## Dispatch Log
+
+Append-only — one line per orchestrator event: date, issue, event (`dispatched` / `shipped` / `blocked` / `resumed`), short note (for `shipped`: the owner's one-line learnings summary and the PR URL).
+
+- 2026-07-02 — task-priority — dispatched — degradation mode (no sub-agent support): session acts as owner, serially, in place on branch `feat/task-priority`.
+
+## Blockers
+.specwright/milestones/2026-07-02-grow-taskr/issues/export-json-csv/issue.md:status: pending
+.specwright/milestones/2026-07-02-grow-taskr/issues/list-filters/issue.md:status: pending
+.specwright/milestones/2026-07-02-grow-taskr/issues/list-newest-first/issue.md:status: pending
+.specwright/milestones/2026-07-02-grow-taskr/issues/task-priority/issue.md:status: in-progress
+.specwright/milestones/2026-07-02-grow-taskr/issues/web-page/issue.md:status: pending
