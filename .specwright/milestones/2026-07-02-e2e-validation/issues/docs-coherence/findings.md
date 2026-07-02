@@ -59,7 +59,7 @@ Mechanical sweep first: `grep -n -E 'design\.md|specs/|sw-specify|sw:specify|/sw
 
 ## AC-3 — `validate-spec.sh` fixture matrix
 
-Fixtures built fresh on the unified layout (never in the repo tree), run from the worktree root with `bash skills/sw/scripts/validate-spec.sh <fixture>`; full verbatim log in `evidence/validate-spec-runs.txt`, fixtures byte-identical in `evidence/fixtures/`. Environment: GNU bash 5.3.9, macOS, commit `c291025`.
+Fixtures built fresh on the unified layout (never in the repo tree), run from the worktree root with `bash skills/sw/scripts/validate-spec.sh <fixture>`; full verbatim log in `evidence/validate-spec-runs.txt`, fixtures byte-identical in `evidence/fixtures/` (run-log paths normalized: machine-local scratch prefix → `<fixtures>`). Environment: GNU bash 5.3.9, macOS, commit `c291025`.
 
 | Fixture | Defect | Exit | Output | Docs promise honored? |
 |---|---|---|---|---|
